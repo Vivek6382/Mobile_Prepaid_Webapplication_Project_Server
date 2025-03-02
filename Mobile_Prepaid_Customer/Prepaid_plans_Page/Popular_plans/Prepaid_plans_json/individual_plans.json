@@ -1,0 +1,77 @@
+[
+    {
+        "planName": "MobiComm Platinum 3999",
+        "price": 3999,
+        "validity": 365,
+        "dailyData": "2.5 GB/Day",
+        "totalData": "912.5 GB",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Sony LIV", "Zee5"],
+        "terms": [
+            "Post daily 100 SMS limit, charges will apply: ₹1 per Local SMS | ₹1.5 per STD SMS.",
+            "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed.",
+            "Unlimited voice calls are included with no additional charges."
+        ]
+    },
+    {
+        "planName": "MobiComm Diamond 2025",
+        "price": 2025,
+        "validity": 200,
+        "dailyData": "2.5 GB/Day",
+        "totalData": "500 GB",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Netflix", "Amazon Prime"],
+        "terms": [
+            "Post daily 100 SMS limit, charges will apply: ₹1 per Local SMS | ₹1.5 per STD SMS.",
+            "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed.",
+            "Unlimited voice calls are included with no additional charges."
+        ]
+    },
+    {
+        "planName": "MobiComm Gold 2599",
+        "price": 2599,
+        "validity": 240,
+        "dailyData": "3 GB/Day",
+        "totalData": "720 GB",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Zee5", "Sun NXT"],
+        "terms": [
+            "Post daily 100 SMS limit, charges will apply: ₹1 per Local SMS | ₹1.5 per STD SMS.",
+            "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed.",
+            "Unlimited voice calls are included with no additional charges."
+        ]
+    },
+    {
+        "planName": "MobiComm Silver 1799",
+        "price": 1799,
+        "validity": 150,
+        "dailyData": "2 GB/Day",
+        "totalData": "300 GB",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Netflix"],
+        "terms": [
+            "Post daily 100 SMS limit, charges will apply: ₹1 per Local SMS | ₹1.5 per STD SMS.",
+            "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed.",
+            "Unlimited voice calls are included with no additional charges."
+        ]
+    },
+    {
+        "planName": "MobiComm Starter 999",
+        "price": 999,
+        "validity": 90,
+        "dailyData": "1.5 GB/Day",
+        "totalData": "135 GB",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": [],
+        "terms": [
+            "Post daily 100 SMS limit, charges will apply: ₹1 per Local SMS | ₹1.5 per STD SMS.",
+            "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed.",
+            "Unlimited voice calls are included with no additional charges."
+        ]
+    }
+]

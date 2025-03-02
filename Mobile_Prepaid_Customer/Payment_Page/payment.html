@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtel Payment Summary</title>
+
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="payment.css">
+</head>
+
+<body>
+
+
+
+    <header class="header_main">
+        <div class="first_header_part">
+            <h4><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html"><span>MOBI</span>-COMM.</a></h4>
+        </div>
+    </header>
+
+
+
+
+
+    <section class="payment_summary_section">
+
+        <div class="plan_card_title">
+            <!-- Payment Summary Title -->
+            <h2 class="payment-summary-title">Payment Summary</h2>
+        </div>
+
+        <div class="plan_card-container">
+            <!-- Airtel Plan Card -->
+            <div class="vi_card">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <span class="plan-name">Prepaid | 8883989997</span>
+                    <span class="plan-price">₹26</span>
+                </div>
+
+                <!-- Card Content -->
+                <div class="card-content">
+                    <table class="plan-details">
+                        <tr>
+                            <td><i class="fas fa-phone-alt"></i> Calls</td>
+                            <td>Truly Unlimited</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-wifi"></i> Data</td>
+                            <td>2GB/Day</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-comment-dots"></i> SMS</td>
+                            <td>100 SMS/Day</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-calendar-alt"></i> Validity</td>
+                            <td>28 Days</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Card Footer -->
+                <div class="card-footer">
+                    <div class="footer-content">
+                        <p><strong>Amount Payable:</strong> ₹26</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="payment-section">
+        <div class="payment-heading">
+            <h2>Payment Options</h2>
+            <p>Select your preferred payment method.</p>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="icon-text">
+                        <i class="fa-solid fa-qrcode"></i> <span>UPI</span>
+                    </div>
+                    <span class="accordion-icon">+</span>
+                </div>
+                <div class="accordion-content">
+                    <label class="upi-option" for="googlepay">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/upi_logos/G-pay_Logo.svg" alt="Google Pay">
+                            <span>Google Pay</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="upi" value="googlepay" id="googlepay">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <label class="upi-option" for="phonepe">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/upi_logos/Phone_Pe_Logo.svg" alt="PhonePe">
+                            <span>PhonePe</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="upi" value="phonepe" id="phonepe">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <label class="upi-option" for="paytm">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/upi_logos/Paytm_Logo.svg" alt="Paytm">
+                            <span>Paytm</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="upi" value="paytm" id="paytm">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <div class="upi-option see-all">
+                        <span>See all</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="icon-text">
+                        <i class="fa-regular fa-credit-card"></i> <span>Credit/Debit/ATM Card</span>
+                    </div>
+                    <span class="accordion-icon">+</span>
+                </div>
+                <div class="accordion-content">
+                    <label class="upi-option" for="card_payment">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/Card_Payment_Logos/Card_Payment_Logo.svg" alt="card payment">
+                            <span>Google Pay</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="upi" value="card payment" id="card_payment">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Updated Net Banking Section -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="icon-text">
+                        <i class="fa-solid fa-university"></i> <span>Net Banking</span>
+                    </div>
+                    <span class="accordion-icon">+</span>
+                </div>
+                <div class="accordion-content">
+                    <label class="upi-option" for="sbi">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/Net_Banking_logos/SBI_Logo.svg" alt="SBI">
+                            <span>SBI</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="netbanking" value="sbi" id="sbi">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <label class="upi-option" for="icici">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/Net_Banking_logos/ICICI_Logo.svg" alt="ICICI">
+                            <span>ICICI</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="netbanking" value="icici" id="icici">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <label class="upi-option" for="axis">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/Net_Banking_logos/Axis_Logo.svg" alt="AXIS">
+                            <span>AXIS</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="netbanking" value="axis" id="axis">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <label class="upi-option" for="kotak">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/Net_Banking_logos/Kotak_Logo.png" alt="KOTAK">
+                            <span>KOTAK</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="netbanking" value="kotak" id="kotak">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <label class="upi-option" for="indusind">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/Net_Banking_logos/Indusind_Logo.png" alt="INDUSIND">
+                            <span>INDUSIND</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="netbanking" value="indusind" id="indusind">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <label class="upi-option" for="hdfc">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/Net_Banking_logos/HDFC_Logo.svg" alt="HDFC">
+                            <span>HDFC</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="netbanking" value="hdfc" id="hdfc">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <div class="upi-option see-all">
+                        <span>See all</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Updated Wallets Section -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="icon-text">
+                        <i class="fa-solid fa-wallet"></i> <span>Wallets</span>
+                    </div>
+                    <span class="accordion-icon">+</span>
+                </div>
+                <div class="accordion-content">
+                    <label class="upi-option" for="mobikwik">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/wallets_logo/Mobikwik.svg" alt="Mobikwik">
+                            <span>Mobikwik</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="wallets" value="mobikwik" id="mobikwik">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <label class="upi-option" for="amazonpay">
+                        <div class="upi_image_text_div">
+                            <img src="./assets/wallets_logo/Amazon-Pay_Logo.svg" alt="Amazon Pay">
+                            <span>Amazon Pay</span>
+                        </div>
+                        <div class="upi_radio">
+                            <input type="radio" name="wallets" value="amazonpay" id="amazonpay">
+                            <span class="ripple-effect"></span>
+                        </div>
+                    </label>
+                    <div class="upi-option see-all">
+                        <span>See all</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <script src="./payment.js"></script>
+</body>
+
+</html>

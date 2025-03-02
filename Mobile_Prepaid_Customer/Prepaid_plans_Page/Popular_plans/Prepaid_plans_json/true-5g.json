@@ -1,0 +1,83 @@
+[
+    {
+        "planName": "True 5G Platinum 3999",
+        "price": 3999,
+        "validity": 365,
+        "dailyData": "2.5 GB/Day",
+        "totalData": "912.5 GB",
+        "data": "Unlimited 5G",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Sony LIV", "Zee5"], 
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Subscription to FanCode via JioTV Mobile App.",
+            "Post daily quota usage, speed will be up to 64 Kbps",
+            "Unlimited 5G data for eligible subscribers"
+        ]
+    },
+    {
+        "planName": "True 5G Diamond 2025",
+        "price": 2025,
+        "validity": 200,
+        "dailyData": "2.5 GB/Day",
+        "totalData": "500 GB",
+        "data": "Unlimited 5G",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Netflix", "Amazon Prime"], 
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Post daily quota usage, speed will be up to 64 Kbps",
+            "Unlimited 5G data for eligible subscribers"
+        ]
+    },
+    {
+        "planName": "True 5G Gold 2599",
+        "price": 2599,
+        "validity": 240,
+        "dailyData": "3 GB/Day",
+        "totalData": "720 GB",
+        "data": "Unlimited 5G",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Zee5", "Sun NXT"],
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Post daily quota usage, speed will be up to 64 Kbps",
+            "Unlimited 5G data for eligible subscribers"
+        ]
+    },
+    {
+        "planName": "True 5G Silver 1799",
+        "price": 1799,
+        "validity": 150,
+        "dailyData": "2 GB/Day",
+        "totalData": "300 GB",
+        "data": "Unlimited 5G",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Netflix"],
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Post daily quota usage, speed will be up to 64 Kbps",
+            "Unlimited 5G data for eligible subscribers"
+        ]
+    },
+    {
+        "planName": "True 5G Starter 999",
+        "price": 999,
+        "validity": 90,
+        "dailyData": "1.5 GB/Day",
+        "totalData": "135 GB",
+        "data": "Unlimited 5G",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": [],
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Post daily quota usage, speed will be up to 64 Kbps",
+            "Unlimited 5G data for eligible subscribers"
+        ]
+    }
+]

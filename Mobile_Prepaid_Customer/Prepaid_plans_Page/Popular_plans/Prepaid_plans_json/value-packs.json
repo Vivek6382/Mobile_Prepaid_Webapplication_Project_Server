@@ -1,0 +1,48 @@
+[
+    {
+        "planName": "Mobi-Comm Value Pack 1748",
+        "price": 1748,
+        "validity": 336,
+        "data": "Voice Only Plan",
+        "voice": "Unlimited",
+        "sms": "3600 SMS",
+        "ott": [],
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Data Tariff post quota completion will be charged at ₹0.50/MB",
+            "Post daily quota usage data speed will be up to 64Kbps",
+            "JioCinema premium is not included in complementary JioCinema subscription"
+        ]
+    },
+    {
+        "planName": "Mobi-Comm Value Pack 448",
+        "price": 448,
+        "validity": 84,
+        "data": "Voice Only Plan",
+        "voice": "Unlimited",
+        "sms": "1000 SMS",
+        "ott": [],
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Data Tariff post quota completion will be charged at ₹0.50/MB",
+            "Post daily quota usage data speed will be up to 64Kbps",
+            "JioCinema premium is not included in complementary JioCinema subscription"
+        ]
+    },
+    {
+        "planName": "Mobi-Comm Value Pack 189",
+        "price": 189,
+        "validity": 28,
+        "totalData": "2 GB",
+        "dailyData": "2 GB/Day",
+        "voice": "Unlimited",
+        "sms": "300 SMS",
+        "ott": [],
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Data Tariff post quota completion will be charged at ₹0.50/MB",
+            "Post daily quota usage data speed will be up to 64Kbps",
+            "Post which unlimited @ 64 Kbps"
+        ]
+    }
+]

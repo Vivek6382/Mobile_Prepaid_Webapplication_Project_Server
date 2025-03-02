@@ -1,0 +1,50 @@
+// Mobile-Validation-Js
+
+// Phone number regex pattern (strictly requires +91 XXXXX XXXXX)
+var phonePattern = /^\d{5}\d{5}$/;
+
+// Error span element
+var mobileError = document.getElementById("mobileError");
+
+// Input field (Corrected ID)
+var mobileInput = document.getElementById("mobile");
+
+// Form submission (Corrected ID)
+var rechargeForm = document.getElementById("rechargeForm");
+
+// Event Listener for Form Submission
+rechargeForm.addEventListener("submit", function (event) {
+    var phoneNumberValue = mobileInput.value.trim(); // Corrected variable
+
+    // Validate the form with the collected values
+    if (!validateRechargeForm(phoneNumberValue)) {
+        event.preventDefault();  // Stop form submission if validation fails
+    }
+});
+
+// On input change, remove error message
+mobileInput.addEventListener("input", function () {
+    mobileError.innerHTML = "";
+    mobileInput.style.borderColor = ""; // Reset border color when user starts typing
+});
+
+// Validation Function
+function validateRechargeForm(phoneNumberValue) {
+    var isValid = true;
+
+    // Phone Number Validation
+    if (phoneNumberValue === "") {
+        mobileError.innerHTML = "Phone Number is required.";
+        mobileInput.style.borderColor = "red";
+        isValid = false;
+    }
+    else if (!phonePattern.test(phoneNumberValue)) {
+        mobileError.innerHTML = "Enter a valid phone number (XXXXXXXXXX) 10 digits.";
+        mobileInput.style.borderColor = "red";
+        isValid = false;
+    } else {
+        mobileInput.style.borderColor = "orangered"; // Valid input styling
+    }
+
+    return isValid;
+}

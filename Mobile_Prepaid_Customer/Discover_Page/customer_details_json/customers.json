@@ -1,0 +1,52 @@
+[
+    {
+      "name": "John Doe",
+      "mobile": "9876543210",
+      "dob": "15 Aug, 1995",
+      "email": "john.doe@email.com",
+      "alternate_number": "8765432109",
+      "contact_method": "Email",
+      "communication_language": "English (IN)",
+      "address": "123, Street Name, City"
+    },
+    {
+      "name": "Alice Smith",
+      "mobile": "9123456789",
+      "dob": "22 Jan, 1990",
+      "email": "alice.smith@email.com",
+      "alternate_number": "9988766554",
+      "contact_method": "Phone",
+      "communication_language": "Hindi",
+      "address": "456, Avenue Road, City"
+    },
+    {
+      "name": "Rajesh Kumar",
+      "mobile": "9987654321",
+      "dob": "5 May, 1988",
+      "email": "rajesh.kumar@email.com",
+      "alternate_number": "9876543212",
+      "contact_method": "WhatsApp",
+      "communication_language": "Tamil",
+      "address": "789, MG Street, City"
+    },
+    {
+      "name": "Priya Sharma",
+      "mobile": "9345678901",
+      "dob": "12 Dec, 1993",
+      "email": "priya.sharma@email.com",
+      "alternate_number": "8765432100",
+      "contact_method": "SMS",
+      "communication_language": "Kannada",
+      "address": "101, Residency Road, City"
+    },
+    {
+      "name": "Vivek S",
+      "mobile": "6382929394",
+      "dob": "11 Nov, 2003",
+      "email": "vivek@email.com",
+      "alternate_number": "9791231947",
+      "contact_method": "Email",
+      "communication_language": "Tamil",
+      "address": "14, Kalki Street, Karungal Patti, Salem-636006"
+    }
+]

@@ -1,0 +1,32 @@
+[
+    {
+        "planName": "SILVER 799",
+        "price": 799,
+        "validity": 90,
+        "dailyData": "2.5 GB/Day",
+        "totalData": "50 GB",
+        "voice": "Unlimited Calls (Local, STD, Roaming)",
+        "sms": "1500 SMS/Month",
+        "ott": ["Netflix", "Amazon Prime", "Sony LIV", "Sun NXT", "Zee5"],
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Data Tariff post quota completion will be charged at ₹0.50/MB",
+            "Post daily quota usage data speed will be up to 64Kbps"
+        ]
+    },
+    {
+        "planName": "GOLD 999",
+        "price": 999,
+        "validity": 120,
+        "dailyData": "3 GB/Day",
+        "totalData": "100 GB",
+        "voice": "Unlimited Calls (Local, STD, Roaming)",
+        "sms": "2000 SMS/Month",
+        "ott": ["Netflix", "Amazon Prime", "Sony LIV"],
+        "terms": [
+            "Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS",
+            "Data Tariff post quota completion will be charged at ₹0.50/MB",
+            "Post daily quota usage data speed will be up to 64Kbps"
+        ]
+    }
+]

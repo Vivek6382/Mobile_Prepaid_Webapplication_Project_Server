@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Mobile Prepaid</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="./My_Account.css?v=2">
+
+</head>
+
+<body>
+
+
+
+    <header class="main-header">
+        <div class="logo-section">
+            <h4><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html"><span>MOBI</span>-COMM.</a></h4>
+        </div>
+        <div class="header-right">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="profile-menu">
+                <i class="fa-solid fa-user"></i>
+                <div class="dropdown-options">
+                    <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html" id="myAccountBtn" >My Account</a>
+                    <a href="#" id="signOutBtn">Sign-out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="nav-container">
+        <nav>
+            <ul>
+                <li><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html">Home</a></li>
+                <li><a href="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">Prepaid Plans</a></li>
+                <li><a href="/Mobile_Prepaid_Customer/Recharge_Page/recharge.html">Recharge</a></li>
+                <li><a href="#">SIM Management</a></li>
+                <li><a href="/Mobile_Prepaid_Customer/Support/support.html">Support</a></li>
+            </ul>
+        </nav>
+    </div>
+        
+    
+    
+
+      
+
+
+    <div class="d-flex">
+
+        <!-- Sidebar -->
+
+        <div class="sidebar">
+            <div class="profile">
+                <div id="user-profile-container">
+                    <div id="user-profile-pic" class="user-profile-img"></div>
+                </div>
+                <div class="user-details">
+                    <h5 id="user-name"></h5>
+                    <p class="user-contact"></p>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats">
+                <span id="total-recharges"></span>
+                <span id="active-plan"></span>
+                <span id="expiry-date"></span>
+            </div>
+
+            <!-- Sidebar Navigation -->
+            <ul class="list-unstyled">
+                <li><a href="#" id="show-account"><i class="fas fa-user"></i> Account Details</a></li>
+                <li><a href="#" id="show-history"><i class="fas fa-history"></i> Recharge History</a></li>
+            </ul>
+
+            <!-- Logout Button -->
+            <div class="logout">
+                <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+            </div>
+        </div>
+
+
+
+        <!-- Main Content -->
+        <div class="content">
+            <div id="Account_details">
+
+                <div id="account-section">
+                    <h4 class="text-white">My Account</h4>
+
+                    <!-- Updated Account Card -->
+                    <div class="container">
+                        <div class="account-card">
+                            <h4 class="card-title">Account Details</h4>
+
+                            <!-- Edit Icon -->
+                            <i class="fas fa-edit edit-icon" id="edit-account"></i>
+
+                            <!-- Profile & Details Layout -->
+                            <div class="profile-row">
+                                <!-- Profile Picture -->
+                                <div id="profile-container">
+                                    <div id="profile-pic" class="profile-img">
+                                        <img id="profile-image" src="" alt="Profile Picture" style="display: none;">
+                                        <span id="profile-initial">U</span>
+                                        <input type="file" id="profile-upload" accept="image/*" hidden>
+                                        <!-- ✅ Keep 'hidden' instead of 'display: none;' -->
+                                        <div id="profile-overlay">
+                                            <i class="fas fa-camera"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- User Details -->
+                                <div class="details-container">
+                                    <h4 class="user-name">John Doe</h4>
+                                    <h5 class="user-mobile">+91 98765 43210</h5>
+                                    <hr>
+                                    <div class="info-grid">
+                                        <div class="info-item"><i class="fas fa-calendar"></i> DOB: <span
+                                                class="text-white">15 Aug, 1995</span></div>
+                                        <div class="info-item"><i class="fas fa-envelope"></i> Email: <span
+                                                class="text-white">john.doe@email.com</span></div>
+                                        <div class="info-item"><i class="fas fa-phone"></i> Alternate Number: <span
+                                                class="text-white">+91 87654 32109</span></div>
+                                        <div class="info-item"><i class="fas fa-comment"></i> Ways to Contact: <span
+                                                class="text-white">Email</span></div>
+
+
+                                        <!-- Hidden-Elements -->
+
+                                        <div class="info-item hidden">
+                                            <i class="fas fa-language"></i> Communication Language: <span
+                                                class="text-white">English (IN)</span>
+                                        </div>
+                                        <div class="info-item hidden">
+                                            <i class="fas fa-map-marker-alt"></i> Permanent Address: <span
+                                                class="text-white">123, Street Name, City</span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div> <!-- Closing the .container for account card -->
+
+
+                    <!-- Update Account Details Pop-up (PLACED HERE) -->
+
+                    <div id="update-popup" class="popup-overlay">
+                        <div class="popup-content">
+                            <!-- Card Header -->
+                            <div class="popup-header">
+                                <h3>Update Account Details</h3>
+                                <p>Edit your account details below.</p>
+                                <button class="close-btn">&times;</button>
+                            </div>
+
+                            <!-- Scrollable Content Section -->
+                            <div class="popup-body">
+                                <div class="details">
+                                    <div class="field-group">
+                                        <label for="update-name"><strong>User Name:</strong></label>
+                                        <input type="text" id="update-name" class="detail-input" disabled>
+                                    </div>
+
+                                    <div class="field-group">
+                                        <label for="update-dob"><strong>Date of Birth:</strong></label>
+                                        <input type="text" id="update-dob" class="detail-input" disabled>
+                                    </div>
+
+                                    <div class="field-group">
+                                        <label for="update-mobile"><strong>Registered Mobile Number:</strong></label>
+                                        <input type="text" id="update-mobile" class="detail-input">
+                                    </div>
+
+                                    <div class="field-group">
+                                        <label for="update-email"><strong>Email:</strong></label>
+                                        <input type="email" id="update-email" class="detail-input">
+                                    </div>
+
+                                    <div class="field-group">
+                                        <label for="update-contact-method"><strong>Ways to Contact:</strong></label>
+                                        <select id="update-contact-method" class="detail-input">
+                                            <option value="Email">Email</option>
+                                            <option value="SMS">SMS</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="field-group">
+                                        <label for="update-language"><strong>Communication Language:</strong></label>
+                                        <select id="update-language" class="detail-input">
+                                            <option value="English (IN)">English (IN)</option>
+                                            <option value="Hindi">Hindi</option>
+                                            <option value="Tamil">Tamil</option>
+                                            <option value="Telugu">Telugu</option>
+                                            <option value="Kannada">Kannada</option>
+                                        </select>
+                                    </div>
+
+                                    <div id="work-details" class="hidden">
+                                        <div class="field-group">
+                                            <label for="update-company"><strong>Company Name
+                                                    (Optional):</strong></label>
+                                            <input type="text" id="update-company" class="detail-input">
+                                        </div>
+
+                                        <div class="field-group">
+                                            <label for="update-work-email"><strong>Work Email:</strong></label>
+                                            <input type="email" id="update-work-email" class="detail-input">
+                                        </div>
+                                    </div>
+
+                                    <div class="field-group">
+                                        <label for="update-address"><strong>Permanent Address:</strong></label>
+                                        <input type="text" id="update-address" class="detail-input" disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card Footer -->
+                            <div class="popup-footer">
+                                <button id="cancel-update">Cancel</button>
+                                <button id="update-btn">Update</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div> <!-- Closing #account-section -->
+
+
+
+
+                <div class="plan-container" id="Active_plans_section">
+
+
+                    <!-- Active Plan Card -->
+                    <div class="vi_card">
+                        <div class="card-header">
+                            <div class="card-title-price">
+                                <div class="plan-name">ACTIVE PLAN</div>
+                                <div class="price">₹799</div> <!-- Removed '-84 Days' -->
+                            </div>
+                            <!-- Trigger Button -->
+                            <div class="card-view-details">
+                                <a href="#" class="open-popup"><i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="card-content">
+                            <div class="benefit">
+                                <i class="fas fa-clock"></i> <span class="expiry-badge">26th Apr, 2025</span>
+                            </div>
+                            <div class="benefit">
+                                <i class="fas fa-calendar-alt"></i> 90 Days
+                            </div>
+                            <div class="benefit">
+                                <i class="fas fa-tachometer-alt"></i> 2.5 GB/Day
+                            </div>
+                            <div class="benefit">
+                                <i class="fas fa-phone-alt"></i> Unlimited Calls
+                            </div>
+                            <div class="benefit">
+                                <i class="fas fa-wifi"></i> 50GB Data
+                            </div>
+                            <div class="benefit">
+                                <i class="fas fa-envelope"></i> 1500 SMS/Month
+                            </div>
+
+
+                            <!-- Hidden OTT Text Data -->
+                            <div class="ott-text-data" style="display: none;">
+                                Netflix, Amazon Prime, Sony LIV, Sun NXT, Zee5
+                            </div>
+
+                            <!-- Hidden OTT Description Data -->
+                            <div class="ott-description-data" style="display: none;">
+                                <div data-ott="Netflix">Enjoy Netflix's premium shows and movies.</div>
+                                <div data-ott="Amazon Prime">Access exclusive Amazon Prime content.</div>
+                                <div data-ott="Sony LIV">Stream the latest entertainment on Sony LIV.</div>
+                                <div data-ott="Sun NXT">Watch your favorite regional movies on Sun NXT.</div>
+                                <div data-ott="Zee5">Enjoy diverse content across genres on Zee5.</div>
+                            </div>
+
+                            <!-- OTT Icons -->
+                            <div class="ott-icons"></div>
+                            <div class="more-ott"></div>
+
+                            <!-- Terms & Conditions (Hidden) -->
+                            <div class="terms-conditions" style="display: none;">
+                                <p>Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS</p>
+                                <p>Data Tariff post quota completion will be charged at ₹0.50/MB</p>
+                                <p>Post daily quota usage data speed will be upto 64Kbps</p>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <a href="#" class="buy-link">
+                                <button class="buy-button">Recharge</button>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <!-- Transaction Details -->
+                    <div class="transaction-card" id="transaction_section">
+                        <h5>Transaction Details</h5>
+                        <div class="transaction-content">
+                            <p><strong>Plan:</strong> <span id="transaction-amount">₹799</span></p>
+                            <p><strong>Purchased on:</strong> <span id="transaction-date">01 Feb, 2025 - 09:31 AM</span>
+                            </p>
+                            <p><strong>Payment Mode:</strong> <span id="transaction-mode">UPI</span></p>
+                            <p><strong>Ref. Number:</strong> <span id="transaction-ref">BR000BPTXZAX</span></p>
+
+                            <!-- Hidden Fields (for JavaScript to fetch) -->
+                            <p class="hidden"><strong>Status:</strong> <span id="transaction-status">Successful</span>
+                            </p>
+                            <p class="hidden"><strong>Plan Start Date:</strong> <span id="transaction-start">01 Feb,
+                                    2025</span></p>
+                            <p class="hidden"><strong>Plan End Date:</strong> <span id="transaction-end">26 Apr,
+                                    2025</span></p>
+                        </div>
+
+                        <div class="transaction-buttons">
+                            <button class="btn btn-secondary transaction-view-btn">View Details</button>
+                            <button class="btn btn-primary" id="download-invoice">Invoice</button>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+
+
+
+            <div class="container mt-5" id="Recharge-history">
+                <h2 class="mb-4">Recharge History</h2>
+
+                <!-- ✅ Navigation for Filtering -->
+                <div class="expiring-customer_navigation">
+                    <nav class="expiring-customer_nav">
+                        <ul>
+                            <div class="filtering_navs">
+                                <li class="expires_list all_list active-nav" onclick="filterTransaction('all')">
+                                    <a href="#">All</a>
+                                </li>
+                                <li class="expires_list successful_list" onclick="filterTransaction('successful')">
+                                    <a href="#">Successful</a>
+                                </li>
+                                <li class="expires_list unsuccessful_list" onclick="filterTransaction('unsuccessful')">
+                                    <a href="#">Failed</a>
+                                </li>
+                            </div>
+
+                            <!-- ✅ Tools (Search & Filter) -->
+                            <div class="tools">
+                                <div class="tool_filter">
+                                    <button id="filterBtn"><i class="fa-solid fa-filter"></i> Filter</button>
+                                </div>
+                                <div class="tool_search">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="searchInput" placeholder="Search transactions..."
+                                        onkeyup="searchTransactions()">
+                                </div>
+                            </div>
+                        </ul>
+                    </nav>
+                </div>
+
+
+                <!-- ✅ Recharge History Cards Container -->
+
+                <div class="cust_manage_main">
+                    <div class="cust_manage_cards_container">
+
+
+
+                        <!-- ✅ Sample Transaction Card -->
+                        <div class="cust_manage_card successful">
+                            <!-- ✅ Batch Label (Positioned Top-Left) -->
+                            <span class="batch-label badge badge-secondary">Feb 2025</span>
+
+                            <div class="dot_div">
+                                <span class="status-dot"></span>
+                            </div>
+
+                            <div class="recharge_history_info">
+                                <div class="recharge_history_row">
+                                    <div class="recharge_mobile_div">
+                                        <span class="recharge_mobile">Transaction ID: <span
+                                                class="recharge_plan-category"></span></span>
+                                    </div>
+                                    <div class="recharge_name_div">
+                                        <span class="recharge_name">Payment Mode: <span
+                                                class="recharge-total-plans"></span></span>
+                                    </div>
+                                </div>
+                                <div class="recharge_history_row">
+                                    <div class="recharge_plan_div">
+                                        <span class="recharge_plan">Purchased on: <span
+                                                class="recharge-purchase-date"></span></span>
+                                    </div>
+                                    <div class="recharge_plan_div">
+                                        <span class="recharge_plan">Plan: <span
+                                                class="recharge-subscribed-users"></span></span>
+                                    </div>
+                                </div>
+
+                                <!-- ✅ Hidden Plan Details -->
+                                <div class="recharge_plan_details" style="display: none;">
+                                    <div class="card-title-price">
+                                        <div class="plan-name">ACTIVE PLAN</div>
+                                        <div class="price">₹799</div>
+                                    </div>
+
+                                    <div class="card-content">
+                                        <div class="benefit">
+                                            <i class="fas fa-clock"></i> <span class="expiry-badge">26th Apr,
+                                                2025</span>
+                                        </div>
+                                        <div class="benefit">
+                                            <i class="fas fa-calendar-alt"></i> 90 Days
+                                        </div>
+                                        <div class="benefit">
+                                            <i class="fas fa-tachometer-alt"></i> 2.5 GB/Day
+                                        </div>
+                                        <div class="benefit">
+                                            <i class="fas fa-phone-alt"></i> Unlimited Calls
+                                        </div>
+                                        <div class="benefit">
+                                            <i class="fas fa-wifi"></i> 50GB Data
+                                        </div>
+                                        <div class="benefit">
+                                            <i class="fas fa-envelope"></i> 1500 SMS/Month
+                                        </div>
+
+
+
+                                        <!-- Hidden OTT Text Data -->
+                                        <div class="ott-text-data" style="display: none;">
+                                            Netflix, Amazon Prime, Sony LIV, Sun NXT, Zee5
+                                        </div>
+
+                                        <!-- Hidden OTT Description Data -->
+                                        <div class="ott-description-data" style="display: none;">
+                                            <div data-ott="Netflix">Enjoy Netflix's premium shows and movies.</div>
+                                            <div data-ott="Amazon Prime">Access exclusive Amazon Prime content.</div>
+                                            <div data-ott="Sony LIV">Stream the latest entertainment on Sony LIV.</div>
+                                            <div data-ott="Sun NXT">Watch your favorite regional movies on Sun NXT.
+                                            </div>
+                                            <div data-ott="Zee5">Enjoy diverse content across genres on Zee5.</div>
+                                        </div>
+
+                                        <!-- OTT Icons -->
+                                        <div class="ott-icons"></div>
+                                        <div class="more-ott"></div>
+
+                                        <!-- Terms & Conditions (Hidden) -->
+                                        <div class="terms-conditions" style="display: none;">
+                                            <p>Post daily 100 SMS limit charging will be Re1 Local | Rs.1.5 STD per SMS
+                                            </p>
+                                            <p>Data Tariff post quota completion will be charged at ₹0.50/MB</p>
+                                            <p>Post daily quota usage data speed will be upto 64Kbps</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- ✅ Hidden Transaction Details -->
+                                <div class="transaction-details" style="display: none;">
+                                    <h5>Transaction Details</h5>
+                                    <div class="transaction-content">
+                                        <p><strong>Plan:</strong> <span class="transaction-amount">₹799</span></p>
+                                        <p><strong>Purchased on:</strong> <span class="transaction-date">01 Feb, 2025 -
+                                                09:31 AM</span></p>
+                                        <p><strong>Payment Mode:</strong> <span class="transaction-mode">UPI</span></p>
+                                        <p><strong>Ref. Number:</strong> <span
+                                                class="transaction-ref">BR000BPTXZAX</span></p>
+
+                                        <!-- Hidden Fields -->
+                                        <p class="hidden"><strong>Status:</strong> <span
+                                                class="transaction-status">Successful</span></p>
+                                        <p class="hidden"><strong>Plan Start Date:</strong> <span
+                                                class="transaction-start">01 Feb, 2025</span></p>
+                                        <p class="hidden"><strong>Plan End Date:</strong> <span
+                                                class="transaction-end">26 Apr, 2025</span></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cust_card_footer">
+                                <i class="fa-solid fa-download download-icon"></i>
+                                <i class="fa-solid fa-eye view-icon"></i>
+                            </div>
+                            <div class="chevron-icon">
+                                <i class="fa fa-chevron-right"></i>
+                            </div>
+                        </div>
+
+
+                        <!-- ✅ Pagination -->
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination"></ul>
+                        </nav>
+                    </div>
+                </div>
+
+
+
+                <div class="entries-info">Showing 3 out of 25 entries</div>
+
+
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+    </div>
+    </div>
+
+
+    <!-- Transaction Details Pop-up -->
+    <div id="transaction-popup" class="transaction-popup-overlay">
+        <div class="transaction-popup-content">
+            <h3>Transaction Details</h3>
+            <p>Here are the details of your <strong>recent transaction</strong>.</p>
+
+            <div class="transaction-details">
+                <label><strong>Amount:</strong></label>
+                <p class="transaction-info" id="popup-amount"></p>
+
+                <label><strong>Status:</strong></label>
+                <p class="transaction-info" id="popup-status"></p>
+
+                <label><strong>Purchased on:</strong></label>
+                <p class="transaction-info" id="popup-date"></p>
+
+                <label><strong>Payment Mode:</strong></label>
+                <p class="transaction-info" id="popup-mode"></p>
+
+                <label><strong>Ref. Number:</strong></label>
+                <p class="transaction-info" id="popup-ref"></p>
+
+                <label><strong>Plan Start Date:</strong></label>
+                <p class="transaction-info" id="popup-start"></p>
+
+                <label><strong>Plan End Date:</strong></label>
+                <p class="transaction-info" id="popup-end"></p>
+            </div>
+
+            <!-- Pop-up Buttons -->
+            <div class="transaction-popup-buttons">
+                <button id="transaction-done-btn">Done</button>
+                <button id="transaction-download-btn">Download Invoice</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Full Card View Pop-up -->
+    <div id="unique-popup-overlay" class="overlay-custom">
+        <div class="popup-container-custom">
+            <!-- Popup Header -->
+            <div class="popup-header-custom">
+                <div class="plan-info-custom">
+                    <span class="plan-title-custom"></span>
+                    <span class="plan-cost-custom"></span>
+                </div>
+                <span id="close-unique-popup" class="popup-close-custom">&times;</span>
+            </div>
+
+            <!-- Popup Body -->
+            <div class="popup-body-custom">
+                <div class="plan-details-custom">
+                    <h3>Plan Details</h3>
+                    <table>
+                        <tr>
+                            <th>Feature</th>
+                            <th class="separator"></th> <!-- Vertical separator -->
+                            <th>Details</th>
+                        </tr>
+                        <tbody id="plan-details-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="extra-perks-custom">
+                    <h3>Additional Benefits</h3>
+                    <div class="perk-list-custom"></div>
+                </div>
+
+                <div class="popup-terms-custom">
+                    <h3>Terms & Conditions</h3>
+                    <div id="terms-content"></div> <!-- Now properly displays all <p> elements -->
+                </div>
+            </div>
+
+            <!-- Popup Footer -->
+            <div class="popup-footer-custom">
+                <button class="purchase-button-custom">Recharge</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- <a href="./assets/Netflix_Logo.svg">Netflix</a>
+    <a href="./assets/Prime_Logo.svg">Amazon Prime</a>
+    <a href="./assets/Sony_Logo.svg">Sony LIV</a>
+    <a href="./assets/Sun_nxt_Logo.svg">Sun NXT</a>
+    <a href="./assets/Zee5_Logo.svg">Zee5</a> -->
+
+
+
+    <!--     
+fas fa-clock -> Expires on
+fas fa-calendar-alt -> Pack validity
+fas fa-tachometer-alt -> Data at high speed*
+fas fa-phone-alt -> Voice
+fas fa-wifi -> Total data
+fas fa-envelope -> SMS -->
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+<script src="./My_Account.js" defer></script>
+
+</html>

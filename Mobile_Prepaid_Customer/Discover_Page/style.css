@@ -1,0 +1,1163 @@
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Primary Colors */
+  --primary-color: #1a1a1a; /* Dark background */
+  --secondary-color: #ff4500; /* Orange-red for highlights */
+  
+  /* Text Colors */
+  --text-color: #ffffff; /* White text */
+  --subtext-color: #bbb; /* Light gray text */
+  
+  /* Border and Background Colors */
+  --border-color: #333; /* Dark border */
+  --background-color: #222; /* Dark background for sections */
+  
+  /* Hover and Active Colors */
+  --highlight-color: #ff4500; /* Orange-red for hover effects */
+  
+  /* Glassmorphic and Other Effect Colors */
+  --glassmorph-color: rgba(255, 69, 0, 0.1); /* Red-orange tint for glass effect */
+  --glassmorph-border: rgba(255, 69, 0, 0.3); /* Border for glass effect */
+  --slider-progress-bg: #444; /* Background for progress bar */
+  --slider-progress-bar: #ff4500; /* Progress bar color */
+
+  /* New Colors for Quick Recharge Section */
+  --dark-background: #121212; /* Dark background */
+  --secondary-background: #1e1e1e; /* Dark background for boxes */
+  --input-background: #252525; /* Dark input background */
+  --input-placeholder: #bbb; /* Light placeholder text */
+  --submit-button-bg: #ff4500; /* Orangered background for buttons */
+  --submit-button-hover: darkred; /* Dark red on button hover */
+  --border-light: #444; /* Light border for elements */
+  --hover-bg: #333; /* Slightly lighter background for hover */
+  
+  /* Additional Colors for Support Section */
+  --support-background: #121212; /* Dark background for the section */
+  --container-background: #1e1e1e; /* Darker container background */
+  --orangered: #ff5722; /* Orangered color */
+  --light-gray: #bbbbbb; /* Light gray text for subtitle */
+  --dark-gray: #2a2a2a; /* Dark gray for FAQ section background */
+  --social-icon-bg: #333; /* Dark background for social icons */
+  --social-icon-hover-bg: #ff5722; /* Orangered hover effect for social icons */
+  --faq-heading-color: #ff5722; /* Orangered heading color for FAQ */
+  --link-hover-color: #ff5722; /* Orangered hover effect for links */
+}
+
+
+/* Body Styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+/* Header Styling */
+.header_main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5rem;
+  background-color: var(--primary-color);
+  border-bottom: 2px solid var(--border-color);
+}
+
+/* First Header Part (Logo) */
+
+.first_header_part h4 a{
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-color);
+  font-style: italic;
+  text-decoration: none;
+}
+
+.first_header_part h4 span {
+  color: var(--highlight-color);
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Second Header Part */
+.second_header_part {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+
+/* Admin Button */
+.admin_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--border-color);
+  padding: 8px 15px;
+  border-radius: 20px;
+  transition: 0.3s ease-in-out;
+  cursor: pointer;
+  gap: 8px; /* Ensures spacing between icon and text */
+  border: 2px solid transparent;
+}
+
+.admin_btn i {
+  font-size: 1.2rem;
+  color: var(--highlight-color); /* Default icon color */
+  transition: color 0.3s ease-in-out;
+}
+
+.admin_btn p {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--text-color);
+  margin: 0; /* Removes unwanted spacing */
+  line-height: 1; /* Ensures consistent height */
+}
+
+.admin_btn p a {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.admin_btn:hover {
+  background: var(--highlight-color);
+  border-color: var(--text-color);
+  transform: scale(1.03); /* Reduced scaling for a smoother effect */
+}
+
+/* Keep the icon visible on hover */
+.admin_btn:hover i {
+  color: white;
+}
+
+
+/* Search Box */
+.search-container {
+  display: flex;
+  align-items: center;
+  background: var(--border-color);
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.search-container i {
+  color: var(--highlight-color);
+  font-size: 1.2rem;
+  margin-right: 5px;
+}
+
+.search-container input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.search-container input::placeholder {
+  color: var(--subtext-color);
+  font-style: italic;
+}
+
+/* User Dropdown */
+.user-dropdown {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Changed user icon color to red-orange */
+.user-dropdown i {
+  font-size: 1.5rem;
+  color: var(--highlight-color);
+  cursor: pointer;
+}
+
+/* Dropdown Content */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: var(--background-color);
+  min-width: 150px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.dropdown-content a:hover {
+  background: var(--highlight-color);
+}
+
+/* Show dropdown on click */
+.user-dropdown.active .dropdown-content {
+  display: block;
+}
+
+/* Navigation Styling */
+.navigation_main {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 5rem;
+  background-color: var(--primary-color);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.navigation_main nav ul {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.navigation_main nav ul li {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--text-color);
+  cursor: pointer;
+  position: relative;
+  transition: 0.3s ease-in-out;
+}
+
+.navigation_main nav ul li a{
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+
+/* Underline Effect */
+.navigation_main nav ul li a::after {
+  content: '';
+  width: 0;
+  height: 3px;
+  background: var(--highlight-color);
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  transition: width 0.3s ease-in-out;
+}
+
+.navigation_main nav ul li a:hover::after {
+  width: 100%;
+}
+
+.navigation_main nav ul li a:hover {
+  color: var(--highlight-color);
+  transform: translateY(-3px);
+}
+
+
+
+
+
+
+/* Carousel */
+.carousel-container {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--primary-color); /* Dark background */
+  padding: 10px;
+}
+
+/* Adjust Splide Images */
+.splide__slide {
+  position: relative;
+}
+
+.splide__slide img {
+  width: 100%;
+  height: 79vh;
+  object-fit: fill;
+  object-position: center;
+  border-radius: 15px;
+  filter: brightness(0.8);
+}
+
+/* Glassmorphic Effect for Content */
+.carousel-content {
+  position: absolute;
+  left: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-color);
+  background: var(--glassmorph-color); /* Red-orange tint */
+  padding: 40px;
+  border-radius: 15px;
+  width: 30%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glassmorph-border);
+}
+
+/* Enhanced Text */
+.carousel-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.carousel-content p {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+}
+
+/* CTA Button */
+.carousel-btn {
+  display: inline-block;
+  background: var(--secondary-color);
+  color: var(--text-color);
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.carousel-btn:hover {
+  background: darkred;
+  transform: scale(1.1);
+}
+
+/* Enhanced Navigation Arrows */
+.splide__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 69, 0, 0.6);
+  border: none;
+  color: var(--text-color);
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.8);
+}
+
+.splide__arrow--prev {
+  left: 15px;
+}
+
+.splide__arrow--next {
+  right: 15px;
+}
+
+/* On Hover */
+.splide__arrow:hover {
+  background: var(--secondary-color);
+}
+
+/* Progress Bar */
+.my-slider-progress {
+  position: absolute;
+  bottom: 10px;
+  left: 5%;
+  width: 90%;
+  height: 5px;
+  background: var(--slider-progress-bg);
+  border-radius: 5px;
+}
+
+.my-slider-progress-bar {
+  background: var(--slider-progress-bar);
+  height: 5px;
+  transition: width 400ms ease;
+  width: 0;
+  border-radius: 5px;
+}
+
+
+
+
+
+/* Quick-Recharge */
+/* Quick Recharge Section */
+.quick_recharge_section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--dark-background);
+  border-bottom: 1px solid (--subtext-color);
+}
+
+/* Main Recharge Box */
+.main-recharge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 470px; /* Increased width */
+  background: var(--secondary-background);
+  border: 1px solid var(--border-color);
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1); /* Light shadow for contrast */
+}
+
+/* Recharge Title */
+.recharge_title {
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-color);
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Recharge Input Box */
+.recharge_input_box {
+  background: var(--input-background);
+  padding: 16px; /* Slightly increased height */
+  border-radius: 10px;
+  margin: 15px 0;
+  width: 100%;
+}
+
+/* Input Field with +91 */
+.recharge_input_box form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+
+
+.recharge_input_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Add space between elements */
+  width: 100%;
+  height: 48px; /* Set a consistent height */
+}
+
+/* Wrapper for the rupees_div and phoneNumber_input_div */
+.rechange_input_elements {
+  display: flex;
+  align-items: center;
+  height: 42px; /* Adjusted height to match button */
+}
+
+.rupees_div {
+  display: flex;
+  align-items: center;
+  height: 100%; /* Match container height */
+}
+
+
+.rupees_div p {
+  background: white;
+  color: black;
+  padding: 10px;
+  border-radius: 5px 0 0 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Match container height */
+  line-height: normal; /* Ensure text doesn’t shift */
+  text-align: center;
+  margin: auto 0;
+}
+
+
+.phoneNumber_input_div input[type="tel"] {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: var(--slider-progress-bg);
+  color: var(--text-color);
+  height: 100%; /* Match container height */
+  border-radius: 0;
+  line-height: normal; /* Ensure consistent spacing */
+}
+
+
+/* Submit Button */
+.recharge_input_div input[type="submit"] {
+  padding: 10px 20px; /* Adjust padding for pill shape */
+  background: var(--submit-button-bg);
+  color: var(--text-color);
+  border: none;
+  border-radius: 999px; /* Make the button rounded (pill shape) */
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  height: 42px; /* Match the adjusted input height */
+}
+
+.recharge_input_div input[type="submit"]:hover {
+  background: var(--submit-button-hover);
+}
+
+
+/* Error Message Below */
+.error-message {
+  color: #ff0000; /* Brighter red */
+  font-size: 1rem; /* Increased font size */
+  margin-top: 6px; /* Added margin for spacing */
+  display: block;
+  text-align: center;
+  font-weight: bold; /* Optional: Make it bold for better visibility */
+}
+
+/* SIM Management Title */
+.sim_management_title {
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+  padding: 10px 0;
+}
+
+.sim_management_title h5 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+/* SIM Management Section */
+.sim_managements {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  border-top: 1px solid var(--border-light);
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Individual SIM Box */
+.get_mobi-comm_sim,
+.lost_mobi-comm_sim,
+.port_to_mobi-comm_sim {
+  flex: 1 1 30%;
+  background: var(--input-background);
+  padding: 10px;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.get_mobi-comm_sim:hover,
+.lost_mobi-comm_sim:hover,
+.port_to_mobi-comm_sim:hover {
+  background: var(--hover-bg);
+}
+
+/* SIM Images */
+.get_mobi-comm_sim img,
+.lost_mobi-comm_sim img,
+.port_to_mobi-comm_sim img {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+/* SIM Text */
+.get_mobi-comm_sim p,
+.lost_mobi-comm_sim p,
+.port_to_mobi-comm_sim p {
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+
+
+
+/* Best Plans Title */
+.best_plans_title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.best_plans_title h5 {
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: orangered;
+  background-color: #121212;
+  padding: 10px 20px;
+  display: inline-block;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(255, 87, 34, 0.5);
+}
+
+/* Best Plans Section */
+.best_plans_cards {
+  padding: 20px;
+  width: 100%;
+  background-color: #121212;
+}
+
+/* Best Plans Cards Container */
+.best_plans_div {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+}
+
+/* Card styling */
+.best_card {
+  width: 350px;
+  background-color: #1e1e1e;
+  color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Card Header - Increased Height */
+.card-header {
+  background-color: #2a2a2a;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 2px solid orangered;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 60px;
+  font-size: 18px;
+  font-weight: bold;
+  color: orangered;
+}
+
+/* Space above 'Fully loaded with benefits' */
+.plan_benifit_details p {
+  margin-top: 10px;
+}
+
+.card-content {
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+/* Scrollbar Styling */
+.card-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+  background: orangered;
+  border-radius: 10px;
+}
+
+.benefit {
+  background-color: #292929;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.benefit img {
+  width: 24px;
+  height: 24px;
+  margin-left: 8px;
+}
+
+/* Card Footer - Increased Height */
+.card-footer {
+  background-color: #d84315;
+  text-align: center;
+  padding: 10px;
+  border-top: 2px solid orangered;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto 0;
+}
+
+/* Anchor Styling - Maintain Button Look */
+.card-footer a {
+  text-decoration: none;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Buy Button */
+.buy-button {
+  background-color: orangered;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  width: 80%;
+  text-align: center;
+  transition: background 0.3s ease-in-out;
+}
+
+.buy-button:hover {
+  background-color: #e64a19;
+}
+
+
+
+
+
+
+
+/* Why Choose Us Section CSS */
+/* General Reset */
+h1, h2, h3, h4, h5, h6 {}
+a, a:hover, a:focus, a:active {
+    text-decoration: none;
+    outline: none;
+}
+a, a:active, a:focus {
+    color: #FF5722; /* Deep Orange */
+    text-decoration: none;
+    transition: 0.3s ease-in-out;
+}
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+span, a, a:hover {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
+}
+
+
+.why_choose_section{
+  background-color: #121212; /* Dark Theme Background */
+  color: #EAEAEA; /* Light Text */
+  border-bottom: 1px solid var(--subtext-color);
+}
+/* Section Header */
+.section-head {
+    margin-bottom: 60px;
+}
+.section-head h4 {
+    position: relative;
+    padding: 0;
+    color: #FF5722; /* Deep Orange */
+    line-height: 1;
+    letter-spacing: 0.3px;
+    font-size: 34px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: none;
+    margin-bottom: 30px;
+}
+.section-head h4:before {
+    content: '';
+    width: 60px;
+    height: 3px;
+    background: #FF5722; /* Deep Orange */
+    position: absolute;
+    left: 0px;
+    bottom: -10px;
+    right: 0;
+    margin: 0 auto;
+}
+
+/* Text Colors */
+.section-head h4 span {
+    font-weight: 700;
+    padding-bottom: 5px;
+    color: #EAEAEA; /* Light Gray */
+}
+p.service_text {
+    color: #B3B3B3 !important; /* Soft Gray */
+    font-size: 16px;
+    line-height: 28px;
+    text-align: center;
+}
+.section-head p, p.awesome_line {
+    color: #B3B3B3;
+    font-size: 16px;
+    line-height: 28px;
+    text-align: center;
+}
+
+/* Extra Text */
+.extra-text {
+    font-size: 34px;
+    font-weight: 700;
+    color: #EAEAEA;
+    margin-bottom: 25px;
+    position: relative;
+    text-transform: none;
+}
+.extra-text::before {
+    content: '';
+    width: 60px;
+    height: 3px;
+    background: #FF5722; /* Deep Orange */
+    position: absolute;
+    left: 0px;
+    bottom: -10px;
+    right: 0;
+    margin: 0 auto;
+}
+.extra-text span {
+    font-weight: 700;
+    color: #FF5722; /* Deep Orange */
+}
+
+/* Cards */
+.item {
+    background: #1E1E1E; /* Dark Gray */
+    text-align: center;
+    padding: 30px 25px;
+    border-radius: 20px;
+    border: 5px solid rgba(255, 87, 34, 0.3); /* Soft Deep Orange Glow */
+    margin-bottom: 30px;
+    transition: all 0.4s ease;
+}
+.item:hover {
+    background: #FF5722; /* Deep Orange */
+    box-shadow: 0 8px 20px 0px rgba(255, 87, 34, 0.5);
+}
+.item:hover h6, .item:hover p, .item:hover .icon {
+    color: #121212 !important; /* Dark Background for Hover Text */
+}
+.item .icon {
+    font-size: 40px;
+    margin-bottom: 25px;
+    color: #FF5722; /* Deep Orange */
+    width: 90px;
+    height: 90px;
+    line-height: 96px;
+    border-radius: 50px;
+}
+.item p {
+    font-size: 15px;
+    line-height: 26px;
+    color: #EAEAEA; /* Light Gray */
+}
+.item h6 {
+    margin-bottom: 20px;
+    color: #FF5722; /* Deep Orange */
+}
+
+/* Mission Section */
+.mission p {
+    margin-bottom: 10px;
+    font-size: 15px;
+    line-height: 28px;
+    font-weight: 500;
+    color: #B3B3B3;
+}
+.mission i {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    background: #FF5722; /* Deep Orange */
+    border-radius: 50%;
+    color: #121212; /* Dark Background */
+    font-size: 25px;
+}
+.mission .small-text {
+    margin-left: 10px;
+    font-size: 13px;
+    color: #B3B3B3;
+}
+
+/* Skills Section */
+.skills {
+    padding-top: 0px;
+}
+.skills .prog-item {
+    margin-bottom: 25px;
+}
+.skills .prog-item:last-child {
+    margin-bottom: 0;
+}
+.skills .prog-item p {
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: #FF5722; /* Deep Orange */
+}
+.skills .prog-item .skills-progress {
+    width: 100%;
+    height: 10px;
+    background: #1E1E1E; /* Dark Gray */
+    border-radius: 20px;
+    position: relative;
+}
+.skills .prog-item .skills-progress span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: #FF5722; /* Deep Orange */
+    width: 10%;
+    border-radius: 10px;
+    transition: all 1s;
+}
+.skills .prog-item .skills-progress span:after {
+    content: attr(data-value);
+    position: absolute;
+    top: -5px;
+    right: 0;
+    font-size: 10px;
+    font-weight: 600;
+    color: #121212; /* Dark Background */
+    background: #FF5722; /* Deep Orange */
+    padding: 3px 7px;
+    border-radius: 30px;
+}
+
+
+
+
+/* Support-Section */
+
+/* Support-Section */
+.support_section {
+  display: flex;
+  justify-content: center;
+  padding: 50px 0;
+  background-color: var(--support-background); /* Dark background for the section */
+}
+
+.support-container {
+  width: 95%;
+  max-width: 850px;
+  background-color: var(--container-background); /* Darker container background */
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(255, 87, 34, 0.4); /* Orangered box-shadow */
+}
+
+.support-title {
+  font-size: 28px;
+  color: var(--orangered);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.subtitle {
+  font-size: 16px;
+  margin: 10px 0 20px;
+  color: var(--light-gray);
+}
+
+.support-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.faq-section,
+.support-navigation {
+  flex: 1;
+  min-width: 320px;
+  background: var(--dark-gray);
+  padding: 20px;
+  border-radius: 10px;
+  margin: 10px;
+  text-align: center;
+  box-shadow: 0px 3px 8px rgba(255, 87, 34, 0.3); /* Orangered box-shadow */
+}
+
+.faq-section h2,
+.support-navigation h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: var(--faq-heading-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.faq-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.faq-section li {
+  margin: 10px 0;
+}
+
+.faq-section a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.faq-section a:hover {
+  color: var(--link-hover-color);
+}
+
+.faq-section a i {
+  color: var(--orangered);
+}
+
+/* Support Navigation (Reusing social-links design) */
+.support-navigation p {
+  color: var(--text-color);
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.support-btn {
+  background-color: var(--social-icon-bg);
+  padding: 12px 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: background 0.3s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.support-btn:hover {
+  background-color: var(--social-icon-hover-bg);
+  transform: scale(1.05);
+}
+
+.section-icon {
+  font-size: 40px; /* Reduced size */
+  color: var(--orangered); /* Match theme */
+  margin-bottom: 10px;
+}
+
+
+.support-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px; /* Space between icon & button */
+  margin-top: 10px;
+}
+
+
+
+
+
+
+
+
+/* //Footer - Section */
+
+.footer {
+  background-color: var(--primary-color);
+  padding: 40px 10%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.footer-section {
+  flex: 1 1 250px;
+  margin-bottom: 20px;
+}
+
+.footer h3 {
+  color: var(--orangered);
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer ul li {
+  margin: 8px 0;
+}
+
+.footer ul li a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer ul li a:hover {
+  color: var(--orangered);
+}
+
+.footer-logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--orangered);
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.social-icons a {
+  color: var(--text-color);
+  font-size: 20px;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  color: var(--orangered);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding: 15px;
+  background-color: var(--footer-bg, #0f0f0f); /* Added --footer-bg if needed */
+  font-size: 14px;
+  border-top: 1px solid var(--border-color);
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+     <!-- Splide.js CSS -->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
+
+     <!-- FontAwesome CDN -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+ 
+     <!-- Bootstrap 5 CSS -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+     <!-- Js-Delivery-For-Analysis -->
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+     <link rel="stylesheet" href="./admin_dashboard.css">
+
+</head>
+<body>
+    
+
+    <!-- Navigation-Section -->
+
+<header class="admin_header">
+    <div class="admin_header_logo">
+        <h4><a href="/Mobile_Prepaid_Admin/admin_dashboard/Summary_View/admin_dashboard.html"><span>MOBI</span>-COMM.</a></h4>
+    </div>
+    <div class="admin_header_controls">
+        <div class="admin_customer_btn">
+            <i class="fa-solid fa-store"></i>
+            <p><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html">Customer</a></p>
+        </div>
+
+        <div class="admin_search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Search...">
+        </div>
+
+        <div class="admin_user_dropdown">
+            <i class="fa-solid fa-user"></i>
+            <div class="admin_dropdown_content">
+                <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html">My Account</a>
+                <a href="#">Sign-out</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="admin_navigation">
+    <nav>
+        <ul>
+            <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Summary_View/admin_dashboard.html">Dashboard</a></li>
+            <li><a href="/Mobile_Prepaid_Admin/Prepaid_Plans_Management/prepaid_plan_management.html">Prepaid Plans Management</a></li>
+            <li><a href="/Mobile_Prepaid_Admin/Customer_Management/customer_management.html">Customer Management</a></li>
+            <li><a href="#">SIM Management</a></li>
+            <li><a href="#">Support Management</a></li>
+        </ul>
+    </nav>
+</div>
+
+
+
+<!-- Admin-DashBoard -->
+<section class="admin_nav_section">
+    <nav class="admin_nav">
+        <h2>Dashboard</h2>
+        <ul>
+            <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Summary_View/admin_dashboard.html">Summary View</a></li>
+            <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Expiring Customer-Plans/expiring-customer.html">Expiring Plans</a></li>
+            <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Most Preferred Plans Packs/most_preferred_plans_pack.html">Most Preferred Plan Packs</a></li>
+            <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/User Growth Over Time/user_growth_over_time.html">User Growth Over Time</a></li>
+            <li><a href="#">Revenue</a></li>
+        </ul>
+    </nav>
+
+    <main class="dashboard_main">
+        <div class="chart_header">
+            <div class="chart_title">
+                <h4>Summary View</h4>
+            </div>
+            <ul class="summary_breadcrumb">
+                <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Summary_View/admin_dashboard.html">Dashboard</a></li>
+                <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Summary_View/admin_dashboard.html">Summary View</a></li>
+            </ul>
+        </div>
+
+        <div class="chart-container">
+            <!-- Expiring Plans Pie Chart -->
+            <div class="chart-box">
+                <canvas id="expiringPlansChart"></canvas>
+                <div class="chart-legend">
+                    <h6>Legend</h6>
+                    <ul>
+                        <li><span class="legend-dot yellow"></span> Expires Soon</li>
+                        <li><span class="legend-dot red"></span> Expired</li>
+                        <li><span class="legend-dot green"></span> Active</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Line Chart: User Growth Over Time -->
+            <div class="chart-box">
+                <canvas id="lineChart"></canvas>
+            </div>
+
+            <!-- Bar Chart -->
+            <div class="chart-box bar-chart">
+                <canvas id="barChart"></canvas>
+            </div>
+
+            <!-- KPI Cards Container -->
+            <div class="kpi-container">
+                <div class="kpi-card">
+                    <div>Revenue Overview (This Month)</div>
+                    <div class="kpi-value">₹12,50,000</div>
+                    <div class="kpi-performance positive">+5%</div> <!-- Signal for performance -->
+                </div>
+                <div class="kpi-card">
+                    <div>Total Revenue</div>
+                    <div class="kpi-value">₹50,00,000</div>
+                    <div class="kpi-performance negative">-3%</div>
+                </div>
+                <div class="kpi-card">
+                    <div>Revenue by Plan Type (Prepaid)</div>
+                    <div class="kpi-value">₹30,00,000</div>
+                    <div class="kpi-performance neutral">0%</div>
+                </div>
+                <div class="kpi-card">
+                    <div>% Increase/Decrease vs Last Month</div>
+                    <div class="kpi-value">+10%</div>
+                    <div class="kpi-performance positive">+10%</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</section>
+
+
+
+
+
+</body>
+
+<!-- Bootstrap 5 JS (Includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Splide.js JS -->
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
+
+<script src="./admin_dashboard.js"></script>
+
+</html>

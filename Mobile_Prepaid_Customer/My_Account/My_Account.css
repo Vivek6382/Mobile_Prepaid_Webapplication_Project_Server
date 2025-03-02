@@ -1,0 +1,1765 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+
+
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #121212;
+  color: white;
+}
+
+
+
+/* Header Styling */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5rem;
+  background-color: #1a1a1a; /* Dark background */
+  border-bottom: 2px solid #333; /* Dark border */
+}
+
+/* Logo Section */
+.logo-section h4 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff; /* White text */
+  font-style: italic;
+}
+
+.logo-section h4 a{
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.logo-section h4 span {
+  color: #ff4500; /* Orange-red for highlights */
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Header Right Section */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Search Box */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #333; /* Dark border */
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.search-box i {
+  color: #ff4500; /* Orange-red for highlights */
+  font-size: 1.2rem;
+  margin-right: 5px;
+}
+
+.search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff; /* White text */
+  font-size: 1rem;
+}
+
+.search-box input::placeholder {
+  color: #bbb; /* Light gray text */
+  font-style: italic;
+}
+
+/* Profile Menu */
+.profile-menu {
+  position: relative;
+  cursor: pointer;
+}
+
+.profile-menu i {
+  font-size: 1.5rem;
+  color: #ff4500; /* Orange-red for highlights */
+  cursor: pointer;
+}
+
+/* Dropdown Options */
+.dropdown-options {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: #222; /* Dark background */
+  min-width: 150px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.dropdown-options a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #ffffff; /* White text */
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.dropdown-options a:hover {
+  background: #ff4500; /* Orange-red for hover effects */
+}
+
+/* Show dropdown on click */
+.profile-menu.active .dropdown-options {
+  display: block;
+}
+
+/* Navigation Styling */
+.nav-container {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 5rem;
+  background-color: #1a1a1a; /* Dark background */
+  border-bottom: 2px solid #333; /* Dark border */
+}
+
+.nav-container nav ul {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+
+.nav-container nav ul li {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #ffffff; /* White text */
+  cursor: pointer;
+  position: relative;
+  transition: 0.3s ease-in-out;
+}
+
+.nav-container nav ul li a{
+  text-decoration: none;
+  color: #ffffff;
+}
+
+/* Underline Effect */
+.nav-container nav ul li::after {
+  content: '';
+  width: 0;
+  height: 3px;
+  background: #ff4500; /* Orange-red for highlights */
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-container nav ul li:hover::after {
+  width: 100%;
+}
+
+.nav-container nav ul li a:hover {
+  color: #ff4500; /* Orange-red for hover effects */
+  transform: translateY(-3px);
+}
+
+/* Admin Button */
+.admin-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #333; /* Dark border */
+  padding: 8px 15px;
+  border-radius: 20px;
+  transition: 0.3s ease-in-out;
+  cursor: pointer;
+  gap: 8px;
+  border: 2px solid transparent;
+}
+
+.admin-button i {
+  font-size: 1.2rem;
+  color: #ff4500; /* Orange-red for highlights */
+}
+
+.admin-button p {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff; /* White text */
+  margin: 0;
+  line-height: 1;
+}
+
+.admin-button:hover {
+  background: #ff4500; /* Orange-red for highlights */
+  border-color: #ffffff; /* White text */
+  transform: scale(1.05);
+}
+
+/* Quick Recharge Section */
+.quick-recharge {
+  background-color: #121212; /* Dark background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.quick-recharge input {
+  background-color: #252525; /* Dark input background */
+  color: #ffffff; /* White text */
+  border: 1px solid #444; /* Light border */
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.quick-recharge input::placeholder {
+  color: #bbb; /* Light gray text */
+}
+
+.quick-recharge button {
+  background-color: #ff4500; /* Orange-red button */
+  color: #ffffff; /* White text */
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.quick-recharge button:hover {
+  background-color: darkred; /* Dark red on button hover */
+}
+
+/* Support Section */
+.support-section {
+  background-color: #121212; /* Dark background */
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.support-container {
+  background-color: #1e1e1e; /* Darker container background */
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.support-title {
+  color: #ff5722; /* Orange-red heading */
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.support-text {
+  color: #bbbbbb; /* Light gray text */
+  font-size: 1rem;
+}
+
+.faq-section {
+  background-color: #2a2a2a; /* Dark gray for FAQ section */
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.faq-section h3 {
+  color: #ff5722; /* Orange-red heading color */
+}
+
+/* Social Icons */
+.social-icons {
+  display: flex;
+  gap: 10px;
+}
+
+.social-icons a {
+  background-color: #333; /* Dark background */
+  padding: 10px;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  background-color: #ff5722; /* Orange-red hover effect */
+}
+
+/* Links */
+.link a {
+  color: #ffffff; /* White text */
+  text-decoration: none;
+}
+
+.link a:hover {
+  color: #ff5722; /* Orange-red hover effect */
+}
+
+
+
+
+
+
+/* Sidebar */
+.sidebar {
+  width: 25%;
+  height: 100vh;
+  background-color: #1c1c1c;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Center User Details */
+.user-details {
+  text-align: center;
+  margin-top: 10px;
+}
+
+h5#user-name {
+  margin: 5px 0;
+  color: white;
+}
+
+.user-contact {
+  font-size: 14px;
+  color: #bbb;
+}
+
+/* Stats Section */
+.stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: white;
+  font-size: 14px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.stats span {
+  font-weight: 500;
+}
+
+/* Sidebar Navigation */
+ul.list-unstyled {
+  margin-top: 10px;
+  width: 100%;
+}
+
+ul.list-unstyled li {
+  margin: 8px 0;
+}
+
+ul.list-unstyled li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+ul.list-unstyled li a i {
+  margin-right: 10px;
+}
+
+ul.list-unstyled li a:hover {
+  background-color: #ff5722;
+  color: white;
+}
+
+/* Logout Button */
+.logout {
+  margin-top: auto; /* Push to bottom */
+  width: 100%;
+}
+
+#logout-btn {
+  text-decoration: none;
+  color: #ff4d4d;
+  font-weight: 600;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align text to the left */
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#logout-btn i {
+  margin-right: 8px;
+}
+
+#logout-btn:hover {
+  background-color: #660000;
+  color: white;
+}
+
+
+
+
+
+
+/* Adjusting content margin */
+.content {
+  border: 1px solid purple;
+  padding: 20px;
+  width: 100%;
+}
+
+/* Container */
+.container {
+  border: 1px solid red;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Account Card */
+.account-card {
+  position: relative; /* Required for the edit icon */
+  background-color: #222;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: 2px solid orangered;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Account Card Title */
+.card-title {
+  color: white;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+
+/* Side-Profile-Pic-Design */
+
+/* User Profile Container */
+#user-profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border: none;
+}
+
+/* User Profile Picture Styling */
+.user-profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #e0e7ff; /* Lighter blue shade */
+  font-size: 46px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+}
+
+
+/* Pofile-Piv-Design */
+
+/* Profile Row - Ensuring Left-Right Alignment */
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  flex-wrap: nowrap;
+  border: 1px solid mediumblue;
+}
+
+/* Profile Container */
+#profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40%;
+  border: none;
+}
+
+/* Profile Picture Styling */
+.profile-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background-color: #cfd8e3;
+  font-size: 46px;
+  color: #1c1c1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Hidden File Input */
+#profile-upload {
+  display: none;
+}
+
+/* Camera Overlay */
+#profile-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#profile-overlay i {
+  color: white;
+  font-size: 24px;
+}
+
+/* Show Overlay on Hover */
+.profile-img:hover #profile-overlay {
+  opacity: 1;
+}
+
+/* Image Styling */
+.profile-img img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+
+
+
+
+/* Details Container - Right Side */
+.details-container {
+  border: 1px solid red;
+  flex-grow: 1;
+  color: white;
+  min-width: 50%;
+  max-width: calc(100% - 160px); /* Ensuring it stays inside the card */
+}
+
+/* Name & Mobile */
+.user-name {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.user-mobile {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* Separator Line */
+.details-container hr {
+  border: 0;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin: 10px 0;
+}
+
+/* User Details (Row Layout) */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 800px;
+}
+
+.row .col-md-6 {
+  padding: 10px;
+}
+
+/* Limit visible fields to 4, others hidden */
+.row h6 {
+  margin: 5px 0;
+  font-size: 16px;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.row h6:nth-child(n+5) {
+  display: none; /* Hide all fields after the first 4 */
+}
+
+.row h6 i {
+  margin-right: 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+/* Individual Info Box */
+.info-item {
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 16px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.info-item:hover {
+  transform: translateY(-3px);
+}
+
+.info-item i {
+  margin-right: 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Edit Icon */
+.edit-icon {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: orangered;
+  cursor: pointer;
+  font-size: 22px;
+  transition: color 0.3s;
+}
+
+.edit-icon:hover {
+  color: white;
+}
+
+/* OTP Button */
+.btn-otp {
+  background-color: orangered;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-otp:hover {
+  background-color: darkorange;
+  transform: scale(1.05);
+}
+
+/* Smooth Buttons */
+button {
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+
+
+
+
+
+/* Active-plan and transaction-details */
+
+/* Updated Layout Container */
+.plan-container {
+  border: 1px solid rebeccapurple;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+/* Active Plan Card */
+.vi_card {
+  width: 360px;
+  height: 380px;
+  background-color: #1e1e1e;
+  color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid orangered;
+  box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+}
+
+/* Webkit scrollbar modifications */
+.vi_card .card-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vi_card .card-content::-webkit-scrollbar-thumb {
+  background: orangered;
+  border-radius: 5px;
+}
+
+/* Removed Hover Effect */
+.vi_card:hover {
+  transform: none;
+}
+
+/* Card Header */
+.card-header {
+  background-color: #1e1e1e; /* Updated */
+  padding: 15px;
+  text-align: left;
+  border-bottom: 2px solid orangered;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Plan Name */
+.plan-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Card Content */
+.card-content {
+  padding: 15px;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 180px;
+  background-color: #292929;
+}
+
+/* Benefits */
+.benefit {
+  background-color: #333;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+/* Card Footer */
+.card-footer {
+  background-color: #1e1e1e; /* Updated */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+/* Buy Button */
+.buy-button {
+  background-color: orangered;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 50px; /* Rounded pill shape */
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s ease-in-out;
+  width: 100%; /* Increased width */
+}
+
+
+.buy-link{
+  border: 1px solid yellow;
+  width: 100%;
+}
+
+
+
+/* OTT Icons Section */
+
+.ott-container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+  background-color: #333;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* Centering the icons properly */
+.ott-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  gap: 5px;
+}
+
+/* Adjusted size of OTT icons */
+.ott-icons .icon {
+  width: 30px;  /* Reduced size */
+  height: 30px; /* Reduced size */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  border: 2px solid white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* OTT Logo Image */
+.ott-icons .icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Position adjustments */
+.ott-icons .icon:nth-child(1) { z-index: 3; }
+.ott-icons .icon:nth-child(2) { z-index: 2; }
+.ott-icons .icon:nth-child(3) { z-index: 1; }
+
+.more-ott {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #bbb;
+}
+
+/* OTT Colors (Fallback) */
+.netflix { background-color: #E50914; }
+.prime { background-color: #00A8E1; }
+.sony { background-color: #3D1F80; }
+.sun { background-color: #D50032; }
+.zee5 { background-color: #000000; }
+
+
+
+
+
+
+
+/* Transaction Card */
+.transaction-card {
+  width: 60%; /* Increased width */
+  height: 350px;
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid orangered;
+  box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Transaction Content */
+.transaction-content {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+}
+
+/* Transaction Details */
+.transaction-content p {
+  font-size: 14px;
+  margin: 5px 0;
+  padding: 10px;
+  background-color:  #333; /* Applied */
+  border-radius: 5px;
+}
+
+/* Transaction Buttons */
+.transaction-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px; /* Added space between buttons */
+  margin-top: 10px;
+  width: 100%;
+}
+
+.btn {
+  padding: 14px 24px; /* Increased width */
+  border-radius: 50px; /* Rounded pill shape */
+  cursor: pointer;
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
+}
+
+.btn-primary {
+  background-color: orangered;
+  color: white;
+  border: none;
+}
+
+.btn-secondary {
+  background-color: #444;
+  color: white;
+  border: none;
+}
+
+
+
+
+/* Transaction-Popup Modal */
+/* Transaction-Popup Modal */
+#transaction-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none; /* Initially hidden */
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Ensure it's above everything */
+}
+
+/* Pop-up Container */
+.transaction-popup-content {
+  background: #1E1E1E;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+  width: 360px;
+  max-width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+/* Heading */
+.transaction-popup-content h3 {
+  color: orangered;
+  margin-bottom: 10px;
+}
+
+/* Scrollable Details Section */
+.transaction-details {
+  margin-top: 10px;
+  text-align: left;
+  padding: 15px;
+  background: #282828;
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Labels */
+.transaction-details label {
+  display: block;
+  color: #ddd;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+/* Transaction Info */
+.transaction-info {
+  background: #333;
+  padding: 8px;
+  border-radius: 5px;
+  color: white;
+  font-size: 14px;
+  border: 1px solid #555;
+}
+
+/* Buttons */
+.transaction-popup-buttons {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Done and Download Buttons */
+#transaction-done-btn, 
+#transaction-download-btn {
+  padding: 10px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+#transaction-done-btn {
+  background: orangered;
+  color: white;
+}
+
+#transaction-done-btn:hover {
+  background: #ff5722;
+}
+
+#transaction-download-btn {
+  background: #444;
+  color: white;
+}
+
+#transaction-download-btn:hover {
+  background: #666;
+}
+
+
+
+
+
+
+
+
+#Account_details {
+  display: block; /* Ensure it's visible by default */
+}
+
+#Recharge-history,
+#autopay-section {
+  display: none; /* Hide initially */
+}
+
+
+
+/* ✅ Navigation Bar */
+.expiring-customer_navigation {
+  border: 2px solid orangered;
+  background: #2b2b2b;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.expiring-customer_navigation ul {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.filtering_navs {
+  display: flex;
+  justify-content: space-around;
+  width: 50%;
+}
+
+.expiring-customer_navigation ul .expires_list a {
+  color: orangered;
+  text-decoration: none;
+  padding: 8px 12px;
+  font-size: 16px;
+  transition: color 0.4s ease-in-out;
+}
+
+/* ✅ Active State */
+.expiring-customer_navigation ul .expires_list.active-nav a {
+  color: white !important;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* ✅ Sections Visibility */
+#Account_details {
+  display: block; /* Ensure it's visible by default */
+}
+
+#Recharge-history,
+#autopay-section {
+  display: none; /* Hide initially */
+}
+
+
+
+/* ✅ Main Container */
+.cust_manage_main {
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  overflow-y: hidden;
+}
+
+/* ✅ Cards Container */
+.cust_manage_cards_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* ✅ Custom Scrollbar */
+.cust_manage_cards_container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cust_manage_cards_container::-webkit-scrollbar-track {
+  background: #1c1c1c;
+}
+
+.cust_manage_cards_container::-webkit-scrollbar-thumb {
+  background: orangered;
+  border-radius: 10px;
+}
+
+/* ✅ Individual Card */
+.cust_manage_card {
+  background: #2b2b2b;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 5px solid #ff4500; /* Orangered highlight */
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: 0px 4px 10px rgba(255, 69, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+  margin-top: 20px; /* ✅ Added margin to prevent batch from being cut off */
+}
+
+
+/* ✅ Recharge History Container */
+.recharge_history_info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 90%;
+  padding: 12px;
+  border-radius: 6px;
+  min-height: 100px;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ✅ Recharge History Rows */
+.recharge_history_row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 6px;
+  background: rgba(68, 68, 68, 0.5);
+  flex-wrap: wrap;
+  min-height: 40px;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ✅ Recharge History Text Styling */
+.recharge_mobile_div,
+.recharge_name_div,
+.recharge_plan_div {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  min-width: 100px;
+}
+
+
+
+/* ✅ Status Dot */
+.dot_div {
+  position: absolute;
+  top: 20px;
+  left: 15px;
+}
+
+/* ✅ Status Dot Styling */
+.status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+  border: 2px solid white;
+}
+
+/* ✅ Transaction Status Colors */
+
+/* ✅ Tooltip Styling */
+.dynamic-tooltip {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  transform: translateX(-50%);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* ✅ Transaction Status Colors */
+.successful .status-dot {
+  background-color: green;
+}
+
+.failed .status-dot {
+  background-color: red;
+}
+
+
+
+
+
+/* ✅ Card Footer */
+.cust_card_footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* ✅ Download & View Icons */
+.download-icon,
+.view-icon {
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.download-icon:hover {
+  color: #ff4500;
+}
+
+.view-icon:hover {
+  color: #17a2b8;
+}
+
+/* ✅ Chevron Icon */
+.chevron-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 69, 0, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.chevron-icon i {
+  color: #ff4500;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+/* ✅ Tool Inputs */
+.tool_search {
+  display: flex;
+  align-items: center;
+  background: #1c1c1c;
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid orangered;
+}
+
+.tool_search i {
+  color: orangered;
+  margin-right: 8px;
+}
+
+.tool_search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  flex-grow: 1;
+  font-size: 14px;
+}
+
+/* ✅ Filter Button */
+.tool_filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.tool_filter button {
+  background-color: orangered;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 2px solid orangered;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  outline: none;
+  width: 100%;
+  max-width: 200px;
+}
+
+.tool_filter button i {
+  color: white;
+  font-size: 18px;
+}
+
+.tool_filter button:hover {
+  background-color: #ff4500;
+  border-color: white;
+}
+
+.tool_filter button:active {
+  transform: scale(0.95);
+}
+
+.tools{
+  display: flex;
+  width: 40%;
+}
+
+
+
+
+/* ✅ Pagination Alignment */
+/* ✅ Pagination Alignment */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-right: 10px;
+}
+
+.pagination .page-item .page-link {
+  background: #2b2b2b;
+  color: orangered;
+  border: 1px solid orangered;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.pagination .page-item.active .page-link {
+  background: orangered;
+  color: white;
+  border-color: orangered;
+}
+
+.pagination .page-item .page-link:hover {
+  background: orangered;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+
+
+/* ✅ Batch Label (Bootstrap Badge - Positioned Outside but Connected) */
+.batch-label {
+  position: absolute;
+  top: -10px; /* Moves it slightly out */
+  left: -10px; /* Moves it slightly out */
+  background-color: orangered !important;
+  color: white !important;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 0px 5px 5px 0px; /* Smooth rounded edge only on the right */
+  z-index: 10;
+  box-shadow: 0px 2px 5px rgba(255, 69, 0, 0.4);
+}
+
+
+
+
+/* Update-pop-up-Design */
+
+/* Update-pop-up-Design */
+
+/* Pop-up Overlay */
+#update-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Pop-up Content */
+.popup-content {
+  background: #1E1E1E;
+  width: 450px; /* Reduced width */
+  max-width: 90%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Header (Fixed at the top) */
+.popup-header {
+  background: #222;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 12px 12px 0 0;
+  position: relative;
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: orangered;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: white;
+}
+
+/* Scrollable Body */
+.popup-body {
+  padding: 15px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+/* Footer (Fixed at the bottom) */
+.popup-footer {
+  background: #222;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Labels */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.field-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Input Fields */
+.detail-input {
+  width: 100%;
+  padding: 10px;
+  background: #333;
+  border: 1px solid #555;
+  color: white;
+  border-radius: 5px;
+}
+
+/* Buttons */
+#update-btn, #cancel-update {
+  padding: 12px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 25px; /* Rounded-pill */
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  width: 48%;
+}
+
+#update-btn {
+  background: orangered;
+}
+
+#cancel-update {
+  background: #444;
+}
+
+/* Custom Scrollbar */
+.popup-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.popup-body::-webkit-scrollbar-track {
+  background: #222;
+}
+
+.popup-body::-webkit-scrollbar-thumb {
+  background: orangered;
+  border-radius: 6px;
+}
+
+.popup-body::-webkit-scrollbar-thumb:hover {
+  background: #ff6347;
+}
+
+/* Hidden Class */
+.hidden {
+  display: none;
+}
+
+
+
+
+
+/* View-Full-Details_Pop-up */
+
+/* Hide popup initially */
+.overlay-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.overlay-custom.active {
+  display: flex;
+}
+
+
+
+
+
+/* Popup Container */
+.popup-container-custom {
+  width: 500px;
+  background-color: #1e1e1e;
+  color: white;
+  border-radius: 12px;
+  border: 2px solid orangered;
+  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  max-width: 90%;
+}
+
+/* Header */
+.popup-header-custom {
+  background-color: #2a2a2a;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid orangered;
+}
+
+/* Plan Info */
+.plan-info-custom {
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-title-custom {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.plan-cost-custom {
+  font-size: 18px;
+  color: #ff7043;
+}
+
+/* Close Button */
+.popup-close-custom {
+  font-size: 24px;
+  color: orangered;
+  cursor: pointer;
+}
+
+/* Popup Body */
+.popup-body-custom {
+  padding: 20px;
+  background-color: #292929;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Table */
+.plan-details-custom table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.plan-details-custom th, .plan-details-custom td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
+
+.plan-details-custom th {
+  background-color: #292929;
+  color: white;
+}
+
+.plan-details-custom td {
+  color: #ccc;
+}
+
+/* Perks Section */
+.extra-perks-custom {
+  margin-top: 20px;
+}
+
+.perk-item-custom {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.perk-item-custom img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.perk-title-custom {
+  font-size: 16px;
+  color: orangered;
+}
+
+/* Footer */
+.popup-footer-custom {
+  padding: 20px;
+  text-align: center;
+  border-top: 2px solid orangered;
+}
+
+.phone-input-custom {
+  padding: 10px;
+  width: 90%;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  border: 2px solid #444;
+}
+
+.phone-input-custom::placeholder {
+  color: orangered;
+}
+
+.purchase-button-custom {
+  background-color: orangered;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.purchase-button-custom:hover {
+  background-color: #e64a19;
+}
+
+
+
+/* Fallback Icon Styling */
+.fallback-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 50%;
+  text-transform: uppercase;
+}
+
+/* Default fallback background */
+.default-fallback {
+  background-color: gray;
+}
+
+/* OTT Colors */
+.netflix { background-color: #E50914; }
+.prime { background-color: #00A8E1; }
+.sony { background-color: #3D1F80; }
+.sun { background-color: #D50032; }
+.zee5 { background-color: #000000; }
+
+
+
+

@@ -1,0 +1,35 @@
+[
+    {
+        "planName": "mobi-entertainment-445",
+        "price": 445,
+        "validity": 28,
+        "dailyData": "2 GB/Day",
+        "totalData": "56 GB",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": [
+            "Sony LIV", "Zee5", "Sun NXT"
+        ],
+        "terms": [
+            "Subscription to Sony LIV, ZEE5, and Sun NXT via mobi-comm app.",
+            "Post daily 100 SMS limit, charges will be Re1 Local | Rs.1.5 STD per SMS",
+            "Post daily quota usage, speed will be reduced to 64 Kbps"
+        ]
+    },
+    {
+        "planName": "mobi-entertainment-175",
+        "price": 175,
+        "validity": 28,
+        "dailyData": null,
+        "totalData": "10 GB",
+        "voice": null,
+        "sms": null,
+        "ott": [
+            "Sony LIV", "Zee5", "Sun NXT"
+        ],
+        "terms": [
+            "Subscription to Sony LIV, ZEE5, and Sun NXT via mobi-comm Mobile App.",
+            "Post quota completion, data speed will be 64 Kbps"
+        ]
+    }
+]

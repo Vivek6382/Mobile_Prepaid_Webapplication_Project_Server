@@ -1,0 +1,115 @@
+/* Dark theme and orangered color */
+body {
+    background-color: #121212; /* Dark background */
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.popup-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1e1e1e; /* Dark container background */
+    width: 400px;  
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 25px rgba(255, 69, 0, 0.2);
+    color: #fff;
+    height: 370px;
+}
+
+/* Close button inside anchor */
+.close-link {
+    text-decoration: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Updated close button color */
+.close-btn {
+    font-size: 24px;
+    color: #ff4500; /* Orangered theme */
+    cursor: pointer;
+}
+
+.pop-up-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.popup-header h1 {
+    font-size: 22px;
+    font-weight: 900;
+    color: #ff4500; /* Orangered theme */
+}
+
+.popup-header p {
+    font-size: 14px;
+    color: #c4c4c4;
+    margin-top: 5px;
+}
+
+.input-section {
+    margin-top: 20px;
+}
+
+.input-section label {
+    font-size: 16px;
+    color: #fff;
+}
+
+.input-section input {
+    width: 90%;
+    padding: 10px;
+    margin-top: 8px;
+    background-color: #282828; /* Darker input background */
+    color: #fff;
+    border: 1px solid #ff4500;
+    border-radius: 6px;
+}
+
+.predefined-upi {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.predefined-upi .upi-option {
+    background-color: #ff4500;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.predefined-upi .upi-option:hover {
+    background-color: #e03d00;
+}
+
+.verify-pay-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff4500;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    margin-top: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.verify-pay-btn:hover {
+    background-color: #e03d00;
+}
+
+/* Added margin between sections */
+.input-section,
+.predefined-upi {
+    margin-bottom: 15px;
+}

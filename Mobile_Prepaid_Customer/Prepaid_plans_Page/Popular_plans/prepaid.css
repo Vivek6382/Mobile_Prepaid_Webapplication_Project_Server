@@ -1,0 +1,1371 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  :root {
+    /* Primary Colors */
+    --primary-color: #1a1a1a; /* Dark background */
+    --secondary-color: #ff4500; /* Orange-red for highlights */
+    
+    /* Text Colors */
+    --text-color: #ffffff; /* White text */
+    --subtext-color: #bbb; /* Light gray text */
+    
+    /* Border and Background Colors */
+    --border-color: #333; /* Dark border */
+    --background-color: #222; /* Dark background for sections */
+    
+    /* Hover and Active Colors */
+    --highlight-color: #ff4500; /* Orange-red for hover effects */
+    
+    /* Glassmorphic and Other Effect Colors */
+    --glassmorph-color: rgba(255, 69, 0, 0.1); /* Red-orange tint for glass effect */
+    --glassmorph-border: rgba(255, 69, 0, 0.3); /* Border for glass effect */
+    --slider-progress-bg: #444; /* Background for progress bar */
+    --slider-progress-bar: #ff4500; /* Progress bar color */
+  
+    /* New Colors for Quick Recharge Section */
+    --dark-background: #121212; /* Dark background */
+    --secondary-background: #1e1e1e; /* Dark background for boxes */
+    --input-background: #252525; /* Dark input background */
+    --input-placeholder: #bbb; /* Light placeholder text */
+    --submit-button-bg: #ff4500; /* Orangered background for buttons */
+    --submit-button-hover: darkred; /* Dark red on button hover */
+    --border-light: #444; /* Light border for elements */
+    --hover-bg: #333; /* Slightly lighter background for hover */
+    
+    /* Additional Colors for Support Section */
+    --support-background: #121212; /* Dark background for the section */
+    --container-background: #1e1e1e; /* Darker container background */
+    --orangered: #ff5722; /* Orangered color */
+    --light-gray: #bbbbbb; /* Light gray text for subtitle */
+    --dark-gray: #2a2a2a; /* Dark gray for FAQ section background */
+    --social-icon-bg: #333; /* Dark background for social icons */
+    --social-icon-hover-bg: #ff5722; /* Orangered hover effect for social icons */
+    --faq-heading-color: #ff5722; /* Orangered heading color for FAQ */
+    --link-hover-color: #ff5722; /* Orangered hover effect for links */
+  }
+  
+  
+  /* Body Styling */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+  }
+  
+  /* Header Styling */
+  .header_main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 5rem;
+    background-color: var(--primary-color);
+    border-bottom: 2px solid var(--border-color);
+  }
+  
+  /* First Header Part (Logo) */
+  .first_header_part h4 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    font-style: italic;
+  }
+  
+  .first_header_part h4 span {
+    color: var(--highlight-color);
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Second Header Part */
+  .second_header_part {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  
+  /* Admin Button */
+  .admin_btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--border-color);
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+    gap: 8px; /* Ensures spacing between icon and text */
+    border: 2px solid transparent;
+  }
+  
+  .admin_btn i {
+    font-size: 1.2rem;
+    color: var(--highlight-color);
+  }
+  
+  .admin_btn p {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin: 0; /* Removes unwanted spacing */
+    line-height: 1; /* Ensures consistent height */
+  }
+  
+  .admin_btn:hover {
+    background: var(--highlight-color);
+    border-color: var(--text-color);
+    transform: scale(1.05);
+  }
+  
+  /* Search Box */
+  .search-container {
+    display: flex;
+    align-items: center;
+    background: var(--border-color);
+    padding: 5px 10px;
+    border-radius: 20px;
+  }
+  
+  .search-container i {
+    color: var(--highlight-color);
+    font-size: 1.2rem;
+    margin-right: 5px;
+  }
+  
+  .search-container input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    font-size: 1rem;
+  }
+  
+  .search-container input::placeholder {
+    color: var(--subtext-color);
+    font-style: italic;
+  }
+  
+  /* User Dropdown */
+  .user-dropdown {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  /* Changed user icon color to red-orange */
+  .user-dropdown i {
+    font-size: 1.5rem;
+    color: var(--highlight-color);
+    cursor: pointer;
+  }
+  
+  /* Dropdown Content */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: var(--background-color);
+    min-width: 150px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+  }
+  
+  .dropdown-content a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: 0.3s;
+  }
+  
+  .dropdown-content a:hover {
+    background: var(--highlight-color);
+  }
+  
+  /* Show dropdown on click */
+  .user-dropdown.active .dropdown-content {
+    display: block;
+  }
+  
+  /* Navigation Styling */
+  .navigation_main {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 5rem;
+    background-color: var(--primary-color);
+    border-bottom: 2px solid var(--border-color);
+  }
+  
+  .navigation_main nav ul {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  
+  .navigation_main nav ul li {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--text-color);
+    cursor: pointer;
+    position: relative;
+    transition: 0.3s ease-in-out;
+  }
+  
+  /* Underline Effect */
+  .navigation_main nav ul li::after {
+    content: '';
+    width: 0;
+    height: 3px;
+    background: var(--highlight-color);
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    transition: width 0.3s ease-in-out;
+  }
+  
+  .navigation_main nav ul li:hover::after {
+    width: 100%;
+  }
+  
+  .navigation_main nav ul li:hover {
+    color: var(--highlight-color);
+    transform: translateY(-3px);
+  }
+
+  
+
+
+/* Prepaid Category Section */
+/* Prepaid Category Section */
+.prepaid-category_section {
+    display: flex;
+    position: relative; /* Change from fixed to relative */
+    width: 100%;
+    height: auto; /* Change from calc(100vh - 175px) to auto */
+    min-height: 100vh; /* Ensure it covers the full viewport */
+    background-color: #121212;
+    padding: 10px 20px;
+    overflow-y: auto; /* Enables scrolling */
+}
+
+
+/* Sidebar (Prepaid Category) */
+.sidebar {
+    width: 300px; /* Slightly increased width */
+    height: 100%;
+    background-color: #1e1e1e;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 3px solid orangered;
+    margin-right: 20px; /* Added spacing between sidebar and main content */
+    border-radius: 10px; /* Rounded edges for smooth look */
+}
+
+/* Scrollbar Styling */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #2b2b2b;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: orangered;
+    border-radius: 5px;
+}
+
+/* Sidebar Title */
+.sidebar h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: orangered;
+    text-align: center;
+}
+
+/* Sidebar Links */
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #2b2b2b;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    transition: 0.3s;
+    font-size: 15px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: orangered;
+    color: #121212;
+    font-weight: bold;
+}
+
+/* Main Content */
+.content {
+    flex: 1;
+    padding: 20px;
+    background-color: #1e1e1e;
+    color: white;
+    border-radius: 10px;
+}
+
+/* Top Prepaid Main Section */
+.top_prepaid_main_section {
+    display: flex;
+    justify-content: space-between; /* Aligns left and right sections */
+    align-items: center;
+    background-color: #2b2b2b;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 2px solid orangered;
+}
+
+/* Title Section */
+.top_prepaid_main_title h4 {
+    font-size: 20px;
+    color: orangered;
+    font-weight: bold;
+}
+
+/* Right Section */
+.top_right_main_section {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Input Fields */
+.search_top_bar input {
+    background-color: #1e1e1e;
+    color: white;
+    border: 2px solid orangered;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+    width: 160px;
+    transition: 0.3s;
+}
+
+.search_top_bar input::placeholder {
+    color: #bfbfbf;
+    font-style: italic;
+}
+
+.search_top_bar input:focus {
+    border-color: white;
+}
+
+/* Search Bar */
+.search_top_bar {
+    display: flex;
+    align-items: center;
+    background-color: #1e1e1e;
+    border-radius: 5px;
+    padding: 6px;
+}
+
+.search_top_bar i {
+    color: orangered;
+    margin-right: 8px;
+}
+
+/* Filter Button */
+.filter_button button {
+    background-color: orangered;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid orangered;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter_button button i {
+    color: white;
+}
+
+.filter_button button:hover {
+    background-color: #ff4500;
+    border-color: white;
+}
+
+
+
+
+
+/* Card Container */
+
+.content {
+    overflow-y: auto;  /* Enables vertical scrolling */
+    height: auto;     /* Ensures the main section takes full viewport height */
+}
+
+.plan_card-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* VI Card Design */
+.vi_card {
+    width: 320px;
+    height: 280px;
+    background-color: #1e1e1e;
+    color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid orangered;
+    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+    transition: transform 0.3s ease-in-out;
+    position: relative;
+}
+
+.vi_card:hover {
+    transform: scale(1.05);
+}
+
+/* Card Header */
+.card-header {
+    background-color: #2a2a2a;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid orangered;
+    display: flex;
+    justify-content: space-around; /* Updated */
+    align-items: center;
+    height: 60px;
+}
+
+/* Plan Name */
+.plan-name {
+    font-size: 18px;
+    font-weight: bold;
+ 
+}
+
+/* Plan Price (Smaller & Aligned Left) */
+.plan-price {
+    font-size: 13px;  /* Reduced size */
+    margin-top: 2px;   /* Spacing */
+    color: #ff7043;
+}
+
+/* Arrow Icon */
+.card-header .icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: orangered;
+    font-size: 20px;
+}
+
+/* Card Content */
+.card-content {
+    padding: 15px;
+    flex-grow: 1;
+    overflow-y: auto;
+    max-height: 140px;
+    background-color: #292929;
+}
+
+/* Custom Scrollbar */
+.card-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.card-content::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+    background: orangered;
+    border-radius: 3px;
+}
+
+/* Benefits */
+.benefit {
+    background-color: #333;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+}
+
+/* Card Footer */
+.card-footer {
+    background-color: #d84315;
+    text-align: center;
+    padding: 10px;
+    border-top: 2px solid orangered;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto 0;
+}
+
+/* Buy Button (Centered & 80% Width) */
+/* Ensure the anchor tag behaves like a button */
+.buy-link {
+  display: inline-block;
+  width: 80%;
+  text-decoration: none; /* Remove default underline */
+}
+
+.buy-button {
+  background-color: orangered;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  width: 100%;  /* Ensure the button takes full width inside the anchor */
+  text-align: center;
+  transition: background 0.3s ease-in-out;
+  display: block;  /* Make it behave like a button */
+}
+
+.buy-button:hover {
+  background-color: #e64a19;
+}
+
+.card-view-details i{
+    color: #e64a19;
+    cursor: pointer;
+}
+
+
+.navigation_main nav ul li a{
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.first_header_part h4 a{
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-color);
+  font-style: italic;
+  text-decoration: none;
+}
+
+
+.admin_btn p a{
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+
+.navigation_main nav ul li a:hover {
+  color: var(--highlight-color);
+  transform: translateY(-3px);
+}
+
+
+
+
+/* Tool Inputs */
+.tool_search {
+  display: flex;
+  align-items: center;
+  background: #1c1c1c;
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid orangered;
+}
+
+.tool_search i {
+  color: orangered;
+  margin-right: 8px;
+}
+
+.tool_search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  flex-grow: 1;
+  font-size: 14px;
+}
+
+
+
+
+/* Filter Button */
+.filter_button button {
+  background-color: orangered;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  border: 2px solid orangered;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter_button button i {
+  color: white;
+}
+
+.filter_button button:hover {
+  background-color: #ff4500;
+  border-color: white;
+}
+
+
+
+/* Customer Management Toolbar */
+.cust_manage_toolbar {
+  display: flex;
+  justify-content: space-between; /* Ensures left and right alignment */
+  align-items: center; /* Aligns content vertically */
+  margin-bottom: 20px;
+}
+
+/* Button Styles */
+.outline-button {
+  border: 2px solid orangered;
+  background: transparent;
+  color: orangered;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.outline-button:hover {
+  background: orangered;
+  color: white;
+}
+
+
+
+
+
+
+/* Filter-Pop-up-design */
+
+/* Filter-Pop-up-design */
+
+/* Filter Pop-up */
+.filter-wrapper {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1a1a1a; /* Dark theme */
+  width: 500px;
+  height: 420px; /* Increased height */
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(255, 69, 0, 0.5);
+  padding: 15px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Close Button */
+.close-filter {
+  position: absolute;
+  top: 10px;
+  right: 15px; /* Moved to top-right */
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.close-filter:hover {
+  color: orangered;
+}
+
+/* Main Container */
+.filter-main {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative; /* Ensure absolute elements are positioned correctly */
+}
+
+/* Left Side - Categories */
+.filter-left {
+  width: 35%;
+  padding: 15px;
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #292929; /* Darker background */
+}
+
+.filter-left h3 {
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  padding: 8px 0;
+  transition: 0.3s;
+}
+
+.filter-left h3:hover,
+.filter-left h3.active {
+  color: orangered;
+}
+
+/* Separator Line */
+.separator {
+  width: 1px;
+  background: orangered;
+  height: 100%;
+}
+
+/* Right Side - Options */
+.filter-right {
+  width: 65%;
+  padding: 15px;
+  background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Fixed Category Header */
+.filter-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: orangered;
+  text-align: center;
+  padding-bottom: 5px;
+  border-bottom: 2px solid orangered;
+}
+
+/* Filter Options */
+.filter-options {
+  max-height: 200px; /* Fixed height */
+  width: 100%; /* Fixed width */
+  overflow-y: auto; /* Scrollable */
+  background: #292929;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+/* Custom Scrollbar */
+.filter-options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-options::-webkit-scrollbar-thumb {
+  background-color: orangered;
+  border-radius: 4px;
+}
+
+/* Checkbox Styling */
+.filter-options label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin: 8px 0;
+  color: white;
+  cursor: pointer;
+}
+
+.filter-options input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid orangered;
+  border-radius: 4px;
+  margin-right: 8px;
+  background: #1a1a1a;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.filter-options input[type="checkbox"]:checked {
+  background-color: orangered;
+}
+
+/* Buttons */
+.filter-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.reset-btn, .confirm-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reset-btn {
+  background-color: transparent;
+  border: 1px solid orangered;
+  color: orangered;
+}
+
+.reset-btn:hover {
+  background-color: orangered;
+  color: white;
+}
+
+.confirm-btn {
+  background-color: orangered;
+  color: white;
+}
+
+.confirm-btn:hover {
+  background-color: #ff4500d9;
+}
+
+
+
+
+/* //Footer - Section */
+
+.footer {
+    background-color: #1a1a1a;
+    padding: 40px 10%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .footer-section {
+    flex: 1 1 250px;
+    margin-bottom: 20px;
+  }
+  .footer h3 {
+    color: orangered;
+    margin-bottom: 15px;
+    font-size: 18px;
+  }
+  .footer ul {
+    list-style: none;
+    padding: 0;
+  }
+  .footer ul li {
+    margin: 8px 0;
+  }
+  .footer ul li a {
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+  .footer ul li a:hover {
+    color: orangered;
+  }
+  .footer-logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: orangered;
+  }
+  .social-icons {
+    display: flex;
+    gap: 15px;
+  }
+  .social-icons a {
+    color: white;
+    font-size: 20px;
+    transition: 0.3s;
+  }
+  .social-icons a:hover {
+    color: orangered;
+  }
+  .footer-bottom {
+    text-align: center;
+    padding: 15px;
+    background-color: #0f0f0f;
+    font-size: 14px;
+    border-top: 1px solid #333;
+  }
+
+
+
+
+
+
+  /* Full-Card-View-Pop-Up-Design */
+
+/* Full-Card-View-Pop-Up-Design */
+
+/* Popup Overlay */
+.custom-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none; /* Initially hidden */
+  justify-content: center;
+  align-items: center;
+}
+
+/* Show popup when active */
+.custom-popup-overlay.active {
+  display: flex;
+}
+
+/* Popup Container */
+.custom-popup-container {
+  width: 600px;
+  background-color: #1e1e1e;
+  color: white;
+  border-radius: 12px;
+  border: 2px solid orangered;
+  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Popup Header */
+.custom-popup-header {
+  background-color: #2a2a2a;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid orangered;
+}
+
+/* Plan Info */
+.custom-plan-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-plan-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.custom-plan-cost {
+  font-size: 18px;
+  color: #ff7043;
+}
+
+/* Close Button */
+.custom-popup-close {
+  font-size: 24px;
+  color: orangered;
+  cursor: pointer;
+}
+
+/* Popup Body */
+.custom-popup-body {
+  padding: 20px;
+  background-color: #292929;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Plan Details Table */
+.custom-plan-details h3 {
+  margin-bottom: 10px;
+}
+
+.custom-plan-details table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-plan-details th, .custom-plan-details td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
+
+.custom-plan-details th {
+  background-color: #292929;
+  color: white;
+}
+
+.custom-plan-details td {
+  color: #ccc;
+}
+
+/* Extra Perks */
+.custom-extra-perks {
+  margin-top: 20px;
+}
+
+.custom-extra-perks h3 {
+  color: white;
+  margin-bottom: 10px;
+}
+
+.custom-perk-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.custom-perk-item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.custom-perk-title {
+  font-size: 16px;
+  color: orangered;
+}
+
+/* Terms & Conditions */
+.custom-popup-terms {
+  margin-top: 20px;
+}
+
+.custom-popup-terms h3 {
+  color: white;
+}
+
+.custom-popup-terms p {
+  color: #ccc;
+  font-size: 14px;
+}
+
+/* Popup Footer */
+.custom-popup-footer {
+  padding: 20px;
+  text-align: center;
+  border-top: 2px solid orangered;
+}
+
+.custom-phone-input {
+  padding: 10px;
+  width: 90%;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  border: 2px solid #444;
+}
+
+.custom-phone-input::placeholder {
+  color: orangered;
+}
+
+.custom-purchase-button {
+  background-color: orangered;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.custom-purchase-button:hover {
+  background-color: #e64a19;
+}
+
+
+
+
+
+
+
+
+/* View-Full-Details_Pop-up */
+
+/* Hide popup initially */
+.overlay-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.overlay-custom.active {
+  display: flex;
+}
+
+
+
+
+
+/* Popup Container */
+.popup-container-custom {
+  width: 500px;
+  background-color: #1e1e1e;
+  color: white;
+  border-radius: 12px;
+  border: 2px solid orangered;
+  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  max-width: 90%;
+}
+
+/* Header */
+.popup-header-custom {
+  background-color: #2a2a2a;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid orangered;
+}
+
+/* Plan Info */
+.plan-info-custom {
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-title-custom {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.plan-cost-custom {
+  font-size: 18px;
+  color: #ff7043;
+}
+
+/* Close Button */
+.popup-close-custom {
+  font-size: 24px;
+  color: orangered;
+  cursor: pointer;
+}
+
+/* Popup Body */
+.popup-body-custom {
+  padding: 20px;
+  background-color: #292929;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Table */
+.plan-details-custom table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.plan-details-custom th, .plan-details-custom td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
+
+.plan-details-custom th {
+  background-color: #292929;
+  color: white;
+}
+
+.plan-details-custom td {
+  color: #ccc;
+}
+
+/* Perks Section */
+.extra-perks-custom {
+  margin-top: 20px;
+}
+
+.perk-item-custom {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.perk-item-custom img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.perk-title-custom {
+  font-size: 16px;
+  color: orangered;
+}
+
+/* Footer */
+.popup-footer-custom {
+  padding: 20px;
+  text-align: center;
+  border-top: 2px solid orangered;
+}
+
+.phone-input-custom {
+  padding: 10px;
+  width: 90%;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  border: 2px solid #444;
+}
+
+.phone-input-custom::placeholder {
+  color: orangered;
+}
+
+.purchase-button-custom {
+  background-color: orangered;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.purchase-button-custom:hover {
+  background-color: #e64a19;
+}
+
+
+
+/* Fallback Icon Styling */
+.fallback-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 50%;
+  text-transform: uppercase;
+}
+
+/* Default fallback background */
+.default-fallback {
+  background-color: gray;
+}
+
+/* OTT Colors */
+.netflix { background-color: #E50914; }
+.prime { background-color: #00A8E1; }
+.sony { background-color: #3D1F80; }
+.sun { background-color: #D50032; }
+.zee5 { background-color: #000000; }
+
+
+
+
+
+
+/* OTT Icons Section */
+
+.ott-container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+  background-color: #333;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* Centering the icons properly */
+.ott-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  gap: 5px;
+}
+
+/* Adjusted size of OTT icons */
+.ott-icons .icon {
+  width: 30px;  /* Reduced size */
+  height: 30px; /* Reduced size */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  border: 2px solid white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* OTT Logo Image */
+.ott-icons .icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Position adjustments */
+.ott-icons .icon:nth-child(1) { z-index: 3; }
+.ott-icons .icon:nth-child(2) { z-index: 2; }
+.ott-icons .icon:nth-child(3) { z-index: 1; }
+
+.more-ott {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #bbb;
+}
+
+
+
+
+/* Mobile-Input-Box-Design-Pop-up */
+
+.custom-phone-input {
+  padding: 10px;
+  width: 90%;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  border: 2px solid #444;
+}
+
+.custom-phone-input::placeholder {
+  color: orangered;
+}

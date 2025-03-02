@@ -1,0 +1,58 @@
+[
+    {
+        "planName": "Cricket Booster 160",
+        "price": 160,
+        "validity": 7,
+        "dailyData": "5 GB",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Sony LIV"],
+        "terms": [
+            "Post daily 100 SMS limit charging will be ₹1 Local | ₹1.5 STD per SMS",
+            "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed",
+            "Unlimited voice calls are included with no additional charges"
+        ]
+    },
+    {
+        "planName": "Cricket Max 499",
+        "price": 499,
+        "validity": 28,
+        "dailyData": "2 GB/Day",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Sony LIV"],
+        "terms": [
+            "Post daily 100 SMS limit charging will be ₹1 Local | ₹1.5 STD per SMS",
+            "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed",
+            "Unlimited voice calls are included with no additional charges"
+        ]
+    },
+    {
+        "planName": "Cricket Super 699",
+        "price": 699,
+        "validity": 56,
+        "dailyData": "2.5 GB/Day",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Sony LIV"],
+        "terms": [
+            "Post daily 100 SMS limit charging will be ₹1 Local | ₹1.5 STD per SMS",
+            "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed",
+            "Unlimited voice calls are included with no additional charges"
+        ]
+    },
+    {
+        "planName": "Cricket Ultimate 999",
+        "price": 999,
+        "validity": 84,
+        "dailyData": "3 GB/Day",
+        "voice": "Unlimited",
+        "sms": "100 SMS/Day",
+        "ott": ["Sony LIV"],
+        "terms": [
+            "Post daily 100 SMS limit charging will be ₹1 Local | ₹1.5 STD per SMS",
+            "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed",
+            "Unlimited voice calls are included with no additional charges"
+        ]
+    }
+]

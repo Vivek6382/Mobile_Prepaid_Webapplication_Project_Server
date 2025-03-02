@@ -1,0 +1,145 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e1e1e; /* Dark background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff;
+}
+
+.otp-container {
+    display: flex;
+    flex-direction: column; /* Flex column */
+    justify-content: space-around; /* Space around the items */
+    align-items: center;
+    width: 42vw; /* Adjusted width */
+    height: 85vh; /* Adjusted height */
+    background-color: #2a2a2a; /* Dark background */
+    padding: 30px;
+    border-radius: 10px;
+    border: 2px solid orangered; /* Orangered border */
+    box-shadow: 0 4px 8px rgba(255, 69, 0, 0.3); /* Orangered glow */
+}
+
+.otp-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    font-size: 20px;
+    color: orangered; /* Changed to orangered */
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+h3 {
+    font-size: 22px;
+    color: orangered; /* Changed to orangered */
+}
+
+.otp-message {
+    font-size: 14px;
+    color: #bbb;
+    margin-bottom: 15px;
+}
+
+.timer {
+    font-size: 18px;
+    color: orangered; /* Changed to orangered */
+    margin-bottom: 25px;
+}
+
+.otp-main {
+    display: flex;
+    flex-direction: column; /* Flex column */
+    justify-content: space-around; /* Space around the items */
+    width: 100%;
+}
+
+.otp-inputs {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.otp-input {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 20px;
+    border: 1px solid orangered; /* Changed to orangered */
+    border-radius: 8px;
+    background-color: #2c2c2c;
+    color: #fff;
+    outline: none;
+    margin-right: 10px; /* Added gap between inputs */
+}
+
+.otp-input:focus {
+    border-color: #ff5733;
+}
+
+.resend {
+    font-size: 14px;
+    color: #bbb;
+    margin-bottom: 10px;
+}
+
+.resend-link {
+    color: orangered; /* Changed to orangered */
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.resend-link:hover {
+    text-decoration: underline;
+}
+
+.validate-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: orangered; /* Changed to orangered */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.validate-btn:hover {
+    background-color: #ff5733; /* Darker orangered on hover */
+}
+
+.back-btn-container {
+    margin-bottom: 20px;
+    align-self: flex-start; /* Align the back button to the left */
+}
+
+.otp-header{
+    display: flex;
+    flex-direction: column;
+}
+
+.otp-header p {
+    margin-top: 10px; /* Adjust the gap as per your requirement */
+}
+
+.resend_timer_div{
+    display: flex;
+    justify-content: space-between;
+}
+
+.validate_btn_div{
+    width: 100%;
+}

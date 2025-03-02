@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recharge Now</title>
+    <link rel="stylesheet" href="./recharge.css">
+
+    <!-- Splide.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
+
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+
+    <header class="header_main">
+        <div class="first_header_part">
+            <h4><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html"><span>MOBI</span>-COMM.</a></h4>
+        </div>
+        <div class="second_header_part">
+
+
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+            <div class="user-dropdown">
+                <i class="fa-solid fa-user" id="userIcon"></i> <!-- Added ID -->
+                <div class="dropdown-content">
+                    <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html" id="myAccountBtn">My Account</a>
+                    <a href="#" id="signOutBtn">Sign-out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="navigation_main">
+        <nav>
+            <ul>
+                <li><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html">Home</a></li>
+                <li><a href="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">Prepaid Plans</a>
+                </li>
+                <li><a href="/Mobile_Prepaid_Customer/Recharge_Page/recharge.html">Recharge</a></li>
+                <li><a href="">SIM Management</a></li>
+                <li><a href="/Mobile_Prepaid_Customer/Support/support.html">Support</a></li>
+            </ul>
+        </nav>
+    </div>
+
+
+
+    <section class="recharge-wrapper">
+        <div class="recharge_section">
+            <div class="container">
+                <h2 class="heading">Mobile Recharge</h2>
+                <p class="description">Enter your details to proceed with the recharge.</p>
+
+                <!-- Recharge Form with GET method -->
+                <form id="rechargeForm" action="/Mobile_Prepaid_Customer/Recharge_Page/OTP_page/otp.html" method="GET">
+                    <!-- Mobile Input Box -->
+                    <div class="input-box">
+                        <label for="mobile">Mobile Number</label>
+                        <input type="text" id="mobile" name="mobile" placeholder="Enter a Mobi-Comm number" />
+                        <span id="mobileError" class="text-danger"></span>
+                    </div>
+
+
+                    <!-- Generate OTP Button -->
+                    <button class="generate-otp  otp-button" id="generateOtp">Generate OTP</button>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="recharge_image">
+            <img src="./high-angle-happy-family.jpg" alt="Recharge Family Image">
+        </div>
+    </section>
+
+
+
+
+
+    <footer class="footer">
+        <div class="footer-section">
+            <div class="footer-logo">Mobi-Comm</div>
+            <p>Connecting you to the world with seamless communication.</p>
+        </div>
+        <div class="footer-section">
+            <h3>Our Offerings</h3>
+            <ul>
+                <li><a href="#">Prepaid</a></li>
+                <li><a href="#">Postpaid</a></li>
+                <li><a href="#">International Roaming</a></li>
+                <li><a href="#">WiFi Calling</a></li>
+                <li><a href="#">5G Services</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Support</h3>
+            <ul>
+                <li><a href="#">Track Order</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Lost SIM</a></li>
+                <li><a href="#">Claim Refund</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Company</h3>
+            <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Investor Relations</a></li>
+                <li><a href="#">Careers</a></li>
+                <li><a href="#">Sitemap</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Connect with Us</h3>
+            <div class="social-icons">
+                <a href="#">&#xf099;</a>
+                <a href="#">&#xf16d;</a>
+                <a href="#">&#xf09a;</a>
+                <a href="#">&#xf167;</a>
+                <a href="#">&#xf08c;</a>
+            </div>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Mobi-Comm. All rights reserved.</p>
+    </div>
+
+
+
+    <!-- OTP Modal -->
+
+<!-- OTP Overlay -->
+<div class="otp-overlay" id="otpOverlay"></div>
+
+<!-- OTP Pop-up -->
+<div class="otp-popup" id="otpPopup">
+    <span class="close-btn" id="closePopup">&times;</span>
+
+    <div class="otp-header">
+        <h3>OTP Verification</h3>
+        <p class="otp-message">A code has been sent to <strong>******8388</strong></p>
+    </div>
+
+    <form action="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html" method="GET"
+        id="otp-form">
+        <div class="otp-main">
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" class="otp-input" id="otp1" name="otp1" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" id="otp2" name="otp2" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" id="otp3" name="otp3" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" id="otp4" name="otp4" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" id="otp5" name="otp5" autocomplete="off">
+                <input type="text" maxlength="1" class="otp-input" id="otp6" name="otp6" autocomplete="off">
+            </div>
+
+            <div class="resend-timer-container">
+                <div class="timer" id="timer">00:30</div>
+                <p class="resend">
+                    <span>Didn’t receive the code?</span>
+                    <a class="resend-link" id="resendLink">Resend</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="validate-btn-container">
+            <button type="submit" class="validate-btn">Verify OTP</button>
+        </div>
+    </form>
+</div>
+
+
+</body>
+
+
+<!-- Bootstrap 5 JS (Includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Splide.js JS -->
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
+
+<script src="./recharge.js"></script>
+
+</html>

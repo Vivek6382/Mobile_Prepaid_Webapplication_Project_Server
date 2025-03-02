@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prepaid Plans</title>
+    <link rel="stylesheet" href="./prepaid_plan_management.css" type="text/css">
+
+    <!-- Splide.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css">
+
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+
+    <!-- Navigation-Section -->
+
+    <header class="admin_header">
+        <div class="admin_header_logo">
+            <h4><a
+                    href="/Mobile_Prepaid_Admin/admin_dashboard/Summary_View/admin_dashboard.html"><span>MOBI</span>-COMM.</a>
+            </h4>
+        </div>
+        <div class="admin_header_controls">
+            <div class="admin_customer_btn">
+                <i class="fa-solid fa-store"></i>
+                <p><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html">Customer</a></p>
+            </div>
+
+            <div class="admin_search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search...">
+            </div>
+
+            <div class="admin_user_dropdown">
+                <i class="fa-solid fa-user"></i>
+                <div class="admin_dropdown_content">
+                    <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html">My Account</a>
+                    <a href="#">Sign-out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin_navigation">
+        <nav>
+            <ul>
+                <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Summary_View/admin_dashboard.html">Dashboard</a></li>
+                <li><a href="#">Prepaid Plans Management</a></li>
+                <li><a href="/Mobile_Prepaid_Admin/Customer_Management/customer_management.html">Customer Management</a>
+                </li>
+                <li><a href="#">SIM Management</a></li>
+                <li><a href="#">Support Management</a></li>
+            </ul>
+        </nav>
+    </div>
+
+
+
+
+
+
+    <!-- Sidebar (Prepaid Categories) -->
+    <section class="prepaid-category_section">
+        <aside class="sidebar">
+            <h2>Plan Categories</h2>
+            <nav>
+                <a href="popular.html" class="active">Popular Plans</a>
+                <a href="true-5g.html">True 5G Unlimited Plans</a>
+                <a href="true-unlimited.html">True Unlimited Upgrade</a>
+                <a href="entertainment.html">Entertainment Plans</a>
+                <a href="data-booster.html">Data Booster</a>
+                <a href="annual.html">Annual Plans</a>
+                <a href="international.html">International Roaming</a>
+                <a href="isd.html">ISD</a>
+                <a href="in-flight.html">In-Flight Packs</a>
+                <a href="top-up.html">Top-up</a>
+                <a href="value.html">Value Packs</a>
+                <a href="data.html">Data Packs</a>
+                <a href="individual.html">Individual Plans</a>
+                <a href="cricket.html">Cricket Plans</a>
+            </nav>
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="content">
+
+            <!-- Prepaid Plans Management Toolbar -->
+            <div class="cust_manage_toolbar">
+                <div class="cust_manage_title">
+                    <h4>Prepaid Plans Management</h4> <!-- Title Updated -->
+                </div>
+                <div class="cust_manage_bulk_selection">
+                    <button class="outline-button add-action">Add</button>
+                    <button class="outline-button delete-action">Delete</button>
+                    <button class="outline-button bulk-update-trigger">Update</button>
+                </div>
+            </div>
+
+
+            <div class="top_prepaid_main_section">
+                <div class="top_prepaid_main_title">
+                    <h4>Popular Plans</h4>
+                </div>
+                <div class="top_right_main_section">
+                    <div class="amount_enter">
+                        <input type="text" placeholder="Enter the Amount">
+                    </div>
+
+                    <div class="tool_search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" name="search" placeholder="Search customers">
+                    </div>
+                    <div class="filter_button">
+                        <button><i class="fa-solid fa-filter"></i> Filter</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="plan_card-container">
+
+
+                <!-- Under-Development -->
+
+                <div class="vi_card">
+
+                    <!-- Checkbox for Bulk Delete -->
+                    <input type="checkbox" class="bulk-delete-checkbox">
+
+                    <!-- Checkbox for Bulk Update -->
+                    <input type="checkbox" class="bulk-update-checkbox">
+
+
+                    <!-- DELETE ICON (Top-Right Corner) -->
+                    <div class="delete-icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+
+
+                    <div class="card-header">
+                        <div class="card-title-price">
+                            <div class="plan-name">SILVER 799</div>
+                            <div class="price">₹799/month</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefit"><i class="fas fa-phone-alt"></i> Unlimited Calls (Local, STD, Roaming)
+                        </div>
+                        <div class="benefit"><i class="fas fa-wifi"></i> 50GB Data</div>
+                        <div class="benefit"><i class="fas fa-envelope"></i> 1500 SMS/Month</div>
+                        <div class="benefit"><i class="fas fa-calendar-alt"></i> Validity: 28 Days</div>
+                    </div>
+
+                    <div class="card-footer">
+
+                        <!-- Eye Icon (Bottom Right, Before Edit Icon) -->
+                        <div class="view-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+
+
+                        <!-- EDIT ICON (Bottom Right Corner) -->
+                        <div class="edit-icon">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </div>
+
+                        <!-- Buy Button (Shifted Up) -->
+                        <a href="/Mobile_Prepaid_Customer/Payment_Page/payment.html" class="buy-link">
+                            <button class="buy-button">Buy Now</button>
+                        </a>
+                    </div>
+                </div>
+
+
+
+
+
+
+                <!-- Under-Development -->
+
+                <div class="vi_card">
+
+
+                    <!-- Checkbox for Bulk Delete -->
+                    <input type="checkbox" class="bulk-delete-checkbox">
+
+                    <!-- Checkbox for Bulk Update -->
+                    <input type="checkbox" class="bulk-update-checkbox">
+
+
+                    <!-- DELETE ICON (Top-Right Corner) -->
+                    <div class="delete-icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+
+                    <div class="card-header">
+                        <div class="card-title-price">
+                            <div class="plan-name">GOLD 999</div>
+                            <div class="price">₹999/month</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefit"><i class="fas fa-phone-alt"></i> Unlimited Calls (Local, STD, Roaming)
+                        </div>
+                        <div class="benefit"><i class="fas fa-wifi"></i> 75GB Data</div>
+                        <div class="benefit"><i class="fas fa-envelope"></i> 2000 SMS/Month</div>
+                        <div class="benefit"><i class="fas fa-calendar-alt"></i> Validity: 30 Days</div>
+                    </div>
+
+                    <div class="card-footer">
+                        <!-- Eye Icon (Bottom Right, Before Edit Icon) -->
+                        <div class="view-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+
+                        <!-- EDIT ICON -->
+                        <div class="edit-icon">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </div>
+
+                        <!-- Buy Button -->
+                        <a href="/Mobile_Prepaid_Customer/Payment_Page/payment.html" class="buy-link">
+                            <button class="buy-button">Buy Now</button>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="vi_card">
+
+                    <!-- Checkbox for Bulk Delete -->
+                    <input type="checkbox" class="bulk-delete-checkbox">
+
+                    <!-- Checkbox for Bulk Update -->
+                    <input type="checkbox" class="bulk-update-checkbox">
+
+
+                    <div class="delete-icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+
+                    <div class="card-header">
+                        <div class="card-title-price">
+                            <div class="plan-name">PLATINUM 1299</div>
+                            <div class="price">₹1299/month</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefit"><i class="fas fa-phone-alt"></i> Unlimited Calls (Local, STD, Roaming)
+                        </div>
+                        <div class="benefit"><i class="fas fa-wifi"></i> 100GB Data</div>
+                        <div class="benefit"><i class="fas fa-envelope"></i> 2500 SMS/Month</div>
+                        <div class="benefit"><i class="fas fa-calendar-alt"></i> Validity: 30 Days</div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="view-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+
+                        <div class="edit-icon">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </div>
+
+                        <a href="/Mobile_Prepaid_Customer/Payment_Page/payment.html" class="buy-link">
+                            <button class="buy-button">Buy Now</button>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="vi_card">
+
+                    <!-- Checkbox for Bulk Delete -->
+                    <input type="checkbox" class="bulk-delete-checkbox">
+
+                    <!-- Checkbox for Bulk Update -->
+                    <input type="checkbox" class="bulk-update-checkbox">
+
+
+                    <div class="delete-icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+
+                    <div class="card-header">
+                        <div class="card-title-price">
+                            <div class="plan-name">PLATINUM 1299</div>
+                            <div class="price">₹1299/month</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefit"><i class="fas fa-phone-alt"></i> Unlimited Calls (Local, STD, Roaming)
+                        </div>
+                        <div class="benefit"><i class="fas fa-wifi"></i> 100GB Data</div>
+                        <div class="benefit"><i class="fas fa-envelope"></i> 2500 SMS/Month</div>
+                        <div class="benefit"><i class="fas fa-calendar-alt"></i> Validity: 30 Days</div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="view-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+
+                        <div class="edit-icon">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </div>
+
+                        <a href="/Mobile_Prepaid_Customer/Payment_Page/payment.html" class="buy-link">
+                            <button class="buy-button">Buy Now</button>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="vi_card">
+
+                    <!-- Checkbox for Bulk Delete -->
+                    <input type="checkbox" class="bulk-delete-checkbox">
+
+                    <!-- Checkbox for Bulk Update -->
+                    <input type="checkbox" class="bulk-update-checkbox">
+
+                    <div class="delete-icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+
+                    <div class="card-header">
+                        <div class="card-title-price">
+                            <div class="plan-name">PLATINUM 1299</div>
+                            <div class="price">₹1299/month</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefit"><i class="fas fa-phone-alt"></i> Unlimited Calls (Local, STD, Roaming)
+                        </div>
+                        <div class="benefit"><i class="fas fa-wifi"></i> 100GB Data</div>
+                        <div class="benefit"><i class="fas fa-envelope"></i> 2500 SMS/Month</div>
+                        <div class="benefit"><i class="fas fa-calendar-alt"></i> Validity: 30 Days</div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="view-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+
+                        <div class="edit-icon">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </div>
+
+                        <a href="/Mobile_Prepaid_Customer/Payment_Page/payment.html" class="buy-link">
+                            <button class="buy-button">Buy Now</button>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="vi_card">
+
+                    <!-- Checkbox for Bulk Delete -->
+                    <input type="checkbox" class="bulk-delete-checkbox">
+
+                    <!-- Checkbox for Bulk Update -->
+                    <input type="checkbox" class="bulk-update-checkbox">
+
+
+                    <div class="delete-icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+
+                    <div class="card-header">
+                        <div class="card-title-price">
+                            <div class="plan-name">PLATINUM 1299</div>
+                            <div class="price">₹1299/month</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="benefit"><i class="fas fa-phone-alt"></i> Unlimited Calls (Local, STD, Roaming)
+                        </div>
+                        <div class="benefit"><i class="fas fa-wifi"></i> 100GB Data</div>
+                        <div class="benefit"><i class="fas fa-envelope"></i> 2500 SMS/Month</div>
+                        <div class="benefit"><i class="fas fa-calendar-alt"></i> Validity: 30 Days</div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="view-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+
+                        <div class="edit-icon">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </div>
+
+                        <a href="/Mobile_Prepaid_Customer/Payment_Page/payment.html" class="buy-link">
+                            <button class="buy-button">Buy Now</button>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+
+            </div>
+
+            <!-- Delete Confirmation Pop-up (Initially Hidden) -->
+            <div id="delete-popup" class="popup-overlay">
+                <div class="popup-content">
+                    <h3>Delete Prepaid Plan</h3>
+                    <p>You are about to delete this <strong>prepaid recharge plan</strong>. This action cannot be
+                        undone.</p>
+
+                    <div class="details">
+                        <div class="detail"><strong>Plan Name:</strong> Unlimited Data + Calls</div>
+                        <div class="detail"><strong>Price:</strong> ₹299</div>
+                        <div class="detail"><strong>Validity:</strong> 28 Days</div>
+                    </div>
+
+                    <div class="popup-buttons">
+                        <button id="confirm-delete">Yes, Delete</button>
+                        <button id="cancel-delete">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Update Plan Pop-up (Initially Hidden) -->
+            <!-- Update Plan Pop-up (Initially Hidden) -->
+            <div id="update-popup" class="popup-overlay" style="display: none;">
+                <div class="popup-content">
+                    <h3>Update Prepaid Plan</h3>
+                    <p>Edit the details of this <strong>prepaid recharge plan</strong> below.</p>
+
+                    <div class="details">
+                        <label for="plan-name"><strong>Plan Name:</strong></label>
+                        <input type="text" id="plan-name" class="detail-input">
+
+                        <label for="plan-price"><strong>Price (₹):</strong></label>
+                        <input type="text" id="plan-price" class="detail-input">
+
+                        <label for="plan-validity"><strong>Validity:</strong></label>
+                        <input type="text" id="plan-validity" class="detail-input">
+
+                        <label for="plan-calls"><strong>Calls:</strong></label>
+                        <input type="text" id="plan-calls" class="detail-input">
+
+                        <label for="plan-data"><strong>Data:</strong></label>
+                        <input type="text" id="plan-data" class="detail-input">
+
+                        <label for="plan-sms"><strong>SMS:</strong></label>
+                        <input type="text" id="plan-sms" class="detail-input">
+                    </div>
+
+                    <div class="popup-buttons">
+                        <button id="update-plan">Update</button>
+                        <button id="cancel-update">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Add Prepaid Plan Pop-up -->
+            <div id="prepaid-add-popup" class="prepaid-popup-overlay">
+                <div class="prepaid-popup-content">
+                    <h3>Add New Prepaid Plan</h3>
+                    <p>Enter the details of the new <strong>prepaid recharge plan</strong> below.</p>
+
+                    <div class="prepaid-details">
+                        <!-- Plan Name -->
+                        <label for="prepaid-plan-name"><strong>Plan Name:</strong></label>
+                        <input type="text" id="prepaid-plan-name" class="prepaid-detail-input"
+                            placeholder="Enter Plan Name">
+
+                        <!-- Price -->
+                        <label for="prepaid-plan-price"><strong>Price (₹):</strong></label>
+                        <input type="text" id="prepaid-plan-price" class="prepaid-detail-input"
+                            placeholder="Enter Price">
+
+                        <!-- Validity -->
+                        <label for="prepaid-plan-validity"><strong>Validity:</strong></label>
+                        <input type="text" id="prepaid-plan-validity" class="prepaid-detail-input"
+                            placeholder="Enter Validity (e.g., 30 Days)">
+
+                        <!-- Calls -->
+                        <label for="prepaid-plan-calls"><strong>Calls:</strong></label>
+                        <input type="text" id="prepaid-plan-calls" class="prepaid-detail-input"
+                            placeholder="Enter Call Details">
+
+                        <!-- Data -->
+                        <label for="prepaid-plan-data"><strong>Data:</strong></label>
+                        <input type="text" id="prepaid-plan-data" class="prepaid-detail-input"
+                            placeholder="Enter Data (e.g., 100GB)">
+
+                        <!-- SMS -->
+                        <label for="prepaid-plan-sms"><strong>SMS:</strong></label>
+                        <input type="text" id="prepaid-plan-sms" class="prepaid-detail-input"
+                            placeholder="Enter SMS Limit (e.g., 2500)">
+
+                    </div>
+
+                    <!-- Pop-up Buttons -->
+                    <div class="prepaid-popup-buttons">
+                        <button id="prepaid-add-btn">Add</button>
+                        <button id="prepaid-cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Bulk Delete Action Panel -->
+            <div class="bulk-delete-panel">
+                <button class="bulk-delete-button delete-selected">Delete Selected</button>
+                <button class="bulk-cancel-button cancel-action">Cancel</button>
+            </div>
+
+
+            <!-- Bulk Update Action Panel -->
+            <div class="bulk-update-panel">
+                <button class="bulk-update-button update-selected">Update Selected</button>
+                <button class="bulk-cancel-button cancel-update-action">Cancel</button>
+            </div>
+
+
+
+            <!-- Filter Pop-up -->
+
+            <!-- Filter Pop-up -->
+            <div id="filterModal" class="filter-wrapper">
+                <div class="filter-main">
+                    <div class="filter-left">
+                        <h3 class="filter-category active" data-filter="ott">OTT Plans</h3>
+                        <h3 class="filter-category" data-filter="data">Data</h3>
+                        <h3 class="filter-category" data-filter="validity">Validity</h3>
+                        <h3 class="filter-category" data-filter="price">Price</h3>
+                    </div>
+
+                    <!-- Separator Line -->
+                    <div class="separator"></div>
+
+                    <div class="filter-right">
+                        <h3 id="filterHeader" class="filter-header">OTT Plans</h3> <!-- Fixed Header -->
+                        <div id="filterOptions" class="filter-options"></div>
+                        <div class="filter-buttons">
+                            <button id="resetFilters" class="reset-btn">Clear all</button>
+                            <button id="confirmFilters" class="confirm-btn">Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- Full-card-view-pop-up -->
+
+            <!-- Full-card-view-pop-up -->
+
+            <!-- Popup Overlay -->
+            <div id="full-card-popup" class="custom-popup-overlay">
+                <!-- Popup Container -->
+                <div class="custom-popup-container">
+                    <!-- Popup Header -->
+                    <div class="custom-popup-header">
+                        <div class="custom-plan-info">
+                            <span class="custom-plan-title">Premium Plan</span>
+                            <span class="custom-plan-cost">$49.99/month</span>
+                        </div>
+                        <span id="close-full-card-popup" class="custom-popup-close">&times;</span>
+                    </div>
+
+                    <!-- Popup Body -->
+                    <div class="custom-popup-body">
+                        <!-- Plan Details -->
+                        <div class="custom-plan-details">
+                            <h3>Plan Details</h3>
+                            <table>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Details</th>
+                                </tr>
+                                <tr>
+                                    <td>Storage</td>
+                                    <td>1TB Cloud Storage</td>
+                                </tr>
+                                <tr>
+                                    <td>Support</td>
+                                    <td>24/7 Customer Support</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Extra Perks -->
+                        <div class="custom-extra-perks">
+                            <h3>Additional Benefits</h3>
+                            <div class="custom-perk-list">
+                                <div class="custom-perk-item">
+                                    <img src="https://via.placeholder.com/60" alt="Perk Logo">
+                                    <div class="custom-perk-info">
+                                        <span class="custom-perk-title">Free VPN Access</span>
+                                        <p>Secure browsing with unlimited VPN.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms & Conditions -->
+                        <div class="custom-popup-terms">
+                            <h3>Terms & Conditions</h3>
+                            <p>This plan is subject to fair usage policies and additional terms.</p>
+                        </div>
+                    </div>
+
+                    <!-- Popup Footer -->
+                    <div class="custom-popup-footer">
+                        <input type="text" class="custom-phone-input" placeholder="Enter your mobile number">
+                        <button class="custom-purchase-button">Purchase Now</button>
+                    </div>
+                </div>
+            </div>
+
+
+        </main>
+
+    </section>
+
+
+
+
+    <footer class="footer">
+        <div class="footer-section">
+            <div class="footer-logo">Mobi-Comm</div>
+            <p>Connecting you to the world with seamless communication.</p>
+        </div>
+        <div class="footer-section">
+            <h3>Our Offerings</h3>
+            <ul>
+                <li><a href="#">Prepaid</a></li>
+                <li><a href="#">Postpaid</a></li>
+                <li><a href="#">International Roaming</a></li>
+                <li><a href="#">WiFi Calling</a></li>
+                <li><a href="#">5G Services</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Support</h3>
+            <ul>
+                <li><a href="#">Track Order</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Lost SIM</a></li>
+                <li><a href="#">Claim Refund</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Company</h3>
+            <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Investor Relations</a></li>
+                <li><a href="#">Careers</a></li>
+                <li><a href="#">Sitemap</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Connect with Us</h3>
+            <div class="social-icons">
+                <a href="#">&#xf099;</a>
+                <a href="#">&#xf16d;</a>
+                <a href="#">&#xf09a;</a>
+                <a href="#">&#xf167;</a>
+                <a href="#">&#xf08c;</a>
+            </div>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Mobi-Comm. All rights reserved.</p>
+    </div>
+
+
+</body>
+
+<!-- Bootstrap 5 JS (Includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Splide.js JS -->
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js"></script>
+
+<!-- Custom JS -->
+<script src="./prepaid_plan_management.js"></script>
+
+</html>
