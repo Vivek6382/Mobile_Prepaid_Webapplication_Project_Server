@@ -2,11 +2,25 @@
 
 // Profile-DropDown-JS
 
+// The-Login-Logout-Handler
+
+// Profile-DropDown-JS
 document.addEventListener("DOMContentLoaded", function () {
     const profileMenu = document.querySelector(".profile-menu");
     const userIcon = document.querySelector(".profile-menu i"); // User icon inside the profile menu
     const dropdownOptions = document.querySelector(".dropdown-options");
     const signOutBtn = document.getElementById("signOutBtn");
+    const logoutBtn = document.getElementById("logout-btn"); // Sidebar logout button
+
+    function handleLogout(event) {
+        event.preventDefault();
+        sessionStorage.removeItem("currentCustomer"); // Remove session storage
+
+        // Ensure storage is cleared before redirecting
+        setTimeout(() => {
+            window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
+        }, 100);
+    }
 
     function updateDropdown() {
         const currentCustomer = sessionStorage.getItem("currentCustomer");
@@ -21,16 +35,16 @@ document.addEventListener("DOMContentLoaded", function () {
             // Ensure dropdown starts hidden
             profileMenu.classList.remove("active");
 
-            // Sign-out functionality
-            signOutBtn.onclick = function (event) {
-                event.preventDefault();
-                sessionStorage.removeItem("currentCustomer"); // Remove session storage
+            // Sign-out functionality (Dropdown Logout)
+            if (signOutBtn) {
+                signOutBtn.onclick = handleLogout;
+            }
 
-                // Ensure the storage is cleared before redirecting
-                setTimeout(() => {
-                    window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
-                }, 100);
-            };
+            // Sidebar Logout Button
+            if (logoutBtn) {
+                logoutBtn.onclick = handleLogout;
+            }
+
         } else {
             // If not logged in, clicking the user icon redirects to the recharge page
             userIcon.onclick = function () {
@@ -66,6 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
 
 
 
@@ -391,12 +406,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // Profile Picture & User Details Handling
+// Dynamic Account Detail JSON Population
 document.addEventListener("DOMContentLoaded", function () {
-    const mainProfileName = document.querySelector(".user-name"); // Main Profile Name
-    const mainProfileMobile = document.querySelector(".user-mobile"); // Main Profile Mobile
-    const sidebarUserName = document.getElementById("user-name"); // Sidebar Username
-    const sidebarUserMobile = document.querySelector(".user-contact"); // Sidebar Mobile
+    const currentCustomer = sessionStorage.getItem("currentCustomer");
 
+    if (!currentCustomer) {
+        // Redirect to recharge page if not logged in
+        window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
+        return;
+    }
+
+    // Parse the stored customer details
+    const userData = JSON.parse(currentCustomer);
+
+    // Populate details dynamically
+    document.querySelector(".user-name").textContent = userData.name;
+    document.querySelector(".user-mobile").textContent = `+91 ${userData.mobile}`;
+
+    const infoItems = document.querySelectorAll(".info-grid .info-item span");
+
+    infoItems[0].textContent = userData.dob; // DOB
+    infoItems[1].textContent = userData.email; // Email
+    infoItems[2].textContent = `+91 ${userData.alternate_number}`; // Alternate Number
+    infoItems[3].textContent = userData.contact_method; // Ways to Contact
+    infoItems[4].textContent = userData.communication_language; // Communication Language
+    infoItems[5].textContent = userData.address; // Permanent Address
+
+    // 🔥 Call Profile Picture Handling after user details are populated
+    handleProfilePicture(userData.mobile, userData.name);
+});
+
+// ✅ Function to Handle Profile Picture Logic
+function handleProfilePicture(userMobile, userName) {
     const profilePic = document.getElementById("profile-pic"); // Main Profile Pic
     const profileUpload = document.getElementById("profile-upload"); // File Upload Input
     const profileImage = document.getElementById("profile-image"); // Main Image Element
@@ -408,34 +449,24 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // Fetch and Set Username & Mobile Number in Sidebar
-    if (mainProfileName && mainProfileMobile && sidebarUserName && sidebarUserMobile) {
-        sidebarUserName.innerText = mainProfileName.innerText;
-        sidebarUserMobile.innerText = mainProfileMobile.innerText;
+    // Retrieve stored profile picture from sessionStorage
+    const storedProfilePic = sessionStorage.getItem(`profilePic_${userMobile}`);
+
+    if (storedProfilePic) {
+        // If an image is stored, display it
+        profileImage.src = storedProfilePic;
+        profileImage.style.display = "block";
+        profileInitial.style.display = "none"; // Hide initials
+
+        // Set Sidebar Profile Picture
+        sideProfilePic.style.backgroundImage = `url(${storedProfilePic})`;
+        sideProfilePic.style.backgroundSize = "cover";
+        sideProfilePic.style.backgroundPosition = "center";
+        sideProfilePic.innerHTML = ""; // Remove initials
+    } else {
+        // If no image, set initials
+        setProfileInitials(userName);
     }
-
-    // Set Initials if No Image
-    function setProfileInitials(name) {
-        let userInitial = name ? name.trim().charAt(0).toUpperCase() : "U";
-
-        // Set Initial for Main Profile
-        profileInitial.innerText = userInitial;
-        profileInitial.style.display = "flex"; // Ensure visible if no image
-
-        // Set Initial for Sidebar Profile
-        let sideProfileInitial = document.createElement("span");
-        sideProfileInitial.innerText = userInitial;
-        sideProfileInitial.style.fontSize = "46px";
-        sideProfileInitial.style.color = "#333";
-        sideProfileInitial.style.fontWeight = "bold";
-        sideProfileInitial.style.textTransform = "uppercase";
-
-        sideProfilePic.innerHTML = ""; // Clear existing content
-        sideProfilePic.appendChild(sideProfileInitial);
-    }
-
-    // Set Initials on Load
-    setProfileInitials(mainProfileName ? mainProfileName.innerText : "");
 
     // Clicking the main profile should open the file selector
     profilePic.addEventListener("click", function () {
@@ -449,15 +480,18 @@ document.addEventListener("DOMContentLoaded", function () {
         if (file) {
             const reader = new FileReader();
             reader.onload = function (e) {
+                const imageURL = e.target.result;
+
+                // Save the profile image in sessionStorage
+                sessionStorage.setItem(`profilePic_${userMobile}`, imageURL);
+
                 // Update Main Profile Pic
-                profilePic.style.backgroundImage = `url(${e.target.result})`;
-                profilePic.style.backgroundSize = "cover";
-                profilePic.style.backgroundPosition = "center";
+                profileImage.src = imageURL;
+                profileImage.style.display = "block";
                 profileInitial.style.display = "none"; // Hide initials
-                profileImage.style.display = "none"; // Keep img hidden
 
                 // Update Sidebar Profile Pic
-                sideProfilePic.style.backgroundImage = `url(${e.target.result})`;
+                sideProfilePic.style.backgroundImage = `url(${imageURL})`;
                 sideProfilePic.style.backgroundSize = "cover";
                 sideProfilePic.style.backgroundPosition = "center";
                 sideProfilePic.innerHTML = ""; // Remove initials
@@ -465,7 +499,30 @@ document.addEventListener("DOMContentLoaded", function () {
             reader.readAsDataURL(file);
         }
     });
-});
+}
+
+// ✅ Function to Set Profile Initials
+function setProfileInitials(name) {
+    let userInitial = name ? name.trim().charAt(0).toUpperCase() : "U";
+
+    // Set Initial for Main Profile
+    const profileInitial = document.getElementById("profile-initial");
+    profileInitial.innerText = userInitial;
+    profileInitial.style.display = "flex"; // Ensure visible if no image
+
+    // Set Initial for Sidebar Profile
+    const sideProfilePic = document.getElementById("user-profile-pic");
+    let sideProfileInitial = document.createElement("span");
+    sideProfileInitial.innerText = userInitial;
+    sideProfileInitial.style.fontSize = "46px";
+    sideProfileInitial.style.color = "#333";
+    sideProfileInitial.style.fontWeight = "bold";
+    sideProfileInitial.style.textTransform = "uppercase";
+
+    sideProfilePic.innerHTML = ""; // Clear existing content
+    sideProfilePic.appendChild(sideProfileInitial);
+}
+
 
 
 
@@ -1380,3 +1437,6 @@ function generateRechargeInvoice(iconElement) {
     // Save the PDF
     doc.save(invoiceNo + ".pdf");
 }
+
+
+
