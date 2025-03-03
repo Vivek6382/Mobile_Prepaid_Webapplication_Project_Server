@@ -48,3 +48,89 @@ function validateRechargeForm(phoneNumberValue) {
 
     return isValid;
 }
+
+
+
+<script>
+    // The OTP-Js
+
+document.addEventListener("DOMContentLoaded", function () {
+  let time = 30;
+  const timerElement = document.getElementById("timer");
+  const resendLink = document.getElementById("resendLink");
+  const otpInputs = document.querySelectorAll(".otp-input");
+  const otpPopup = document.getElementById("otpPopup");
+  const otpOverlay = document.getElementById("otpOverlay");
+  const closePopup = document.getElementById("closePopup");
+  const otpForm = document.getElementById("otp-form");
+
+  function startTimer() {
+      time = 30; // Reset timer
+      timerElement.style.visibility = "visible"; // Show timer
+      const countdown = setInterval(() => {
+          time--;
+          const minutes = Math.floor(time / 60);
+          const seconds = time % 60;
+          timerElement.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+          if (time <= 0) {
+              clearInterval(countdown);
+              timerElement.style.visibility = "hidden"; // Hide timer when it reaches 0
+          }
+      }, 1000);
+  }
+
+  // Function to Open OTP Pop-up
+  function openOtpPopup() {
+      otpPopup.classList.add("active");
+      otpOverlay.classList.add("active");
+      startTimer(); // Start the timer when OTP opens
+  }
+
+  // Function to Close OTP Pop-up
+  function closeOtpPopup() {
+      otpPopup.classList.remove("active");
+      otpOverlay.classList.remove("active");
+  }
+
+  // Close button functionality
+  closePopup.addEventListener("click", closeOtpPopup);
+
+  // OTP input handling (Auto-focus next input)
+  otpInputs.forEach((input, index) => {
+      input.addEventListener("input", () => {
+          if (input.value.length === 1 && index < otpInputs.length - 1) {
+              otpInputs[index + 1].focus();
+          }
+      });
+
+      input.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" && !input.value && index > 0) {
+              otpInputs[index - 1].focus();
+          }
+      });
+  });
+
+  // Resend OTP functionality
+  resendLink.addEventListener("click", () => {
+      otpInputs.forEach(input => input.value = ""); // Clear inputs
+      startTimer(); // Restart timer
+  });
+
+  // OTP Form Validation before Submission
+  otpForm.addEventListener("submit", function (event) {
+      let otpValue = "";
+      otpInputs.forEach(input => {
+          otpValue += input.value;
+      });
+
+      if (otpValue.length !== 6) {
+          event.preventDefault();
+          alert("Please enter all 6 digits of the OTP.");
+      }
+  });
+
+  // Open OTP Pop-up when required (If you have a button to trigger OTP, call `openOtpPopup()`)
+});
+
+</script>

@@ -66,3 +66,57 @@
 </div>
 
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const profileMenu = document.querySelector(".profile-menu"); // Updated class
+    const dropdownOptions = document.querySelector(".dropdown-options"); // Updated class
+    const userIcon = document.querySelector(".profile-menu i"); // Updated selector for user icon
+    const signOutBtn = document.getElementById("signOutBtn"); // No change needed
+
+    function updateDropdown() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+
+        if (currentCustomer) {
+            // Show dropdown when user icon is clicked
+            userIcon.onclick = function (event) {
+                event.stopPropagation();
+                dropdownOptions.classList.toggle("active");
+            };
+
+            // Sign-out functionality
+            signOutBtn.onclick = function (event) {
+                event.preventDefault();
+                sessionStorage.removeItem("currentCustomer"); // Remove session storage
+
+                // Ensure the storage is cleared before redirecting
+                setTimeout(() => {
+                    window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html"; 
+                }, 100);
+            };
+        } else {
+            // If not logged in, clicking the user icon redirects to the recharge page
+            userIcon.onclick = function () {
+                window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
+            };
+        }
+    }
+
+    // Initialize dropdown behavior
+    updateDropdown();
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+        if (!profileMenu.contains(event.target)) {
+            dropdownOptions.classList.remove("active");
+        }
+    });
+
+    // Handle case where user manually navigates away after signing out
+    window.addEventListener("storage", function () {
+        if (!sessionStorage.getItem("currentCustomer")) {
+            window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
+        }
+    });
+});
+
+</script>

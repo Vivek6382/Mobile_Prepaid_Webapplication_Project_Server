@@ -1,8 +1,12 @@
+// The-Login-Logout-Handler
+
+// Profile-DropDown-JS
+
 document.addEventListener("DOMContentLoaded", function () {
-    const profileMenu = document.querySelector(".profile-menu"); // Updated class
-    const dropdownOptions = document.querySelector(".dropdown-options"); // Updated class
-    const userIcon = document.querySelector(".profile-menu i"); // Updated selector for user icon
-    const signOutBtn = document.getElementById("signOutBtn"); // No change needed
+    const profileMenu = document.querySelector(".profile-menu");
+    const userIcon = document.querySelector(".profile-menu i"); // User icon inside the profile menu
+    const dropdownOptions = document.querySelector(".dropdown-options");
+    const signOutBtn = document.getElementById("signOutBtn");
 
     function updateDropdown() {
         const currentCustomer = sessionStorage.getItem("currentCustomer");
@@ -11,8 +15,11 @@ document.addEventListener("DOMContentLoaded", function () {
             // Show dropdown when user icon is clicked
             userIcon.onclick = function (event) {
                 event.stopPropagation();
-                dropdownOptions.classList.toggle("active");
+                profileMenu.classList.toggle("active"); // Toggle `active` on `.profile-menu`
             };
+
+            // Ensure dropdown starts hidden
+            profileMenu.classList.remove("active");
 
             // Sign-out functionality
             signOutBtn.onclick = function (event) {
@@ -21,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Ensure the storage is cleared before redirecting
                 setTimeout(() => {
-                    window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html"; 
+                    window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
                 }, 100);
             };
         } else {
@@ -29,6 +36,9 @@ document.addEventListener("DOMContentLoaded", function () {
             userIcon.onclick = function () {
                 window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
             };
+
+            // Ensure dropdown is hidden
+            profileMenu.classList.remove("active");
         }
     }
 
@@ -38,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Close dropdown when clicking outside
     document.addEventListener("click", function (event) {
         if (!profileMenu.contains(event.target)) {
-            dropdownOptions.classList.remove("active");
+            profileMenu.classList.remove("active");
         }
     });
 
@@ -46,6 +56,13 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("storage", function () {
         if (!sessionStorage.getItem("currentCustomer")) {
             window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
+        }
+    });
+
+    // Listen for login event from the recharge form
+    window.addEventListener("storage", function () {
+        if (sessionStorage.getItem("currentCustomer")) {
+            updateDropdown(); // Update dropdown dynamically after login
         }
     });
 });

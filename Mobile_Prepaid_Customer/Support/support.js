@@ -22,26 +22,26 @@ document.querySelectorAll('.faq-question').forEach(item => {
 // Nav-Drop-Down
 
 
-  // Profile-DropDown-JS
+   // Profile-DropDown-JS
 
-  document.addEventListener("DOMContentLoaded", function () {
+   document.addEventListener("DOMContentLoaded", function () {
     const userDropdown = document.querySelector(".user-dropdown");
+    const userIcon = document.getElementById("userIcon");
     const dropdownContent = document.querySelector(".dropdown-content");
-    const userIcon = document.getElementById("userIcon"); // User icon
-    const signOutBtn = document.getElementById("signOutBtn"); // Sign-out button
+    const signOutBtn = document.getElementById("signOutBtn");
 
     function updateDropdown() {
         const currentCustomer = sessionStorage.getItem("currentCustomer");
 
         if (currentCustomer) {
-            // Show dropdown when user icon is clicked
+            // Show dropdown when user icon is clicked, toggle 'active' class
             userIcon.onclick = function (event) {
                 event.stopPropagation();
-                dropdownContent.classList.toggle("active");
+                userDropdown.classList.toggle("active");
             };
 
-            // Ensure dropdown is visible
-            dropdownContent.style.display = "block";
+            // Ensure dropdown starts hidden
+            userDropdown.classList.remove("active");
 
             // Sign-out functionality
             signOutBtn.onclick = function (event) {
@@ -50,7 +50,7 @@ document.querySelectorAll('.faq-question').forEach(item => {
 
                 // Ensure the storage is cleared before redirecting
                 setTimeout(() => {
-                    window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html"; 
+                    window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
                 }, 100);
             };
         } else {
@@ -60,7 +60,7 @@ document.querySelectorAll('.faq-question').forEach(item => {
             };
 
             // Ensure dropdown is hidden
-            dropdownContent.style.display = "none";
+            userDropdown.classList.remove("active");
         }
     }
 
@@ -70,7 +70,7 @@ document.querySelectorAll('.faq-question').forEach(item => {
     // Close dropdown when clicking outside
     document.addEventListener("click", function (event) {
         if (!userDropdown.contains(event.target)) {
-            dropdownContent.classList.remove("active");
+            userDropdown.classList.remove("active");
         }
     });
 
@@ -89,6 +89,7 @@ document.querySelectorAll('.faq-question').forEach(item => {
     });
 
 });
+
 
 
 
