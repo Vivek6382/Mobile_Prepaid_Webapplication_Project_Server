@@ -252,17 +252,23 @@
     min-height: 100vh; /* Ensure it covers the full viewport */
     background-color: #121212;
     padding: 10px 20px;
-    overflow-y: auto; /* Enables scrolling */
 }
 
+
+.side_bar_full{
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center align */
+  width: 100%;
+  max-width: 300px; /* Match sidebar width */
+}
 
 /* Sidebar (Prepaid Category) */
 .sidebar {
     width: 300px; /* Slightly increased width */
-    height: 100%;
+    height: auto;
     background-color: #1e1e1e;
     padding: 20px;
-    overflow-y: auto;
     border-right: 3px solid orangered;
     margin-right: 20px; /* Added spacing between sidebar and main content */
     border-radius: 10px; /* Rounded edges for smooth look */
@@ -1368,4 +1374,221 @@
 
 .custom-phone-input::placeholder {
   color: orangered;
+}
+
+
+
+
+
+
+/* Change-Design */
+
+
+.recharge-card {
+    width: 100%; /* Match sidebar width */
+    max-width: 300px; /* Same as sidebar */
+    margin-bottom: 15px; /* Space between card and sidebar */
+    margin-right: 20px; /* Added spacing between sidebar and main content */
+    padding: 12px 15px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  background-color: orangered; /* Icon background */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  font-size: 18px;
+  color: white;
+}
+
+.text {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 14px;
+  color: #bbbbbb; /* Subtle gray */
+}
+
+.phone-number {
+  font-weight: bold;
+  font-size: 18px;
+  color: orangered; /* Highlighted color */
+}
+
+.change-button {
+  background-color: orangered;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease-in-out, transform 0.2s;
+}
+
+.change-button:hover {
+  background-color: #ff7f50;
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 400px) {
+  .recharge-card {
+      width: 100%;
+      max-width: 320px;
+  }
+}
+
+
+
+
+/* Change-Pop-up-Design */
+
+
+/* Overlay Pop-up */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup {
+  background: #252525;
+  border-radius: 12px;
+  padding: 30px;
+  width: 350px; /* Increased width */
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  position: relative;
+  transform: scale(0.8);
+  opacity: 0;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.overlay.active {
+  display: flex;
+}
+
+.popup.active {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Pop-up Header */
+.popup-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close-btn {
+  font-size: 24px;
+  cursor: pointer;
+  color: #FF5722;
+}
+
+.close-btn:hover {
+  color: #E64A19;
+}
+
+/* Pop-up Content */
+.popup-icon {
+  font-size: 42px;
+  color: #FF5722;
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: 22px;
+  margin-bottom: 5px;
+  color: white;
+}
+
+.popup-subtitle {
+  font-size: 14px;
+  color: #B0BEC5;
+  margin-bottom: 12px;
+}
+
+/* Input Field */
+.mobile-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #FF5722;
+  background: #2E2E2E;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+.mobile-input::placeholder {
+  color: #B0BEC5;
+}
+
+/* Error Message */
+.error-message {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #ff4d4d; /* Bright red for visibility */
+  font-weight: bold;
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* Confirm Button */
+.confirm-btn {
+  background-color: #FF5722;
+  border: none;
+  padding: 10px;
+  flex: 1;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.confirm-btn:hover {
+  background-color: #E64A19;
+}
+
+/* Cancel Button */
+.cancel-btn {
+  background-color: #444;
+  border: none;
+  padding: 10px;
+  flex: 1;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+  background-color: #666;
 }

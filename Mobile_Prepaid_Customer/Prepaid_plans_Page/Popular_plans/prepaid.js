@@ -497,7 +497,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // Dynamic Pop-up Content JS
-// Wait for DOM to load
+// Dynamic Pop-up Content JS
 document.addEventListener("DOMContentLoaded", () => {
     fetch("./Prepaid_plans_json/popular_plans.json")
         .then(response => response.json())
@@ -506,7 +506,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Attach event listener to the container to handle dynamically added elements
     document.querySelector(".plan_card-container").addEventListener("click", function (e) {
-        if (e.target.classList.contains("open-popup") || e.target.closest(".open-popup")) {
+        if (
+            e.target.classList.contains("open-popup") ||
+            e.target.closest(".open-popup") ||
+            e.target.classList.contains("buy-button") // ✅ Buy Now button triggers popup
+        ) {
             e.preventDefault();
             openPopup(e.target.closest(".vi_card"));
         }
@@ -516,6 +520,97 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("close-unique-popup").addEventListener("click", function () {
         document.getElementById("unique-popup-overlay").classList.remove("active");
     });
+
+    // Fetch customer details from JSON and store them in an object
+    let customerData = {};
+
+    fetch("/Mobile_Prepaid_Customer/Discover_Page/customer_details_json/customers.json")
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(customer => {
+                customerData[customer.mobile.trim()] = customer; // Store customer details indexed by mobile number
+            });
+        })
+        .catch(error => console.error("Error loading customer data:", error));
+
+    // Select elements
+    const phoneInput = document.querySelector(".custom-phone-input");
+    const purchaseButton = document.querySelector(".purchase-button-custom");
+
+    // Create error message span and insert it below the input field and above the button
+    const errorSpan = document.createElement("span");
+    errorSpan.classList.add("phone-error-message");
+    errorSpan.style.color = "red"; // ✅ Error message color set to red
+    errorSpan.style.display = "block";
+    errorSpan.style.marginTop = "5px";
+    
+    // Insert error message below input field
+    phoneInput.parentNode.insertBefore(errorSpan, purchaseButton);
+
+    // Check session storage and hide phone input field if currentCustomer exists
+    const currentCustomer = sessionStorage.getItem("currentCustomer");
+
+    if (currentCustomer) {
+        phoneInput.style.display = "none";
+        errorSpan.style.display = "none"; // Hide error message if the phone input is hidden
+    }
+
+    // Event Listener for Recharge Button Click
+    purchaseButton.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent default action
+
+        const phoneNumber = phoneInput.value.trim().replace(/\s+/g, ""); // Remove spaces
+
+        if (validatePhoneNumber(phoneNumber)) {
+            // Store user details in sessionStorage
+            sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumber]));
+
+            // Redirect to payment page
+            window.location.href = "/Mobile_Prepaid_Customer/Payment_Page/payment.html";
+        }
+    });
+
+    // On input change, show error message dynamically
+    phoneInput.addEventListener("input", function () {
+        const phoneNumber = phoneInput.value.trim().replace(/\s+/g, ""); // Remove spaces
+        validatePhoneNumber(phoneNumber);
+    });
+
+    // Function to validate phone number
+    function validatePhoneNumber(phoneNumber) {
+        let isValid = true;
+        errorSpan.innerHTML = ""; // Clear previous errors
+
+        // If empty
+        if (phoneNumber === "") {
+            errorSpan.innerHTML = "📢 Phone Number is required.";
+            isValid = false;
+        }
+        // If non-numeric characters are included
+        else if (!/^\d*$/.test(phoneNumber)) {
+            errorSpan.innerHTML = "⚠️ Enter only digits (0-9).";
+            isValid = false;
+        }
+        // If less than 10 digits
+        else if (phoneNumber.length < 10) {
+            errorSpan.innerHTML = "⚠️ Enter a valid 10-digit phone number.";
+            isValid = false;
+        }
+        // If exactly 10 digits, check registration
+        else if (phoneNumber.length === 10) {
+            if (!(phoneNumber in customerData)) {
+                errorSpan.innerHTML = "🚫 You are not a registered user of Mobi-Comm.";
+                isValid = false;
+            }
+        }
+        // If more than 10 digits
+        else if (phoneNumber.length > 10) {
+            errorSpan.innerHTML = "❌ Phone number should be 10 digits long.";
+            isValid = false;
+        }
+
+        return isValid;
+    }
 });
 
 // Function to open the popup dynamically
@@ -557,6 +652,7 @@ function openPopup(card) {
 
     // Populate OTT Benefits
     const perkList = document.querySelector(".perk-list-custom");
+    const extraPerksSection = document.querySelector(".extra-perks-custom");
     perkList.innerHTML = "";
 
     const ottTextElement = card.querySelector(".ott-text-data");
@@ -616,21 +712,17 @@ function openPopup(card) {
             perkItem.appendChild(perkInfo);
             perkList.appendChild(perkItem);
         });
+
+        extraPerksSection.style.display = ottNames.length > 0 ? "block" : "none";
+    } else {
+        extraPerksSection.style.display = "none";
     }
 
-    // Set Terms & Conditions
-    const termsContainer = document.getElementById("terms-content");
-    termsContainer.innerHTML = "";
-
-    card.querySelectorAll(".terms-conditions p").forEach(p => {
-        const paragraph = document.createElement("p");
-        paragraph.textContent = p.textContent;
-        termsContainer.appendChild(paragraph);
-    });
-
-    // Show Popup
     document.getElementById("unique-popup-overlay").classList.add("active");
 }
+
+
+
 
 
 
@@ -760,6 +852,141 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load Default Category (Popular Plans)
     loadPlans("popular_plans");
+});
+
+
+
+
+
+
+
+
+
+// Recharge-Pop-up-JS
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const changeBtn = document.querySelector(".change-button");
+    const overlay = document.getElementById("overlay");
+    const popup = document.querySelector(".popup");
+    const closePopup = document.getElementById("closePopup");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const phoneNumberSpan = document.getElementById("phoneNumber");
+    const newMobileNumber = document.getElementById("newMobileNumber");
+    const newMobileError = document.getElementById("newMobileError");
+
+    // Store customer data
+    let customerData = {};
+
+    // Fetch customer details from JSON
+    fetch("/Mobile_Prepaid_Customer/Discover_Page/customer_details_json/customers.json")
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(customer => {
+                customerData[customer.mobile.trim()] = customer; // Store customer details indexed by mobile number
+            });
+        })
+        .catch(error => console.error("Error loading customer data:", error));
+
+    // Show pop-up
+    changeBtn.addEventListener("click", () => {
+        overlay.classList.add("active");
+        popup.classList.add("active");
+        newMobileNumber.value = phoneNumberSpan.textContent.trim(); // Pre-fill input field with current number
+        validateNewMobileNumber(newMobileNumber.value); // Validate on open
+    });
+
+    // Hide pop-up
+    closePopup.addEventListener("click", closePopupFunction);
+    cancelBtn.addEventListener("click", closePopupFunction);
+
+    // Update mobile number
+    confirmBtn.addEventListener("click", () => {
+        let newNumber = newMobileNumber.value.trim().replace(/\s+/g, ""); // Remove spaces
+
+        if (validateNewMobileNumber(newNumber)) {
+            // Check if number is registered
+            if (newNumber in customerData) {
+                // Update displayed number
+                phoneNumberSpan.textContent = newNumber;
+
+                // Update current customer in session storage
+                sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[newNumber]));
+
+                // Close the pop-up
+                closePopupFunction();
+            }
+        }
+    });
+
+    // Real-time validation on input change
+    newMobileNumber.addEventListener("input", function () {
+        let newNumber = newMobileNumber.value.trim().replace(/\s+/g, "");
+        validateNewMobileNumber(newNumber);
+    });
+
+    // Close popup when clicking outside
+    overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) {
+            closePopupFunction();
+        }
+    });
+
+    // Function to close pop-up
+    function closePopupFunction() {
+        overlay.classList.remove("active");
+        popup.classList.remove("active");
+        newMobileError.textContent = ""; // Clear error message
+    }
+
+    // Validation Function
+    function validateNewMobileNumber(number) {
+        let isValid = true;
+        newMobileError.textContent = ""; // Clear previous errors
+
+        if (number === "") {
+            newMobileError.textContent = "📢 Phone Number is required.";
+            isValid = false;
+        } else if (!/^\d*$/.test(number)) {
+            newMobileError.textContent = "⚠️ Enter only digits (0-9).";
+            isValid = false;
+        } else if (number.length < 10) {
+            newMobileError.textContent = "⚠️ Enter a valid 10-digit phone number.";
+            isValid = false;
+        } else if (number.length > 10) {
+            newMobileError.textContent = "❌ Phone number should be 10 digits long.";
+            isValid = false;
+        } else if (!(number in customerData)) {
+            newMobileError.textContent = "🚫 You are not a registered user of Mobi-Comm.";
+            isValid = false;
+        }
+
+        return isValid;
+    }
+});
+
+
+
+
+
+//Recharge-card-display-fetch-js
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const phoneNumberSpan = document.getElementById("phoneNumber");
+    const rechargeCard = document.getElementById("rechargeCard");
+
+    // Retrieve customer data from sessionStorage
+    let currentCustomer = sessionStorage.getItem("currentCustomer");
+
+    if (currentCustomer) {
+        currentCustomer = JSON.parse(currentCustomer);
+        phoneNumberSpan.textContent = currentCustomer.mobile; // Update number dynamically
+        rechargeCard.style.display = "flex"; // Show card
+    } else {
+        rechargeCard.style.display = "none"; // Hide card if no data
+    }
 });
 
 

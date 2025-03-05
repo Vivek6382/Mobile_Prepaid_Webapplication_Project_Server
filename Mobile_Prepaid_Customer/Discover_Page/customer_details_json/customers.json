@@ -15,7 +15,7 @@
       "dob": "22 Jan, 1990",
       "email": "alice.smith@email.com",
       "alternate_number": "9988766554",
-      "contact_method": "Phone",
+      "contact_method": "SMS",
       "communication_language": "Hindi",
       "address": "456, Avenue Road, City"
     },
@@ -25,7 +25,7 @@
       "dob": "5 May, 1988",
       "email": "rajesh.kumar@email.com",
       "alternate_number": "9876543212",
-      "contact_method": "WhatsApp",
+      "contact_method": "SMS",
       "communication_language": "Tamil",
       "address": "789, MG Street, City"
     },

@@ -27,29 +27,30 @@
             <div class="profile-menu">
                 <i class="fa-solid fa-user"></i>
                 <div class="dropdown-options">
-                    <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html" id="myAccountBtn" >My Account</a>
+                    <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html" id="myAccountBtn">My Account</a>
                     <a href="#" id="signOutBtn">Sign-out</a>
                 </div>
             </div>
         </div>
     </header>
-    
+
     <div class="nav-container">
         <nav>
             <ul>
                 <li><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html">Home</a></li>
-                <li><a href="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">Prepaid Plans</a></li>
+                <li><a href="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">Prepaid Plans</a>
+                </li>
                 <li><a href="/Mobile_Prepaid_Customer/Recharge_Page/recharge.html">Recharge</a></li>
                 <li><a href="#">SIM Management</a></li>
                 <li><a href="/Mobile_Prepaid_Customer/Support/support.html">Support</a></li>
             </ul>
         </nav>
     </div>
-        
-    
-    
 
-      
+
+
+
+
 
 
     <div class="d-flex">
@@ -118,8 +119,6 @@
                                     </div>
                                 </div>
 
-
-
                                 <!-- User Details -->
                                 <div class="details-container">
                                     <h4 class="user-name"></h4>
@@ -181,7 +180,12 @@
 
                                     <div class="field-group">
                                         <label for="update-mobile"><strong>Registered Mobile Number:</strong></label>
-                                        <input type="text" id="update-mobile" class="detail-input">
+                                        <input type="text" id="update-mobile" class="detail-input" disabled>
+                                    </div>
+
+                                    <div class="field-group">
+                                        <label for="update-alt-mobile"><strong>Alternate Mobile Number:</strong></label>
+                                        <input type="text" id="update-alt-mobile" class="detail-input">
                                     </div>
 
                                     <div class="field-group">
@@ -208,19 +212,6 @@
                                         </select>
                                     </div>
 
-                                    <div id="work-details" class="hidden">
-                                        <div class="field-group">
-                                            <label for="update-company"><strong>Company Name
-                                                    (Optional):</strong></label>
-                                            <input type="text" id="update-company" class="detail-input">
-                                        </div>
-
-                                        <div class="field-group">
-                                            <label for="update-work-email"><strong>Work Email:</strong></label>
-                                            <input type="email" id="update-work-email" class="detail-input">
-                                        </div>
-                                    </div>
-
                                     <div class="field-group">
                                         <label for="update-address"><strong>Permanent Address:</strong></label>
                                         <input type="text" id="update-address" class="detail-input" disabled>
@@ -235,7 +226,6 @@
                             </div>
                         </div>
                     </div>
-
 
 
 
@@ -622,7 +612,6 @@
             </div>
         </div>
     </div>
-
 
 
     <!-- <a href="./assets/Netflix_Logo.svg">Netflix</a>

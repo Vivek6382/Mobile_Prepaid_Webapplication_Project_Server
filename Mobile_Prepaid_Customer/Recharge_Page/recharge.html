@@ -142,45 +142,48 @@
 
     <!-- OTP Modal -->
 
-<!-- OTP Overlay -->
-<div class="otp-overlay" id="otpOverlay"></div>
+    <!-- OTP Overlay -->
+    <div class="otp-overlay" id="otpOverlay"></div>
 
-<!-- OTP Pop-up -->
-<div class="otp-popup" id="otpPopup">
-    <span class="close-btn" id="closePopup">&times;</span>
+    <!-- OTP Pop-up -->
+    <div class="otp-popup" id="otpPopup">
+        <span class="close-btn" id="closePopup">&times;</span>
 
-    <div class="otp-header">
-        <h3>OTP Verification</h3>
-        <p class="otp-message">A code has been sent to <strong>******8388</strong></p>
+        <div class="otp-header">
+            <h3>OTP Verification</h3>
+            <p class="otp-message">A code has been sent to <strong></strong></p>
+        </div>
+
+        <form action="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html" method="GET"
+            id="otp-form">
+            <div class="otp-main">
+                <div class="otp-inputs">
+                    <input type="text" maxlength="1" class="otp-input" id="otp1" name="otp1" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" id="otp2" name="otp2" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" id="otp3" name="otp3" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" id="otp4" name="otp4" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" id="otp5" name="otp5" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" id="otp6" name="otp6" autocomplete="off">
+                </div>
+
+                <span id="otpError" class="text-danger"></span>
+
+                <div class="resend-timer-container">
+                    <div class="timer" id="timer">00:30</div>
+                    <p class="resend">
+                        <span>Didn’t receive the code?</span>
+                        <a class="resend-link" id="resendLink">Resend</a>
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="validate-btn-container">
+                <button type="submit" class="validate-btn">Verify OTP</button>
+            </div>
+        </form>
+
     </div>
-
-    <form action="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html" method="GET"
-        id="otp-form">
-        <div class="otp-main">
-            <div class="otp-inputs">
-                <input type="text" maxlength="1" class="otp-input" id="otp1" name="otp1" autocomplete="off">
-                <input type="text" maxlength="1" class="otp-input" id="otp2" name="otp2" autocomplete="off">
-                <input type="text" maxlength="1" class="otp-input" id="otp3" name="otp3" autocomplete="off">
-                <input type="text" maxlength="1" class="otp-input" id="otp4" name="otp4" autocomplete="off">
-                <input type="text" maxlength="1" class="otp-input" id="otp5" name="otp5" autocomplete="off">
-                <input type="text" maxlength="1" class="otp-input" id="otp6" name="otp6" autocomplete="off">
-            </div>
-
-            <div class="resend-timer-container">
-                <div class="timer" id="timer">00:30</div>
-                <p class="resend">
-                    <span>Didn’t receive the code?</span>
-                    <a class="resend-link" id="resendLink">Resend</a>
-                </p>
-            </div>
-        </div>
-
-        <div class="validate-btn-container">
-            <button type="submit" class="validate-btn">Verify OTP</button>
-        </div>
-    </form>
-    
-</div>
 
 
 </body>

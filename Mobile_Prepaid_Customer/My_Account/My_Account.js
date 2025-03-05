@@ -537,12 +537,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const updatePopup = document.getElementById("update-popup");
     const updateBtn = document.getElementById("update-btn");
     const cancelUpdateBtn = document.getElementById("cancel-update");
-    const closeBtn = document.querySelector(".close-btn"); // Close button
-    const generateOtpBtn = document.getElementById("generate-otp");
-    const generateAltOtpBtn = document.getElementById("generate-alt-otp");
-    const generateWorkOtpBtn = document.getElementById("generate-work-otp");
-
-    // Selecting user details (Check if elements exist)
+    const closeBtn = document.querySelector(".close-btn");
+    
+    // Selecting user details
     const userName = document.querySelector(".user-name");
     const userMobile = document.querySelector(".user-mobile");
     const userEmail = document.querySelector(".fa-envelope + span");
@@ -550,18 +547,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const userDOB = document.querySelector(".fa-calendar + span");
     const userLanguage = document.querySelector(".fa-language + span");
     const userAddress = document.querySelector(".fa-map-marker-alt + span");
+    const userAltMobile = document.querySelector(".fa-phone + span"); // Fetch alternate mobile
 
-    // Select the edit button (Fixed selector)
+    // Select the edit button
     const editButton = document.querySelector(".edit-icon"); 
 
     if (editButton) {
         editButton.addEventListener("click", function () {
-            console.log("Edit button clicked!"); // Debugging step
-
             if (updatePopup) {
                 // Set values in input fields
                 document.getElementById("update-name").value = userName?.textContent || "";
                 document.getElementById("update-mobile").value = userMobile?.textContent || "";
+                document.getElementById("update-alt-mobile").value = userAltMobile?.textContent || ""; // Fetch alt mobile
                 document.getElementById("update-email").value = userEmail?.textContent || "";
                 document.getElementById("update-contact-method").value = userContactMethod?.textContent || "";
                 document.getElementById("update-dob").value = userDOB?.textContent || "";
@@ -587,31 +584,29 @@ document.addEventListener("DOMContentLoaded", function () {
         updatePopup.style.display = "none";
     });
 
-    // Save updated details
+    // Save updated details and update session storage
     updateBtn?.addEventListener("click", function () {
         if (userMobile) userMobile.textContent = document.getElementById("update-mobile").value;
+        if (userAltMobile) userAltMobile.textContent = document.getElementById("update-alt-mobile").value;
         if (userEmail) userEmail.textContent = document.getElementById("update-email").value;
         if (userContactMethod) userContactMethod.textContent = document.getElementById("update-contact-method").value;
         if (userLanguage) userLanguage.textContent = document.getElementById("update-language").value;
         if (userAddress) userAddress.textContent = document.getElementById("update-address").value;
 
+        // Update session storage
+        let currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer")) || {};
+        currentCustomer.mobile = document.getElementById("update-mobile").value;
+        currentCustomer.altMobile = document.getElementById("update-alt-mobile").value;
+        currentCustomer.email = document.getElementById("update-email").value;
+        currentCustomer.contactMethod = document.getElementById("update-contact-method").value;
+        currentCustomer.language = document.getElementById("update-language").value;
+        currentCustomer.address = document.getElementById("update-address").value;
+        
+        sessionStorage.setItem("currentCustomer", JSON.stringify(currentCustomer));
+
         updatePopup.style.display = "none";
     });
-
-    // OTP Buttons
-    generateOtpBtn?.addEventListener("click", function () {
-        alert("OTP Sent to New Number");
-    });
-
-    generateAltOtpBtn?.addEventListener("click", function () {
-        alert("OTP Sent to Alternate Number");
-    });
-
-    generateWorkOtpBtn?.addEventListener("click", function () {
-        alert("OTP Sent to Work Email");
-    });
 });
-
 
 
 
@@ -1035,40 +1030,57 @@ function generateInvoice() {
 // Dynamic-Sidebar-Data-Fetch
 
 
+// Dynamic Sidebar Data Fetch
 document.addEventListener("DOMContentLoaded", function () {
-    // Fetch user details dynamically
-    const userName = document.querySelector("#user-name");
-    const userContact = document.querySelector(".user-contact");
+    // Fetch user details dynamically from account details
+    const userNameElement = document.querySelector("#user-name");
+    const userContactElement = document.querySelector(".user-contact");
 
-    const userDetailsCard = document.querySelector(".user_details_card");
-    if (userDetailsCard) {
-        userName.textContent = userDetailsCard.querySelector(".user-name").textContent;
-        userContact.textContent = userDetailsCard.querySelector(".user-mobile").textContent;
+    // Selecting user details from the main account details section
+    const accountUserName = document.querySelector(".details-container .user-name");
+    const accountUserMobile = document.querySelector(".details-container .user-mobile");
+
+    if (accountUserName && userNameElement) {
+        userNameElement.textContent = accountUserName.textContent.trim();
+    } else {
+        userNameElement.textContent = "User";
+    }
+
+    if (accountUserMobile && userContactElement) {
+        userContactElement.textContent = accountUserMobile.textContent.trim();
+    } else {
+        userContactElement.textContent = "Not Available";
     }
 
     // Fetch total recharges count
     const totalRecharges = document.querySelector("#total-recharges");
     const rechargeCards = document.querySelectorAll(".cust_manage_card");
-    totalRecharges.textContent = `${rechargeCards.length} Recharges`;
+
+    if (totalRecharges) {
+        totalRecharges.textContent = `${rechargeCards.length} Recharges`;
+    }
 
     // Fetch active plan details
     const activePlanCard = document.querySelector(".vi_card");
     const activePlanText = document.querySelector("#active-plan");
 
-    if (activePlanCard) {
-        const planName = activePlanCard.querySelector(".plan-name").textContent;
-        const price = activePlanCard.querySelector(".price").textContent;
-        const duration = activePlanCard.querySelector(".fa-calendar-alt").nextSibling.textContent.trim();
+    if (activePlanCard && activePlanText) {
+        const planName = activePlanCard.querySelector(".plan-name")?.textContent || "Unknown Plan";
+        const price = activePlanCard.querySelector(".price")?.textContent || "₹0";
+        const duration = activePlanCard.querySelector(".fa-calendar-alt")?.nextSibling?.textContent.trim() || "No Duration";
+
         activePlanText.textContent = `${price} - ${duration}`;
     }
 
     // Fetch expiry date
     const expiryDateSpan = document.querySelector("#expiry-date");
-    if (activePlanCard) {
-        const expiryDate = activePlanCard.querySelector(".expiry-badge").textContent;
+
+    if (activePlanCard && expiryDateSpan) {
+        const expiryDate = activePlanCard.querySelector(".expiry-badge")?.textContent || "Not Available";
         expiryDateSpan.textContent = `Expires: ${expiryDate}`;
     }
 });
+
 
 
 

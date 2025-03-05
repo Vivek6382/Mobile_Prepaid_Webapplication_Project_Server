@@ -74,51 +74,59 @@
 
 // Mobile Validation & OTP Pop-up Integration with JSON-based Quick Recharge Validation
 
+// Mobile Validation & OTP Pop-up Integration with JSON-based Quick Recharge Validation
+
 document.addEventListener("DOMContentLoaded", function () {
-    var phonePattern = /^\d{10}$/; // 10-digit validation
+    var phonePattern = /^\d{10}$/;
     var mobileError = document.getElementById("mobileError");
     var mobileInput = document.getElementById("mobile");
     var generateOtpButton = document.getElementById("generateOtp");
-    var verifyOtpButton = document.querySelector(".validate-btn"); // OTP Verify Button
+    var verifyOtpButton = document.querySelector(".validate-btn");
 
     // OTP Pop-up elements
     var otpPopup = document.getElementById("otpPopup");
     var otpOverlay = document.getElementById("otpOverlay");
     var closePopup = document.getElementById("closePopup");
+    var otpMessage = document.querySelector(".otp-message strong");
+    var otpError = document.getElementById("otpError");
 
-    // Store registered users & customer details
+    // OTP Side Notification
+    var notificationContainer = document.createElement("div");
+    notificationContainer.classList.add("notification-container");
+    document.body.appendChild(notificationContainer);
+
     var customerData = {};
+    var generatedOTP = ""; // Store generated OTP
 
     // Fetch customer details from JSON
     fetch("/Mobile_Prepaid_Customer/Discover_Page/customer_details_json/customers.json")
         .then(response => response.json())
         .then(data => {
             data.forEach(customer => {
-                customerData[customer.mobile.trim()] = customer; // Store customer details indexed by mobile number
+                customerData[customer.mobile.trim()] = customer;
             });
         })
         .catch(error => console.error("Error loading customer data:", error));
 
-    // Show validation error dynamically as user types
     mobileInput.addEventListener("input", function () {
-        var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, ""); // Remove spaces
+        var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, "");
         validateRechargeForm(phoneNumberValue);
     });
 
-    // Form submission validation & OTP pop-up handling
     generateOtpButton.addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent default form submission
-        var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, ""); // Remove spaces
+        event.preventDefault();
+        var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, "");
 
         if (validateRechargeForm(phoneNumberValue)) {
-            openOtpPopup(phoneNumberValue); // Show OTP pop-up
+            generatedOTP = generateRandomOTP(); // Generate new OTP
+            showNotification(`OTP ${generatedOTP} sent successfully`); // Show OTP sent notification
+            openOtpPopup(phoneNumberValue); // Show OTP entry pop-up
         }
     });
 
-    // Validation Function
     function validateRechargeForm(phoneNumberValue) {
         var isValid = true;
-        mobileError.innerHTML = ""; // Clear previous error messages
+        mobileError.innerHTML = "";
 
         if (phoneNumberValue === "") {
             mobileError.innerHTML = "📢 Phone Number is required.";
@@ -129,36 +137,41 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (phoneNumberValue.length < 10) {
             mobileError.innerHTML = "⚠️ Enter a valid 10-digit phone number.";
             isValid = false;
-        } else if (phoneNumberValue.length === 10) {
-            if (!(phoneNumberValue in customerData)) {
-                mobileError.innerHTML = "🚫 You are not a registered user of Mobi-Comm.";
-                isValid = false;
-            }
-        } else if (phoneNumberValue.length > 10) {
-            mobileError.innerHTML = "❌ Phone number should be 10 digits long.";
+        } else if (!(phoneNumberValue in customerData)) {
+            mobileError.innerHTML = "🚫 You are not a registered user of Mobi-Comm.";
             isValid = false;
         }
 
         return isValid;
     }
 
-    // Function to Open OTP Pop-up
     function openOtpPopup(phoneNumber) {
         otpPopup.classList.add("active");
         otpOverlay.classList.add("active");
-        startOtpTimer(30); // Start OTP timer when pop-up opens
+        otpMessage.textContent = `******${phoneNumber.slice(-4)}`; // Update phone in message
+        otpError.textContent = ""; // Clear OTP error
+        otpInputs.forEach(input => input.value = ""); // Clear previous OTP inputs
+        otpInputs[0].focus();
+        startOtpTimer(30);
     }
 
-    // Function to Close OTP Pop-up
     closePopup.addEventListener("click", function () {
         otpPopup.classList.remove("active");
         otpOverlay.classList.remove("active");
     });
 
-    // OTP Input Handling (Auto-focus next field)
+    function generateRandomOTP() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
     var otpInputs = document.querySelectorAll(".otp-input");
+
     otpInputs.forEach((input, index) => {
-        input.addEventListener("input", function () {
+        input.addEventListener("input", function (event) {
+            if (!/^\d$/.test(this.value)) {
+                this.value = ""; // Only allow digits
+                return;
+            }
             if (this.value.length === 1 && index < otpInputs.length - 1) {
                 otpInputs[index + 1].focus();
             }
@@ -169,24 +182,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 otpInputs[index - 1].focus();
             }
         });
+
+        input.addEventListener("paste", function (event) {
+            event.preventDefault();
+            var pasteData = event.clipboardData.getData("text").trim();
+            if (/^\d{6}$/.test(pasteData)) {
+                otpInputs.forEach((input, i) => {
+                    input.value = pasteData[i] || "";
+                });
+                otpInputs[5].focus();
+            }
+        });
     });
 
-    // OTP Timer Countdown
     var timerElement = document.getElementById("timer");
     var resendLink = document.getElementById("resendLink");
+
     function startOtpTimer(durationInSeconds) {
         var timeLeft = durationInSeconds;
-        resendLink.style.display = "none"; // Hide resend link initially
-        timerElement.style.display = "block"; // Show timer
+        resendLink.style.display = "none";
+        timerElement.style.display = "block";
         var countdown = setInterval(function () {
             var minutes = Math.floor(timeLeft / 60);
             var seconds = timeLeft % 60;
-            timerElement.textContent =
-                (minutes < 10 ? "0" : "") +
-                minutes +
-                ":" +
-                (seconds < 10 ? "0" : "") +
-                seconds;
+            timerElement.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 
             if (timeLeft <= 0) {
                 clearInterval(countdown);
@@ -198,38 +217,49 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 1000);
     }
 
-    // Resend OTP Functionality
     resendLink.addEventListener("click", function () {
-        resendLink.style.display = "none";
-        timerElement.style.display = "block";
+        generatedOTP = generateRandomOTP();
+        showNotification(`OTP ${generatedOTP} sent successfully`);
         startOtpTimer(30);
     });
 
-    // Verify OTP Button Click
     verifyOtpButton.addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent default form submission
-
-        var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, ""); // Remove spaces
-        if (!validateRechargeForm(phoneNumberValue)) {
-            return;
-        }
-
-        // Simulate OTP validation (You can replace this with actual OTP check logic)
-        var otpInputs = document.querySelectorAll(".otp-input");
+        event.preventDefault();
         var enteredOtp = Array.from(otpInputs).map(input => input.value).join("");
 
-        if (enteredOtp.length !== otpInputs.length || !/^\d{4,6}$/.test(enteredOtp)) {
-            alert("⚠️ Invalid OTP. Please enter a valid OTP.");
+        otpError.innerHTML = ""; // Clear previous error
+
+        if (enteredOtp.length < 6) {
+            otpError.innerHTML = "⚠️ Please enter all 6 digits.";
             return;
         }
 
-        // Store customer details in sessionStorage
-        sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumberValue]));
+        if (enteredOtp !== generatedOTP) {
+            otpError.innerHTML = "🚫 The OTP entered is incorrect. Please try again.";
+            return;
+        }
 
-        // Redirect to prepaid page after successful OTP verification
+        sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[mobileInput.value.trim()]));
         window.location.href = "/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html";
     });
+
+    function showNotification(message) {
+        var notification = document.createElement("div");
+        notification.classList.add("notification");
+        notification.innerHTML = `<div class="icon">✔</div>
+                                  <div class="notification-text">${message}</div>
+                                  <button class="close-btn">&times;</button>`;
+
+        notification.querySelector(".close-btn").addEventListener("click", function () {
+            notification.remove();
+        });
+
+        notificationContainer.appendChild(notification);
+        setTimeout(() => notification.remove(), 10000); // Increased time to 10 seconds
+    }
 });
+
+
 
 
 

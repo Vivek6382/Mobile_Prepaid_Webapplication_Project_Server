@@ -1,136 +1,38 @@
-// Mobile-Validation-Js
+<!DOCTYPE html>
+<html lang="en">
 
-// Phone number regex pattern (strictly requires +91 XXXXX XXXXX)
-var phonePattern = /^\d{5}\d{5}$/;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <title>Recharge Card</title>
 
-// Error span element
-var mobileError = document.getElementById("mobileError");
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-// Input field (Corrected ID)
-var mobileInput = document.getElementById("mobile");
+    <style>
+        body {
+            background-color: #121212;
+            /* Dark theme background */
+            color: #ffffff;
+            /* White text */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-// Form submission (Corrected ID)
-var rechargeForm = document.getElementById("rechargeForm");
+        
+    </style>
+</head>
 
-// Event Listener for Form Submission
-rechargeForm.addEventListener("submit", function (event) {
-    var phoneNumberValue = mobileInput.value.trim(); // Corrected variable
-
-    // Validate the form with the collected values
-    if (!validateRechargeForm(phoneNumberValue)) {
-        event.preventDefault();  // Stop form submission if validation fails
-    }
-});
-
-// On input change, remove error message
-mobileInput.addEventListener("input", function () {
-    mobileError.innerHTML = "";
-    mobileInput.style.borderColor = ""; // Reset border color when user starts typing
-});
-
-// Validation Function
-function validateRechargeForm(phoneNumberValue) {
-    var isValid = true;
-
-    // Phone Number Validation
-    if (phoneNumberValue === "") {
-        mobileError.innerHTML = "Phone Number is required.";
-        mobileInput.style.borderColor = "red";
-        isValid = false;
-    }
-    else if (!phonePattern.test(phoneNumberValue)) {
-        mobileError.innerHTML = "Enter a valid phone number (XXXXXXXXXX) 10 digits.";
-        mobileInput.style.borderColor = "red";
-        isValid = false;
-    } else {
-        mobileInput.style.borderColor = "orangered"; // Valid input styling
-    }
-
-    return isValid;
-}
+<body>
 
 
+</body>
 
-<script>
-    // The OTP-Js
-
-document.addEventListener("DOMContentLoaded", function () {
-  let time = 30;
-  const timerElement = document.getElementById("timer");
-  const resendLink = document.getElementById("resendLink");
-  const otpInputs = document.querySelectorAll(".otp-input");
-  const otpPopup = document.getElementById("otpPopup");
-  const otpOverlay = document.getElementById("otpOverlay");
-  const closePopup = document.getElementById("closePopup");
-  const otpForm = document.getElementById("otp-form");
-
-  function startTimer() {
-      time = 30; // Reset timer
-      timerElement.style.visibility = "visible"; // Show timer
-      const countdown = setInterval(() => {
-          time--;
-          const minutes = Math.floor(time / 60);
-          const seconds = time % 60;
-          timerElement.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-          if (time <= 0) {
-              clearInterval(countdown);
-              timerElement.style.visibility = "hidden"; // Hide timer when it reaches 0
-          }
-      }, 1000);
-  }
-
-  // Function to Open OTP Pop-up
-  function openOtpPopup() {
-      otpPopup.classList.add("active");
-      otpOverlay.classList.add("active");
-      startTimer(); // Start the timer when OTP opens
-  }
-
-  // Function to Close OTP Pop-up
-  function closeOtpPopup() {
-      otpPopup.classList.remove("active");
-      otpOverlay.classList.remove("active");
-  }
-
-  // Close button functionality
-  closePopup.addEventListener("click", closeOtpPopup);
-
-  // OTP input handling (Auto-focus next input)
-  otpInputs.forEach((input, index) => {
-      input.addEventListener("input", () => {
-          if (input.value.length === 1 && index < otpInputs.length - 1) {
-              otpInputs[index + 1].focus();
-          }
-      });
-
-      input.addEventListener("keydown", (e) => {
-          if (e.key === "Backspace" && !input.value && index > 0) {
-              otpInputs[index - 1].focus();
-          }
-      });
-  });
-
-  // Resend OTP functionality
-  resendLink.addEventListener("click", () => {
-      otpInputs.forEach(input => input.value = ""); // Clear inputs
-      startTimer(); // Restart timer
-  });
-
-  // OTP Form Validation before Submission
-  otpForm.addEventListener("submit", function (event) {
-      let otpValue = "";
-      otpInputs.forEach(input => {
-          otpValue += input.value;
-      });
-
-      if (otpValue.length !== 6) {
-          event.preventDefault();
-          alert("Please enter all 6 digits of the OTP.");
-      }
-  });
-
-  // Open OTP Pop-up when required (If you have a button to trigger OTP, call `openOtpPopup()`)
-});
-
-</script>
+</html>
