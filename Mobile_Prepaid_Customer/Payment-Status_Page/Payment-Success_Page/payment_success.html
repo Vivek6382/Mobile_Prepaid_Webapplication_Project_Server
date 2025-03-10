@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Successful | MOBI-COMM</title>
-
     <link rel="stylesheet" href="./payment_success.css">
 </head>
 <body>
@@ -15,16 +14,48 @@
         <h1>Payment Successful</h1>
         <p>Your payment has been processed successfully! Your mobile recharge or plan activation is now active on your registered number. Thank you for choosing <strong>MOBI-COMM</strong>.</p>
         
-        <div class="details">
-            <div class="detail"><strong>Amount Paid:</strong> ₹3210</div>
-            <div class="detail"><strong>Payment Mode:</strong>  UPI</div>
-            <div class="detail"><strong>Transaction ID:</strong> #12345678</div>
-            <div class="detail"><strong>Purchased On:</strong> 03 Nov, 2024 | 02:09 PM</div>
-            <div class="detail"><strong>Mobile Number:</strong> +91 98765 43210</div>
-            <div class="detail"><strong>Plan Activated:</strong> Unlimited Calls + 2GB/Day for 30 Days</div>
+        <!-- Scrollable Details Section -->
+        <div class="details-container">
+            
+            <!-- Transaction Details -->
+            <div class="details transaction-details">
+                <h2>Transaction Details</h2>
+                <div class="detail"><strong>Amount Paid:</strong> <span id="amount"></span></div>
+                <div class="detail"><strong>Payment Mode:</strong> <span id="payment-mode"></span></div>
+                <div class="detail"><strong>Transaction ID:</strong> <span id="transaction-id"></span></div>
+                <div class="detail"><strong>Purchased On:</strong> <span id="purchase-date"></span></div>
+                <div class="detail"><strong>Plan Start:</strong> <span id="plan-start"></span></div>
+                <div class="detail"><strong>Plan End:</strong> <span id="plan-end"></span></div>
+            </div>
+
+            <!-- Plan Details -->
+            <div class="details plan-details">
+                <h2>Plan Details</h2>
+                <div class="detail"><strong>Plan Name:</strong> <span id="plan-name"></span></div>
+                <div class="detail"><strong>Price:</strong> ₹<span id="plan-price"></span></div>
+                <div class="detail"><strong>Validity:</strong> <span id="plan-validity"></span> Days</div>
+                <div class="detail" id="daily-data-container"><strong>Daily Data:</strong> <span id="plan-daily-data"></span></div>
+                <div class="detail"><strong>Total Data:</strong> <span id="plan-total-data"></span></div>
+                <div class="detail" id="voice-container"><strong>Calls:</strong> <span id="plan-calls"></span></div>
+                <div class="detail" id="sms-container"><strong>SMS:</strong> <span id="plan-sms"></span></div>
+            </div>
+
+            <!-- OTT Benefits (Hidden by default) -->
+            <div class="details ott-details" id="ott-section" style="display: none;">
+                <h2>OTT Benefits</h2>
+                <div class="ott-container" id="ott-list"></div>
+            </div>
+
+            <!-- Terms & Conditions (Hidden by default) -->
+            <div class="details terms-details" id="terms-section" style="display: none;">
+                <h2>Terms & Conditions</h2>
+                <div class="terms-container" id="terms-list"></div>
+            </div>
         </div>
 
+        <!-- Buttons -->
         <div class="button-container">
+            <button id="downloadInvoice" class="btn-primary">Download Invoice</button>
             <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html">
                 <button class="btn-primary">View Recharge History</button>
             </a>
@@ -32,7 +63,8 @@
                 <button class="btn-secondary">Return to Home</button>
             </a>
         </div>
-
     </div>
+
+    <script src="./payment_success.js"></script>
 </body>
 </html>

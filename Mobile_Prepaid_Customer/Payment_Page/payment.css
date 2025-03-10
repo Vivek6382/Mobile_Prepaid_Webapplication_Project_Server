@@ -1,30 +1,8 @@
-/* Header Styling */
-.header_main {
-    display: flex;
-    justify-content: flex-start; /* Align logo to the left */
-    align-items: center;
-    padding: 1rem 5rem;
-    background-color: var(--primary-color);
-    border-bottom: 2px solid wheat /* Added border bottom */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-
-/* First Header Part (Logo) */
-.first_header_part h4 a {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--text-color);
-    font-style: italic;
-    text-decoration: none;
-}
-
-/* Styling for "MOBI" */
-.first_header_part h4 span {
-    color: orangered; /* Set MOBI to orangered */
-    font-weight: bold;
-    font-family: 'Poppins', sans-serif;
-}
-
-
 
 /* General Styles */
 body {
@@ -36,120 +14,239 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
     padding: 20px;
 }
 
-/* Payment Summary Section */
-.payment_summary_section {
-    margin-top: 50px; /* Fix to prevent cutting off */
-    text-align: center;
-    width: 100%;
+
+
+/* Header Styling */
+.header_main {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: space-between; /* Button on the left, logo centered */
+    padding: 10px; /* Adjusted padding */
+    background-color: var(--primary-color);
+    border-bottom: 2px solid wheat;
+    width: 100%;
+    box-sizing: border-box; /* Ensures padding doesn't increase width */
+    margin-bottom: 0;
 }
 
-/* Payment Summary Title */
-.payment-summary-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: orangered;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-}
-
-/* Card Container */
-.plan_card-container {
+/* First Header Part (Centered Logo) */
+.first_header_part {
+    flex-grow: 1;
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
     justify-content: center;
-    width: 500px;
 }
 
-/* Airtel Card */
-.vi_card {
-    width: 500px;
-    background: orangered;
+/* Logo Styling */
+.first_header_part h4 a {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    font-style: italic;
+    text-decoration: none;
+}
+
+/* Styling for "MOBI" */
+.first_header_part h4 span {
+    color: orangered;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Back Button Container (Left Side) */
+.back-button-container {
+    flex-shrink: 0;
+}
+
+/* Back Button Styling */
+.back-button {
+    background-color: black;
     color: white;
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    border: 3px solid orangered;
-    box-shadow: 0 5px 15px rgba(255, 69, 0, 0.5);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(255, 69, 0, 0.4);
 }
 
-/* Card Header */
-.card-header {
-    background-color: #2a2a2a;
-    padding: 18px;
-    text-align: left;
-    border-bottom: 2px solid orangered;
+.back-button:hover {
+    background-color: #333;
+    transform: scale(1.05);
+}
+
+/* Payment Container */
+.payment-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 30px;
+    width: 100%;
+    border: 1px solid red;
+}
+
+
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+h2 {
+    font-size: 1.6em;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-/* Plan Name */
-.plan-name {
-    font-size: 18px;
-    font-weight: bold;
+/* Payment Summary Box */
+.payment-summary {
+    background-color: #1E1E1E;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.3);
+    transition: all 0.3s ease-in-out;
 }
 
-/* Plan Price */
-.plan-price {
-    font-size: 18px;
+/* Payment Item Row */
+.payment-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #333;
+}
+
+.payment-item:last-child {
+    border-bottom: none;
+}
+
+.amount {
+    font-weight: bold;
     color: orangered;
+}
+
+/* Toggle Button */
+.toggle-btn {
+    background: orangered;
+    color: white;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
     font-weight: bold;
 }
 
-/* Card Content */
-.card-content {
-    padding: 18px;
-    background-color: #292929;
+.toggle-btn:hover {
+    background: #d84315;
 }
 
-/* Plan Details Table */
+
+
+/* Hidden Details Section */
 .plan-details {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #222;
+    border-radius: 10px;
+    transition: max-height 0.5s ease-in-out, opacity 0.3s;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden; /* Ensures it's truly hidden when collapsed */
+}
+
+.plan-details.show {
+    max-height: 800px;
+    opacity: 1;
+    padding: 20px;
+    visibility: visible;
+}
+
+
+/* Table for Plan Benefits */
+.plan-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 10px;
 }
 
-.plan-details td {
-    padding: 12px;
+.plan-table td {
+    padding: 10px;
     border-bottom: 1px solid #444;
-    color: white;
-    font-size: 15px;
 }
 
-.plan-details i {
-    color: orangered;
-    margin-right: 10px;
-}
-
-/* Card Footer */
-.card-footer {
-    background: orangered;
-    text-align: center;
-    padding: 18px;
-    border-top: 2px solid orangered;
-    transition: background 0.3s ease;
-}
-
-/* Footer Content */
-.footer-content {
-    font-size: 18px;
+.plan-table td:first-child {
     font-weight: bold;
 }
+
+/* OTT Logos Styling */
+.ott-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.ott {
+    background-color: #333;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ott img {
+    width: 50px;
+    height: auto;
+}
+
+/* Terms & Conditions */
+.terms {
+    margin-top: 15px;
+}
+
+.terms ul {
+    padding-left: 20px;
+}
+
+.terms li {
+    margin-bottom: 8px;
+}
+
+
+
+
+
+
+/* Payment Summary Section */
+.payment-summary {
+    flex: 1;
+    background: #1e1e1e;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.3);
+    width: 100%;
+    min-height: fit-content; /* Prevent unnecessary height expansion */
+}
+
 
 /* Payment Section */
 .payment-section {
-    max-width: 900px; /* Increased width */
-    width: 90%;
-    margin: 50px auto;
+    flex: 2; /* Takes more space than summary */
+    max-width: 900px;
+    width: 100%;
     padding: 40px;
     background: #181818;
     border-radius: 12px;
@@ -157,8 +254,6 @@ body {
     box-shadow: 0px 4px 10px rgba(255, 69, 0, 0.3);
     text-align: center;
 }
-
-
 
 
 
@@ -204,15 +299,16 @@ body {
     color: orangered;
 }
 
-/* Accordion Content */
 .accordion-content {
-    display: none;
-    padding: 10px;
+    max-height: 0;
+    padding: 0 10px;
     background: #1e1e1e;
     border-radius: 8px;
     margin-top: 5px;
     overflow: hidden;
+    transition: max-height 0.3s ease-in-out; /* Smooth transition */
 }
+
 
 /* UPI Options - Centered and Added Margin to All Except First */
 .upi-option {
@@ -310,4 +406,161 @@ body {
     .upi-option {
         width: 100%; /* Full width on smaller screens */
     }
+}
+
+
+
+
+
+
+
+
+/* UPI Overlay */
+/* UPI Overlay (Background Cover) */
+.upi-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+    display: none; /* Initially hidden */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Show Overlay */
+.upi-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Popup Container */
+.popup-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1e1e1e; /* Dark container background */
+    width: 400px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 25px rgba(255, 69, 0, 0.2);
+    color: #fff;
+    height: 370px;
+}
+
+/* Close Button */
+.close-link {
+    text-decoration: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Close Button Styling */
+.close-btn {
+    font-size: 24px;
+    color: #ff4500; /* Orangered theme */
+    cursor: pointer;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Popup Main Content */
+.pop-up-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+}
+
+/* Popup Header */
+.popup-header h1 {
+    font-size: 22px;
+    font-weight: 900;
+    color: #ff4500; /* Orangered theme */
+}
+
+.popup-header p {
+    font-size: 14px;
+    color: #c4c4c4;
+    margin-top: 5px;
+}
+
+/* Input Section */
+.input-section {
+    margin-top: 20px;
+}
+
+.input-section label {
+    font-size: 16px;
+    color: #fff;
+}
+
+.input-section input {
+    width: 90%;
+    padding: 10px;
+    margin-top: 8px;
+    background-color: #282828; /* Darker input background */
+    color: #fff;
+    border: 1px solid #ff4500;
+    border-radius: 6px;
+}
+
+/* Predefined UPI Options */
+.predefined-upi {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.predefined-upi .upi-option {
+    background-color: #ff4500;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.predefined-upi .upi-option:hover {
+    background-color: #e03d00;
+}
+
+/* Confirm and Pay Button */
+.verify-pay-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #ff4500;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    margin-top: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.verify-pay-btn:hover {
+    background-color: #e03d00;
+}
+
+/* Spacing Adjustments */
+.input-section,
+.predefined-upi {
+    margin-bottom: 15px;
 }

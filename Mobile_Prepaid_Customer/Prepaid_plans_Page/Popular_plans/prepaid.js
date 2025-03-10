@@ -559,6 +559,13 @@ document.addEventListener("DOMContentLoaded", () => {
     purchaseButton.addEventListener("click", function (event) {
         event.preventDefault(); // Prevent default action
 
+        // If currentCustomer exists, redirect immediately without validation
+        if (currentCustomer) {
+            window.location.href = "/Mobile_Prepaid_Customer/Payment_Page/payment.html";
+            return;
+        }
+
+        // If currentCustomer does not exist, validate phone number
         const phoneNumber = phoneInput.value.trim().replace(/\s+/g, ""); // Remove spaces
 
         if (validatePhoneNumber(phoneNumber)) {
@@ -733,6 +740,8 @@ function openPopup(card) {
 
 // Popular-Plans-Dynamically-Generate-cards
 
+// Popular-Plans-Dynamically-Generate-cards
+
 document.addEventListener("DOMContentLoaded", function () {
     const planCategories = document.querySelectorAll(".sidebar nav a");
     const container = document.querySelector(".plan_card-container");
@@ -772,7 +781,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (plan.sms) {
                 benefitsHTML += `<div class="benefit"><i class="fas fa-envelope"></i> ${plan.sms}</div>`;
             }
-            
 
             // Handle OTT benefits if available
             let ottHTML = "";
@@ -828,7 +836,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             `;
 
+            // Append card to container
             container.appendChild(card);
+
+            // ✅ Attach event listener to store JSON in sessionStorage when "Buy" button is clicked
+            const buyButton = card.querySelector(".buy-button");
+            buyButton.addEventListener("click", function () {
+                sessionStorage.setItem("currentPlan", JSON.stringify(plan));
+            });
+
+            // ✅ Attach event listener to store JSON in sessionStorage when arrow is clicked
+            const arrowButton = card.querySelector(".open-popup");
+            arrowButton.addEventListener("click", function () {
+                sessionStorage.setItem("currentPlan", JSON.stringify(plan));
+            });
         });
 
         // Dispatch event to notify that new cards are added
@@ -853,6 +874,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Load Default Category (Popular Plans)
     loadPlans("popular_plans");
 });
+
 
 
 

@@ -1452,3 +1452,158 @@ function generateRechargeInvoice(iconElement) {
 
 
 
+
+
+
+
+
+
+// Active-plan-Transaction-Dynamic-JS
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const planContainer = document.getElementById("Active_plans_section");
+    const transactionSection = document.getElementById("transaction_section");
+
+    // Get current customer from session storage
+    const currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer"));
+    const transactionData = JSON.parse(localStorage.getItem("transaction_details"));
+
+    if (!currentCustomer || !transactionData) {
+        displayNoActivePlans();
+        return;
+    }
+
+    const mobileNumber = currentCustomer.mobile;
+    const userTransactions = transactionData[mobileNumber] || [];
+
+    if (userTransactions.length === 0) {
+        displayNoActivePlans();
+        return;
+    }
+
+    // Find the oldest non-expired transaction
+    const today = new Date();
+    let activeTransaction = null;
+
+    userTransactions.forEach(transaction => {
+        const planEndDate = new Date(transaction.plan_end.split(" ").join("-"));
+        if (planEndDate >= today) {
+            if (!activeTransaction || new Date(transaction.purchased_on.split(" - ")[0]) < new Date(activeTransaction.purchased_on.split(" - ")[0])) {
+                activeTransaction = transaction;
+            }
+        }
+    });
+
+    if (!activeTransaction) {
+        displayNoActivePlans();
+        return;
+    }
+
+    // Fill Active Plan Details
+    const planDetails = activeTransaction.plan_details;
+    const cardContent = document.querySelector(".card-content");
+    document.querySelector(".plan-name").textContent = planDetails.planName || "Unknown Plan";
+    document.querySelector(".price").textContent = `₹${planDetails.price || 0}`;
+
+    cardContent.innerHTML = ""; // Clear existing benefits
+
+    addBenefit(cardContent, "fas fa-calendar-alt", `${planDetails.validity} Days`);
+    if (planDetails.dailyData) addBenefit(cardContent, "fas fa-tachometer-alt", planDetails.dailyData);
+    if (planDetails.voice) addBenefit(cardContent, "fas fa-phone-alt", planDetails.voice);
+    if (planDetails.totalData) addBenefit(cardContent, "fas fa-wifi", planDetails.totalData);
+    if (planDetails.sms) addBenefit(cardContent, "fas fa-envelope", planDetails.sms);
+
+    // Populate Terms & Conditions
+    const termsElement = document.querySelector(".terms-conditions");
+    termsElement.innerHTML = ""; // Clear previous terms
+
+    if (planDetails.terms && planDetails.terms.length > 0) {
+        planDetails.terms.forEach(term => {
+            const termItem = document.createElement("p");
+            termItem.textContent = `• ${term}`;
+            termsElement.appendChild(termItem);
+        });
+    } else {
+        termsElement.innerHTML = "<p>No specific terms & conditions available.</p>";
+    }
+
+    // Dynamic OTT Icons with "+N more" Fix
+    const ottTextElement = document.querySelector(".ott-text-data");
+    const ottIconsContainer = document.createElement("div");
+    ottIconsContainer.classList.add("ott-icons");
+
+    if (planDetails.ott && planDetails.ott.length > 0) {
+        ottTextElement.textContent = planDetails.ott.join(", ");
+        const ottClassMap = {
+            "Netflix": "netflix",
+            "Amazon Prime": "prime",
+            "Sony LIV": "sony",
+            "Sun NXT": "sun",
+            "Zee5": "zee5"
+        };
+
+        const ottLogos = {
+            "Netflix": "./assets/Netflix_Logo.svg",
+            "Amazon Prime": "./assets/Prime_Logo.svg",
+            "Sony LIV": "./assets/Sony_Logo.svg",
+            "Sun NXT": "./assets/Sun_nxt_Logo.svg",
+            "Zee5": "./assets/Zee5_Logo.svg"
+        };
+
+        let loadedIcons = 0;
+        planDetails.ott.forEach((ott, index) => {
+            if (index < 3) {
+                let icon = document.createElement("div");
+                icon.classList.add("icon", ottClassMap[ott] || "");
+
+                let img = document.createElement("img");
+                img.src = ottLogos[ott] || "";
+                img.alt = ott;
+
+                let fallbackText = document.createElement("span");
+                fallbackText.classList.add("fallback-icon");
+                fallbackText.innerText = ott.charAt(0).toUpperCase();
+
+                img.onerror = function () {
+                    img.remove();
+                    icon.appendChild(fallbackText);
+                };
+
+                icon.appendChild(img);
+                ottIconsContainer.appendChild(icon);
+                loadedIcons++;
+            }
+        });
+
+        // If there are more than 3 OTTs, display "+N more"
+        if (planDetails.ott.length > 3) {
+            const moreText = document.createElement("span");
+            moreText.classList.add("ott-more-text");
+            moreText.textContent = `+${planDetails.ott.length - 3} more`;
+            ottIconsContainer.appendChild(moreText);
+        }
+    }
+    cardContent.appendChild(ottIconsContainer);
+
+    // **Fix: Fetch Status, Plan Start Date, and Plan End Date**
+    document.getElementById("transaction-amount").textContent = `₹${activeTransaction.amount}`;
+    document.getElementById("transaction-date").textContent = activeTransaction.purchased_on;
+    document.getElementById("transaction-mode").textContent = activeTransaction.payment_mode;
+    document.getElementById("transaction-ref").textContent = activeTransaction.ref_number || "N/A";
+    document.getElementById("transaction-status").textContent = activeTransaction.status || "N/A"; // **Fix**
+    document.getElementById("transaction-start").textContent = activeTransaction.plan_start || "N/A"; // **Fix**
+    document.getElementById("transaction-end").textContent = activeTransaction.plan_end || "N/A"; // **Fix**
+
+    function addBenefit(container, iconClass, text) {
+        const benefitDiv = document.createElement("div");
+        benefitDiv.classList.add("benefit");
+        benefitDiv.innerHTML = `<i class="${iconClass}"></i> <span>${text}</span>`;
+        container.appendChild(benefitDiv);
+    }
+
+    function displayNoActivePlans() {
+        planContainer.innerHTML = `<h2 style="color: orangered; text-align: center;">No Active Plans or Transaction Details Available</h2>`;
+        transactionSection.style.display = "none";
+    }
+});
