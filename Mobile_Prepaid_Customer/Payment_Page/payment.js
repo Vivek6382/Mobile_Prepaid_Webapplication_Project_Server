@@ -90,190 +90,197 @@ function toggleDetails() {
 
 // Payment-Section-Accordion
 
-// Payment-Section-Accordion
 document.addEventListener("DOMContentLoaded", function () {
-    const accordionHeaders = document.querySelectorAll(".accordion-header");
-    const upiOptions = document.querySelectorAll("input[name='upi']");
-    const closeButton = document.querySelector(".close-link");
-    const upiInput = document.getElementById("upi-id");
-    const upiButtons = document.querySelectorAll(".upi-option");
-    const upiError = document.getElementById("upiError");
-    const upiForm = document.getElementById("upiForm");
+  const accordionHeaders = document.querySelectorAll(".accordion-header");
+  const upiOptions = document.querySelectorAll("input[name='upi']");
+  const closeButton = document.querySelector(".close-link");
+  const upiInput = document.getElementById("upi-id");
+  const upiButtons = document.querySelectorAll(".upi-option");
+  const upiError = document.getElementById("upiError");
+  const upiForm = document.getElementById("upiForm");
 
-    // ✅ UPI ID regex pattern
-    const upiPattern = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+  // ✅ UPI ID regex pattern
+  const upiPattern = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
 
-    // ✅ Accordion Toggle Function
-    function toggleAccordion(header) {
-        let content = header.nextElementSibling;
-        let icon = header.querySelector(".accordion-icon");
+  // ✅ Accordion Toggle Function
+  function toggleAccordion(header) {
+      let content = header.nextElementSibling;
+      let icon = header.querySelector(".accordion-icon");
 
-        document.querySelectorAll(".accordion-content").forEach((acc) => {
-            if (acc !== content) {
-                acc.style.maxHeight = "0";
-                acc.classList.remove("active");
-            }
-        });
+      document.querySelectorAll(".accordion-content").forEach((acc) => {
+          if (acc !== content) {
+              acc.style.maxHeight = "0";
+              acc.classList.remove("active");
+          }
+      });
 
-        document.querySelectorAll(".accordion-icon").forEach((ic) => {
-            if (ic !== icon) ic.textContent = "+";
-        });
+      document.querySelectorAll(".accordion-icon").forEach((ic) => {
+          if (ic !== icon) ic.textContent = "+";
+      });
 
-        if (content.classList.toggle("active")) {
-            content.style.maxHeight = content.scrollHeight + "px";
-            icon.textContent = "-";
-        } else {
-            content.style.maxHeight = "0";
-            icon.textContent = "+";
-        }
-    }
+      if (content.classList.toggle("active")) {
+          content.style.maxHeight = content.scrollHeight + "px";
+          icon.textContent = "-";
+      } else {
+          content.style.maxHeight = "0";
+          icon.textContent = "+";
+      }
+  }
 
-    // ✅ Attach accordion event listeners
-    accordionHeaders.forEach((header) => {
-        header.addEventListener("click", () => toggleAccordion(header));
-    });
+  // ✅ Attach accordion event listeners
+  accordionHeaders.forEach((header) => {
+      header.addEventListener("click", () => toggleAccordion(header));
+  });
 
-    // ✅ UPI Popup Functions
-    function showUpiPopup() {
-        let overlay = document.getElementById("upiOverlay");
-        if (overlay) overlay.classList.add("active");
+  // ✅ UPI Popup Functions
+  function showUpiPopup() {
+      let overlay = document.getElementById("upiOverlay");
+      if (overlay) overlay.classList.add("active");
 
-        if (upiInput) {
-            upiInput.value = "";
-            upiInput.placeholder = "Enter UPI ID";
-            upiError.innerHTML = "";
-        }
-    }
+      if (upiInput) {
+          upiInput.value = "";
+          upiInput.placeholder = "Enter UPI ID";
+          upiError.innerHTML = "";
+      }
+  }
 
-    function closeUpiPopup() {
-        let overlay = document.getElementById("upiOverlay");
-        if (overlay) overlay.classList.remove("active");
+  function closeUpiPopup() {
+      let overlay = document.getElementById("upiOverlay");
+      if (overlay) overlay.classList.remove("active");
 
-        if (upiInput) {
-            upiInput.value = "";
-            upiError.innerHTML = "";
-        }
+      if (upiInput) {
+          upiInput.value = "";
+          upiError.innerHTML = "";
+      }
 
-        document.querySelectorAll("input[name='upi']").forEach((radio) => {
-            radio.checked = false;
-        });
-    }
+      document.querySelectorAll("input[name='upi']").forEach((radio) => {
+          radio.checked = false;
+      });
+  }
 
-    // ✅ Append UPI suffix to input field
-    function appendUpi(upiSuffix) {
-        let currentValue = upiInput.value.trim();
+  // ✅ Append UPI suffix to input field
+  function appendUpi(upiSuffix) {
+      let currentValue = upiInput.value.trim();
 
-        if (currentValue.length === 0) return;
+      if (currentValue.length === 0) return;
 
-        currentValue = currentValue.replace(/@\w+$/, "");
-        upiInput.value = currentValue + upiSuffix;
-        upiInput.focus();
+      currentValue = currentValue.replace(/@\w+$/, "");
+      upiInput.value = currentValue + upiSuffix;
+      upiInput.focus();
 
-        validateUpiForm(upiInput.value.trim());
-    }
+      validateUpiForm(upiInput.value.trim());
+  }
 
-    upiOptions.forEach((option) => {
-        option.addEventListener("click", function () {
-            if (this.checked) showUpiPopup(this.value);
-        });
-    });
+  upiOptions.forEach((option) => {
+      option.addEventListener("click", function () {
+          if (this.checked) showUpiPopup(this.value);
+      });
+  });
 
-    if (closeButton) {
-        closeButton.addEventListener("click", closeUpiPopup);
-    }
+  if (closeButton) {
+      closeButton.addEventListener("click", closeUpiPopup);
+  }
 
-    upiButtons.forEach((button) => {
-        button.addEventListener("click", function () {
-            appendUpi(this.textContent.trim());
-        });
-    });
+  upiButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+          appendUpi(this.textContent.trim());
+      });
+  });
 
-    // ✅ UPI ID Validation on Form Submission
-    upiForm.addEventListener("submit", function (event) {
-        let upiValue = upiInput.value.trim();
+  // ✅ UPI ID Validation on Form Submission
+  upiForm.addEventListener("submit", function (event) {
+      let upiValue = upiInput.value.trim();
 
-        if (!validateUpiForm(upiValue)) {
-            event.preventDefault();
-            return;
-        }
+      if (!validateUpiForm(upiValue)) {
+          event.preventDefault();
+          return;
+      }
 
-        // ✅ Proceed with storing transaction details if form is valid
-        storeTransactionDetails("UPI");
-    });
+      // ✅ Proceed with storing transaction details if form is valid
+      storeTransactionDetails("UPI");
+  });
 
-    // ✅ Validation on Input (Error Appears as User Types)
-    upiInput.addEventListener("input", function () {
-        validateUpiForm(upiInput.value.trim());
-    });
+  // ✅ Validation on Input (Error Appears as User Types)
+  upiInput.addEventListener("input", function () {
+      validateUpiForm(upiInput.value.trim());
+  });
 
-    function validateUpiForm(upiValue) {
-        let isValid = true;
+  function validateUpiForm(upiValue) {
+      let isValid = true;
 
-        if (upiValue === "") {
-            upiError.innerHTML = "<strong>⚠️ UPI ID is required.</strong>";
-            upiError.style.color = "red";
-            isValid = false;
-        } else if (!upiPattern.test(upiValue)) {
-            upiError.innerHTML = "<strong>❌ Enter a valid UPI ID (example: name@upi).</strong>";
-            upiError.style.color = "red";
-            isValid = false;
-        } else {
-            upiError.innerHTML = "<strong>✅ Looks good!</strong>";
-            upiError.style.color = "green";
-        }
+      if (upiValue === "") {
+          upiError.innerHTML = "<strong>⚠️ UPI ID is required.</strong>";
+          upiError.style.color = "red";
+          isValid = false;
+      } else if (!upiPattern.test(upiValue)) {
+          upiError.innerHTML = "<strong>❌ Enter a valid UPI ID (example: name@upi).</strong>";
+          upiError.style.color = "red";
+          isValid = false;
+      } else {
+          upiError.innerHTML = "<strong>✅ Looks good!</strong>";
+          upiError.style.color = "green";
+      }
 
-        return isValid;
-    }
+      return isValid;
+  }
 
-    // ✅ Store Transaction Details (UPI or Card) in localStorage per user
-    function storeTransactionDetails(paymentMode) {
-        let currentPlan = JSON.parse(sessionStorage.getItem("currentPlan"));
-        let currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer"));
+  // ✅ Store Transaction Details (UPI or Card) in the backend
+  function storeTransactionDetails(paymentMode) {
+      let currentPlan = JSON.parse(sessionStorage.getItem("currentPlan"));
+      let currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer"));
 
-        if (!currentCustomer || !currentCustomer.mobile) {
-            console.error("No current customer found.");
-            return;
-        }
+      if (!currentCustomer || !currentCustomer.userId) {
+          console.error("No current customer found.");
+          return;
+      }
 
-        let userMobile = currentCustomer.mobile;
+      let userId = currentCustomer.userId;
+      let userMobile = currentCustomer.mobile;
 
-        let now = new Date();
-        let purchaseDate = now.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) +
-            " - " + now.toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: true });
+      let now = new Date();
+      let purchaseDate = now.toISOString(); // Corrected format for timestamp
 
-        let startDate = now.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+      let startDate = now.toISOString(); // Corrected format for start date
 
-        let endDate = new Date();
-        endDate.setDate(now.getDate() + currentPlan.validity);
-        let planEndDate = endDate.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+      let endDate = new Date();
+      endDate.setDate(now.getDate() + currentPlan.validity);
+      let planEndDate = endDate.toISOString(); // Corrected format for end date
 
-        let transactionId = Math.floor(100000000000 + Math.random() * 900000000000).toString();
+      let transactionId = "TXN" + Math.floor(100000000000 + Math.random() * 900000000000).toString();
 
-        let transactionDetails = {
-            amount: currentPlan.price,
-            status: "Successful",
-            purchased_on: purchaseDate,
-            payment_mode: paymentMode,
-            ref_number: transactionId,
-            plan_start: startDate,
-            plan_end: planEndDate,
-            plan_details: currentPlan
-        };
+      let transactionDetails = {
+          amount: currentPlan.price,
+          transactionStatus: "SUCCESSFUL",
+          planStatus: "ACTIVE",
+          purchasedOn: purchaseDate,
+          paymentMode: paymentMode,
+          refNumber: transactionId,
+          planStart: startDate,
+          planEnd: planEndDate,
+          user: {
+              userId: userId
+          },
+          plan: {
+              planId: currentPlan.planId
+          }
+      };
 
-        // ✅ Store the latest transaction in sessionStorage for pop-up display
-        sessionStorage.setItem("currentTransaction", JSON.stringify(transactionDetails));
-
-        // ✅ Fetch existing transactions from localStorage
-        let transactionsData = JSON.parse(localStorage.getItem("transaction_details")) || {};
-
-        // ✅ If user already has transactions, append, else create new array
-        if (!transactionsData[userMobile]) {
-            transactionsData[userMobile] = [];
-        }
-
-        transactionsData[userMobile].push(transactionDetails);
-
-        // ✅ Update localStorage
-        localStorage.setItem("transaction_details", JSON.stringify(transactionsData));
-    }
+      // ✅ Send the transaction details to the backend using Fetch API
+      fetch("http://localhost:8083/api/transactions", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify(transactionDetails),
+      })
+      .then((response) => response.json())
+      .then((data) => {
+          console.log("Transaction stored successfully:", data);
+          // ✅ Store the latest transaction in sessionStorage for pop-up display
+          sessionStorage.setItem("currentTransaction", JSON.stringify(transactionDetails));
+      })
+      .catch((error) => {
+          console.error("Error storing transaction:", error);
+      });
+  }
 });

@@ -3,145 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Summary</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1D1E25;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
-
-        h2 {
-            font-size: 1.5em;
-        }
-
-        .payment-summary {
-            background-color: #2A2B35;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .payment-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #444;
-        }
-
-        .payment-item:last-child {
-            border-bottom: none;
-        }
-
-        .amount {
-            font-weight: bold;
-        }
-
-        .toggle-btn {
-            color: #008CFF;
-            cursor: pointer;
-            display: inline-block;
-            margin-top: 10px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .plan-details {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #333;
-            border-radius: 5px;
-        }
-
-        .ott-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .ott {
-            background-color: #444;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-    </style>
+    <title>Document</title>
 </head>
 <body>
-    <div class="container">
-        <div class="payment-summary">
-            <h2>Payment Summary <span class="toggle-btn" onclick="toggleDetails()">+ View Details</span></h2>
-            <p>This is the plan details and the total amount</p>
+    
+    <aside class="sidebar">
 
-            <div class="payment-item">
-                <span>Plan Name</span>
-                <span class="amount">SILVER 799</span>
-            </div>
-            <div class="payment-item">
-                <span>Price</span>
-                <span class="amount">₹799/month</span>
-            </div>
-            <div class="payment-item">
-                <span>Validity</span>
-                <span class="amount">90 Days</span>
-            </div>
-            <div class="payment-item">
-                <span>Total Amount</span>
-                <span class="amount">₹1,20,020.00</span>
-            </div>
+        <h2>Plan Categories</h2>
+        <nav>
+            <a href="popular.html" data-category="popular_plans" class="active">Popular Plans</a>
+            <a href="true-5g.html" data-category="true-5g">True 5G Unlimited Plans</a>
+            <!-- <a href="true-unlimited.html"  data-category="true_unlimited_upgarde">True Unlimited Upgrade</a> -->
+            <a href="entertainment.html" data-category="entertainment_plans">Entertainment Plans</a>
+            <!-- <a href="data-booster.html">Data Booster</a> -->
+            <a href="annual.html" data-category="annual_plans">Annual Plans</a>
+            <!-- <a href="international.html">International Roaming</a> -->
+            <!-- <a href="isd.html">ISD</a> -->
+            <!-- <a href="in-flight.html">In-Flight Packs</a> -->
+            <!-- <a href="top-up.html">Top-up</a> -->
+            <a href="value.html" data-category="value-packs">Value Packs</a>
+            <a href="data.html" data-category="data_packs">Data Packs</a>
+            <a href="individual.html" data-category="individual_plans">Individual Plans</a>
+            <a href="cricket.html" data-category="cricket_plans">Cricket Plans</a>
+        </nav>
+    </aside>
 
-            <div class="plan-details hidden" id="planDetails">
-                <h3>Plan Benefits</h3>
-                <div class="payment-item">
-                    <span>Daily Data</span>
-                    <span class="amount">2.5 GB/Day</span>
-                </div>
-                <div class="payment-item">
-                    <span>Total Data</span>
-                    <span class="amount">50 GB</span>
-                </div>
-                <div class="payment-item">
-                    <span>Voice</span>
-                    <span class="amount">Unlimited Calls</span>
-                </div>
-                <div class="payment-item">
-                    <span>SMS</span>
-                    <span class="amount">1500 SMS/Month</span>
-                </div>
-                <h3>OTT Benefits</h3>
-                <div class="ott-list">
-                    <div class="ott">Netflix</div>
-                    <div class="ott">Amazon Prime</div>
-                    <div class="ott">Sony LIV</div>
-                    <div class="ott">Sun NXT</div>
-                    <div class="ott">Zee5</div>
-                </div>
-
-                <h3>Terms & Conditions</h3>
-                <ul>
-                    <li>Post daily 100 SMS limit charging: ₹1 Local | ₹1.5 STD per SMS</li>
-                    <li>Data Tariff post quota completion: ₹0.50/MB</li>
-                    <li>Post daily quota usage data speed will be up to 64Kbps</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function toggleDetails() {
-            const details = document.getElementById("planDetails");
-            details.classList.toggle("hidden");
-        }
-    </script>
+    
 </body>
+
+<script>
+    // Popular-Plans-Dynamically-Generate-cards
+
+document.addEventListener("DOMContentLoaded", function () {
+    const planCategories = document.querySelectorAll(".sidebar nav a");
+    const container = document.querySelector(".plan_card-container");
+
+    // Function to Load JSON Data Dynamically
+    function loadPlans(category) {
+        fetch(`./Prepaid_plans_json/${category}.json`) // ✅ Corrected Fetch Path
+            .then(response => response.json())
+            .then(plans => {
+                generatePlans(plans); // Generate cards dynamically for all categories
+            })
+            .catch(error => console.error(`Error loading ${category}.json:`, error));
+    }
+
+    // Function to Generate Plan Cards (Handles Missing Data)
+    function generatePlans(plans) {
+        container.innerHTML = ""; // Clear previous content
+
+        plans.forEach(plan => {
+            const card = document.createElement("div");
+            card.classList.add("vi_card");
+
+            let benefitsHTML = "";
+
+            if (plan.validity) {
+                benefitsHTML += `<div class="benefit"><i class="fas fa-calendar-alt"></i> ${plan.validity} Days</div>`;
+            }
+            if (plan.dailyData) {
+                benefitsHTML += `<div class="benefit"><i class="fas fa-tachometer-alt"></i> ${plan.dailyData}</div>`;
+            }
+            if (plan.voice) {
+                benefitsHTML += `<div class="benefit"><i class="fas fa-phone-alt"></i> ${plan.voice}</div>`;
+            }
+            if (plan.totalData) {
+                benefitsHTML += `<div class="benefit"><i class="fas fa-wifi"></i> ${plan.totalData}</div>`;
+            }
+            if (plan.sms) {
+                benefitsHTML += `<div class="benefit"><i class="fas fa-envelope"></i> ${plan.sms}</div>`;
+            }
+
+            // Handle OTT benefits if available
+            let ottHTML = "";
+            if (plan.ott && plan.ott.length > 0) {
+                ottHTML = `
+                    <div class="ott-text-data" style="display: none;">
+                        ${plan.ott.join(", ")}
+                    </div>
+
+                    <div class="ott-description-data" style="display: none;">
+                        ${plan.ott.map(ott => `
+                            <div data-ott="${ott}">Enjoy ${ott}'s premium content.</div>
+                        `).join("")}
+                    </div>
+
+                    <!-- OTT Icons -->
+                    <div class="ott-icons"></div>
+                    <div class="more-ott"></div>
+                `;
+            }
+
+            // Handle Terms & Conditions
+            let termsHTML = "";
+            if (plan.terms && plan.terms.length > 0) {
+                termsHTML = `
+                    <div class="terms-conditions" style="display: none;">
+                        ${plan.terms.map(term => `<p>${term}</p>`).join("")}
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-title-price">
+                        <div class="plan-name">${plan.planName}</div>
+                        <div class="price">₹${plan.price}/month</div>
+                    </div>
+                    <div class="card-view-details">
+                        <i class="fa-solid fa-arrow-right open-popup"></i>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    ${benefitsHTML}  <!-- Only display available benefits -->
+                    ${ottHTML}        <!-- OTT Section Added Here ✅ -->
+                    ${termsHTML}      <!-- Show Terms & Conditions if available -->
+                </div>
+
+                <div class="card-footer">
+                    <a href="/Mobile_Prepaid_Customer/Payment_Page/payment.html" class="buy-link">
+                        <button class="buy-button">Buy Now</button>
+                    </a>
+                </div>
+            `;
+
+            // Append card to container
+            container.appendChild(card);
+
+            // ✅ Attach event listener to store JSON in sessionStorage when "Buy" button is clicked
+            const buyButton = card.querySelector(".buy-button");
+            buyButton.addEventListener("click", function () {
+                sessionStorage.setItem("currentPlan", JSON.stringify(plan));
+            });
+
+            // ✅ Attach event listener to store JSON in sessionStorage when arrow is clicked
+            const arrowButton = card.querySelector(".open-popup");
+            arrowButton.addEventListener("click", function () {
+                sessionStorage.setItem("currentPlan", JSON.stringify(plan));
+            });
+        });
+
+        // Dispatch event to notify that new cards are added
+        document.dispatchEvent(new Event("cardsUpdated"));
+    }
+
+    // Handle Category Clicks
+    planCategories.forEach(category => {
+        category.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            // Remove active class from all links and add to the clicked one
+            planCategories.forEach(cat => cat.classList.remove("active"));
+            this.classList.add("active");
+
+            // Load corresponding JSON file
+            const selectedCategory = this.getAttribute("data-category");
+            loadPlans(selectedCategory);
+        });
+    });
+
+    // Load Default Category (Popular Plans)
+    loadPlans("popular_plans");
+});
+
+
+</script>
 </html>

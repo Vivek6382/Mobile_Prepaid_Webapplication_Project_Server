@@ -85,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Update-pop-up-JS
 
-// Update-pop-up-JS
 document.addEventListener("DOMContentLoaded", function () {
     const updatePopup = document.getElementById("update-popup");
     const updateCustomerBtn = document.getElementById("update-customer");
@@ -99,6 +98,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const subscriptionEndInput = document.getElementById("update-subscription-end");
     const billingAmountInput = document.getElementById("update-billing-amount");
     const lastPaymentInput = document.getElementById("update-last-payment");
+
+    const emailErrorSpan = document.getElementById("email-error");
 
     let currentCard = null;
 
@@ -126,20 +127,21 @@ document.addEventListener("DOMContentLoaded", function () {
         const lastPayment = currentCard.querySelector(".last_payment");
 
         if (currentCard.classList.contains("expired")) {
-            statusSelect.value = "red"; // Expired
+            statusSelect.value = "red";
         } else if (currentCard.classList.contains("expires-soon")) {
-            statusSelect.value = "yellow"; // Expires Soon
+            statusSelect.value = "yellow";
         } else if (currentCard.classList.contains("active")) {
-            statusSelect.value = "green"; // Active
+            statusSelect.value = "green";
         }
 
         customerMobileInput.value = customerMobile.textContent;
         customerNameInput.value = customerName.textContent;
         customerEmailInput.value = customerEmail ? customerEmail.textContent : "";
-        subscriptionStartInput.value = subscriptionStart ? subscriptionStart.textContent.replace("Start: ", "") : "";
-        subscriptionEndInput.value = subscriptionEnd ? subscriptionEnd.textContent.replace("End: ", "") : "";
+        subscriptionStartInput.value = subscriptionStart ? subscriptionStart.textContent.split(": ").pop() : "";
+        subscriptionEndInput.value = subscriptionEnd ? subscriptionEnd.textContent.split(": ").pop() : "";
+        lastPaymentInput.value = lastPayment ? lastPayment.textContent.split(": ").pop() : "";        
         billingAmountInput.value = billingAmount ? billingAmount.textContent.replace("₹", "") : "";
-        lastPaymentInput.value = lastPayment ? lastPayment.textContent.replace("Last Payment: ", "") : "";
+      
 
         updatePopup.style.display = "flex";
     }
@@ -149,16 +151,22 @@ document.addEventListener("DOMContentLoaded", function () {
         currentCard = null;
     });
 
+    // Email Validation on Input
+    customerEmailInput.addEventListener("input", function () {
+        const email = customerEmailInput.value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            emailErrorSpan.textContent = "Please enter a valid email address.";
+            emailErrorSpan.style.color = "red";
+        } else {
+            emailErrorSpan.textContent = "";
+        }
+    });
+
     updateCustomerBtn.addEventListener("click", function () {
         if (currentCard) {
             const statusDot = currentCard.querySelector(".status-dot");
-            const customerMobile = currentCard.querySelector(".customer_mobile");
-            const customerName = currentCard.querySelector(".customer_name");
-            const customerEmail = currentCard.querySelector(".customer_email");
-            const subscriptionStart = currentCard.querySelector(".subscription_start");
-            const subscriptionEnd = currentCard.querySelector(".subscription_end");
-            const billingAmount = currentCard.querySelector(".billing_amount");
-            const lastPayment = currentCard.querySelector(".last_payment");
 
             // Remove old status classes
             currentCard.classList.remove("expired", "expires-soon", "active");
@@ -182,16 +190,34 @@ document.addEventListener("DOMContentLoaded", function () {
             // Update tooltip text dynamically
             statusDot.setAttribute("data-tooltip", tooltipText);
 
-            customerMobile.textContent = customerMobileInput.value;
-            customerName.textContent = customerNameInput.value;
-            if (customerEmail) customerEmail.textContent = customerEmailInput.value;
-            if (subscriptionStart) subscriptionStart.textContent = "Start: " + subscriptionStartInput.value;
-            if (subscriptionEnd) subscriptionEnd.textContent = "End: " + subscriptionEndInput.value;
-            if (billingAmount) billingAmount.textContent = "₹" + billingAmountInput.value;
-            if (lastPayment) lastPayment.textContent = "Last Payment: " + lastPaymentInput.value;
+            if (customerEmailInput.value.trim() !== "") {
+                updateEmail(customerEmailInput.value);
+            }
         }
         updatePopup.style.display = "none";
     });
+
+    function updateEmail(newEmail) {
+        fetch("http://localhost:8083/api/users/1/email", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: newEmail }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to update email.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Email updated successfully:", data);
+            })
+            .catch(error => {
+                console.error("Error updating email:", error);
+            });
+    }
 });
 
 
@@ -201,167 +227,167 @@ document.addEventListener("DOMContentLoaded", function () {
 // Add-pop-up-js
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    const addPopup = document.getElementById("add-popup");
-    const addCustomerBtn = document.getElementById("add-customer-btn");
-    const cancelAddBtn = document.getElementById("cancel-add");
-    const addButton = document.querySelector(".outline-button:nth-child(1)");
+// document.addEventListener("DOMContentLoaded", function () {
+//     const addPopup = document.getElementById("add-popup");
+//     const addCustomerBtn = document.getElementById("add-customer-btn");
+//     const cancelAddBtn = document.getElementById("cancel-add");
+//     const addButton = document.querySelector(".outline-button:nth-child(1)");
 
-    // Get input fields
-    const statusSelect = document.getElementById("add-status-dot");
-    const customerMobileInput = document.getElementById("add-customer-mobile");
-    const customerNameInput = document.getElementById("add-customer-name");
-    const customerPlanInput = document.getElementById("add-customer-plan");
-    const customerEmailInput = document.getElementById("add-customer-email");
-    const subscriptionStartInput = document.getElementById("add-subscription-start");
-    const subscriptionEndInput = document.getElementById("add-subscription-end");
-    const billingAmountInput = document.getElementById("add-billing-amount");
-    const lastPaymentInput = document.getElementById("add-last-payment");
+//     // Get input fields
+//     const statusSelect = document.getElementById("add-status-dot");
+//     const customerMobileInput = document.getElementById("add-customer-mobile");
+//     const customerNameInput = document.getElementById("add-customer-name");
+//     const customerPlanInput = document.getElementById("add-customer-plan");
+//     const customerEmailInput = document.getElementById("add-customer-email");
+//     const subscriptionStartInput = document.getElementById("add-subscription-start");
+//     const subscriptionEndInput = document.getElementById("add-subscription-end");
+//     const billingAmountInput = document.getElementById("add-billing-amount");
+//     const lastPaymentInput = document.getElementById("add-last-payment");
 
-    const cardsContainer = document.querySelector(".cust_manage_cards_container");
+//     const cardsContainer = document.querySelector(".cust_manage_cards_container");
 
-    // Open Add Pop-up
-    addButton.addEventListener("click", function () {
-        addPopup.style.display = "flex";
-    });
+//     // Open Add Pop-up
+//     addButton.addEventListener("click", function () {
+//         addPopup.style.display = "flex";
+//     });
 
-    // Close Add Pop-up
-    cancelAddBtn.addEventListener("click", function () {
-        addPopup.style.display = "none";
-    });
+//     // Close Add Pop-up
+//     cancelAddBtn.addEventListener("click", function () {
+//         addPopup.style.display = "none";
+//     });
 
-    // Function to attach tooltip events
-    function attachTooltipEvents() {
-        document.querySelectorAll(".status-dot").forEach(dot => {
-            dot.addEventListener("mouseenter", function () {
-                let tooltip = document.createElement("div");
-                tooltip.classList.add("dynamic-tooltip");
-                tooltip.innerText = this.getAttribute("data-tooltip");
+//     // Function to attach tooltip events
+//     function attachTooltipEvents() {
+//         document.querySelectorAll(".status-dot").forEach(dot => {
+//             dot.addEventListener("mouseenter", function () {
+//                 let tooltip = document.createElement("div");
+//                 tooltip.classList.add("dynamic-tooltip");
+//                 tooltip.innerText = this.getAttribute("data-tooltip");
 
-                document.body.appendChild(tooltip);
+//                 document.body.appendChild(tooltip);
 
-                let rect = this.getBoundingClientRect();
-                tooltip.style.left = `${rect.left + rect.width / 2}px`;
-                tooltip.style.top = `${rect.top - 30}px`; // Position above the dot
-                tooltip.style.visibility = "visible";
-                tooltip.style.opacity = "1";
-            });
+//                 let rect = this.getBoundingClientRect();
+//                 tooltip.style.left = `${rect.left + rect.width / 2}px`;
+//                 tooltip.style.top = `${rect.top - 30}px`; // Position above the dot
+//                 tooltip.style.visibility = "visible";
+//                 tooltip.style.opacity = "1";
+//             });
 
-            dot.addEventListener("mouseleave", function () {
-                document.querySelectorAll(".dynamic-tooltip").forEach(tip => tip.remove());
-            });
-        });
-    }
+//             dot.addEventListener("mouseleave", function () {
+//                 document.querySelectorAll(".dynamic-tooltip").forEach(tip => tip.remove());
+//             });
+//         });
+//     }
 
     
 
-    // Add Customer Card
-    addCustomerBtn.addEventListener("click", function () {
-        const mobileNumber = customerMobileInput.value.trim();
-        const customerName = customerNameInput.value.trim();
-        const customerPlan = customerPlanInput.value.trim();
-        const customerEmail = customerEmailInput.value.trim();
-        const subscriptionStart = subscriptionStartInput.value.trim();
-        const subscriptionEnd = subscriptionEndInput.value.trim();
-        const billingAmount = billingAmountInput.value.trim();
-        const lastPayment = lastPaymentInput.value.trim();
-        const status = statusSelect.value;
+//     // Add Customer Card
+//     addCustomerBtn.addEventListener("click", function () {
+//         const mobileNumber = customerMobileInput.value.trim();
+//         const customerName = customerNameInput.value.trim();
+//         const customerPlan = customerPlanInput.value.trim();
+//         const customerEmail = customerEmailInput.value.trim();
+//         const subscriptionStart = subscriptionStartInput.value.trim();
+//         const subscriptionEnd = subscriptionEndInput.value.trim();
+//         const billingAmount = billingAmountInput.value.trim();
+//         const lastPayment = lastPaymentInput.value.trim();
+//         const status = statusSelect.value;
 
-        if (!mobileNumber || !customerName || !customerPlan || !customerEmail || !subscriptionStart || !subscriptionEnd || !billingAmount || !lastPayment) {
-            alert("Please fill in all fields.");
-            return;
-        }
+//         if (!mobileNumber || !customerName || !customerPlan || !customerEmail || !subscriptionStart || !subscriptionEnd || !billingAmount || !lastPayment) {
+//             alert("Please fill in all fields.");
+//             return;
+//         }
 
-        // Determine tooltip text based on selected status
-        let tooltipText = status === "red" ? "Expired" : status === "yellow" ? "Expires Soon" : "Active";
+//         // Determine tooltip text based on selected status
+//         let tooltipText = status === "red" ? "Expired" : status === "yellow" ? "Expires Soon" : "Active";
 
-        // Create a new customer card
-        const newCard = document.createElement("div");
-        newCard.classList.add("cust_manage_card", "all-category"); // Always in "All" category
+//         // Create a new customer card
+//         const newCard = document.createElement("div");
+//         newCard.classList.add("cust_manage_card", "all-category"); // Always in "All" category
 
-        if (status === "red") {
-            newCard.classList.add("expired");
-        } else if (status === "yellow") {
-            newCard.classList.add("expires-soon");
-        } else {
-            newCard.classList.add("active");
-        }
+//         if (status === "red") {
+//             newCard.classList.add("expired");
+//         } else if (status === "yellow") {
+//             newCard.classList.add("expires-soon");
+//         } else {
+//             newCard.classList.add("active");
+//         }
 
-        newCard.innerHTML = `
-            <!-- Bulk Checkboxes -->
-            <input type="checkbox" class="bulk-delete-checkbox">
-            <input type="checkbox" class="bulk-update-checkbox">
+//         newCard.innerHTML = `
+//             <!-- Bulk Checkboxes -->
+//             <input type="checkbox" class="bulk-delete-checkbox">
+//             <input type="checkbox" class="bulk-update-checkbox">
 
-            <!-- Delete Icon -->
-            <i class="fa-solid fa-xmark delete-icon"></i>
+//             <!-- Delete Icon -->
+//             <i class="fa-solid fa-xmark delete-icon"></i>
 
-            <!-- Status Dot -->
-            <div class="dot_div">
-                <span class="status-dot" style="background-color: ${status};" data-tooltip="${tooltipText}"></span>
-            </div>
+//             <!-- Status Dot -->
+//             <div class="dot_div">
+//                 <span class="status-dot" style="background-color: ${status};" data-tooltip="${tooltipText}"></span>
+//             </div>
 
-            <!-- Customer Details -->
-            <div class="customer_info">
+//             <!-- Customer Details -->
+//             <div class="customer_info">
 
-                <!-- Always Visible -->
-                <div class="customer_mobile_div">
-                    <span class="customer_mobile">${mobileNumber}</span>
-                </div>
-                <div class="customer_name_div">
-                    <span class="customer_name">${customerName}</span>
-                </div>
-                <div class="customer_plan_div">
-                    <span class="customer_plan">${customerPlan}</span>
-                </div>
+//                 <!-- Always Visible -->
+//                 <div class="customer_mobile_div">
+//                     <span class="customer_mobile">${mobileNumber}</span>
+//                 </div>
+//                 <div class="customer_name_div">
+//                     <span class="customer_name">${customerName}</span>
+//                 </div>
+//                 <div class="customer_plan_div">
+//                     <span class="customer_plan">${customerPlan}</span>
+//                 </div>
 
-                <!-- Hidden Details -->
-                <div class="customer_email_div hidden-details">
-                    <span class="customer_email">${customerEmail}</span>
-                </div>
-                <div class="subscription_start_div hidden-details">
-                    <span class="subscription_start">Start: ${subscriptionStart}</span>
-                </div>
-                <div class="subscription_end_div hidden-details">
-                    <span class="subscription_end">End: ${subscriptionEnd}</span>
-                </div>
-                <div class="billing_amount_div hidden-details">
-                    <span class="billing_amount">₹${billingAmount}</span>
-                </div>
-                <div class="last_payment_div hidden-details">
-                    <span class="last_payment">Last Payment: ${lastPayment}</span>
-                </div>
-            </div>
+//                 <!-- Hidden Details -->
+//                 <div class="customer_email_div hidden-details">
+//                     <span class="customer_email">${customerEmail}</span>
+//                 </div>
+//                 <div class="subscription_start_div hidden-details">
+//                     <span class="subscription_start">Start: ${subscriptionStart}</span>
+//                 </div>
+//                 <div class="subscription_end_div hidden-details">
+//                     <span class="subscription_end">End: ${subscriptionEnd}</span>
+//                 </div>
+//                 <div class="billing_amount_div hidden-details">
+//                     <span class="billing_amount">₹${billingAmount}</span>
+//                 </div>
+//                 <div class="last_payment_div hidden-details">
+//                     <span class="last_payment">Last Payment: ${lastPayment}</span>
+//                 </div>
+//             </div>
 
-            <!-- Card Footer -->
-            <div class="cust_card_footer">
-                <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
-                <i class="fa-solid fa-pen-to-square edit-icon"></i>
-            </div>
-        `;
+//             <!-- Card Footer -->
+//             <div class="cust_card_footer">
+//                 <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+//                 <i class="fa-solid fa-pen-to-square edit-icon"></i>
+//             </div>
+//         `;
 
-        // Append to container
-        cardsContainer.appendChild(newCard);
+//         // Append to container
+//         cardsContainer.appendChild(newCard);
 
-        // Re-apply event listeners to all status dots
-        attachTooltipEvents();
+//         // Re-apply event listeners to all status dots
+//         attachTooltipEvents();
 
-        // Clear input fields
-        customerMobileInput.value = "";
-        customerNameInput.value = "";
-        customerPlanInput.value = "";
-        customerEmailInput.value = "";
-        subscriptionStartInput.value = "";
-        subscriptionEndInput.value = "";
-        billingAmountInput.value = "";
-        lastPaymentInput.value = "";
+//         // Clear input fields
+//         customerMobileInput.value = "";
+//         customerNameInput.value = "";
+//         customerPlanInput.value = "";
+//         customerEmailInput.value = "";
+//         subscriptionStartInput.value = "";
+//         subscriptionEndInput.value = "";
+//         billingAmountInput.value = "";
+//         lastPaymentInput.value = "";
 
-        // Close pop-up
-        addPopup.style.display = "none";
-    });
+//         // Close pop-up
+//         addPopup.style.display = "none";
+//     });
 
-    // Attach event listeners on page load
-    attachTooltipEvents();
-});
+//     // Attach event listeners on page load
+//     attachTooltipEvents();
+// });
 
 
 
@@ -464,147 +490,147 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Bulk-Update-Delete-Js
 
-document.addEventListener("DOMContentLoaded", function () {
-    let activeMode = null; // Tracks if delete or update is active
+// document.addEventListener("DOMContentLoaded", function () {
+//     let activeMode = null; // Tracks if delete or update is active
 
-    /** ---------------- BULK DELETE ---------------- **/
-    const deleteButton = document.querySelector(".delete-action");
-    const deleteCheckboxes = document.querySelectorAll(".bulk-delete-checkbox");
-    const bulkDeletePanel = document.querySelector(".bulk-delete-panel");
-    const deleteSelectedButton = document.querySelector(".delete-selected");
-    const cancelDeleteButton = document.querySelector(".cancel-action");
+//     /** ---------------- BULK DELETE ---------------- **/
+//     const deleteButton = document.querySelector(".delete-action");
+//     const deleteCheckboxes = document.querySelectorAll(".bulk-delete-checkbox");
+//     const bulkDeletePanel = document.querySelector(".bulk-delete-panel");
+//     const deleteSelectedButton = document.querySelector(".delete-selected");
+//     const cancelDeleteButton = document.querySelector(".cancel-action");
 
-    deleteButton.addEventListener("click", function () {
-        if (activeMode === "update") return; // Prevent action if update is active
+//     deleteButton.addEventListener("click", function () {
+//         if (activeMode === "update") return; // Prevent action if update is active
 
-        activeMode = "delete"; // Set delete mode active
-        deleteCheckboxes.forEach(checkbox => checkbox.style.display = "inline-block");
-    });
+//         activeMode = "delete"; // Set delete mode active
+//         deleteCheckboxes.forEach(checkbox => checkbox.style.display = "inline-block");
+//     });
 
-    deleteCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener("change", function () {
-            const anyChecked = [...deleteCheckboxes].some(cb => cb.checked);
-            bulkDeletePanel.style.bottom = anyChecked ? "0" : "-60px";
-        });
-    });
+//     deleteCheckboxes.forEach(checkbox => {
+//         checkbox.addEventListener("change", function () {
+//             const anyChecked = [...deleteCheckboxes].some(cb => cb.checked);
+//             bulkDeletePanel.style.bottom = anyChecked ? "0" : "-60px";
+//         });
+//     });
 
-    deleteSelectedButton.addEventListener("click", function () {
-        deleteCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) {
-                checkbox.closest(".cust_manage_card").remove();
-            }
-        });
+//     deleteSelectedButton.addEventListener("click", function () {
+//         deleteCheckboxes.forEach(checkbox => {
+//             if (checkbox.checked) {
+//                 checkbox.closest(".cust_manage_card").remove();
+//             }
+//         });
 
-        resetBulkActions();
-    });
+//         resetBulkActions();
+//     });
 
-    cancelDeleteButton.addEventListener("click", function () {
-        resetBulkActions();
-    });
+//     cancelDeleteButton.addEventListener("click", function () {
+//         resetBulkActions();
+//     });
 
-    /** ---------------- BULK UPDATE ---------------- **/
-    const updateButton = document.querySelector(".bulk-update-trigger");
-    const updateCheckboxes = document.querySelectorAll(".bulk-update-checkbox");
-    const bulkUpdatePanel = document.querySelector(".bulk-update-panel");
-    const updateSelectedButton = document.querySelector(".update-selected");
-    const cancelUpdateButton = document.querySelector(".cancel-update-action");
+//     /** ---------------- BULK UPDATE ---------------- **/
+//     const updateButton = document.querySelector(".bulk-update-trigger");
+//     const updateCheckboxes = document.querySelectorAll(".bulk-update-checkbox");
+//     const bulkUpdatePanel = document.querySelector(".bulk-update-panel");
+//     const updateSelectedButton = document.querySelector(".update-selected");
+//     const cancelUpdateButton = document.querySelector(".cancel-update-action");
 
-    const updatePopup = document.getElementById("update-popup");
-    const updateCustomerBtn = document.getElementById("update-customer");
-    const cancelUpdateBtn = document.getElementById("cancel-update");
+//     const updatePopup = document.getElementById("update-popup");
+//     const updateCustomerBtn = document.getElementById("update-customer");
+//     const cancelUpdateBtn = document.getElementById("cancel-update");
 
-    const statusSelect = document.getElementById("status-dot");
-    const customerMobileInput = document.getElementById("update-customer-mobile");
-    const customerNameInput = document.getElementById("update-customer-name");
+//     const statusSelect = document.getElementById("status-dot");
+//     const customerMobileInput = document.getElementById("update-customer-mobile");
+//     const customerNameInput = document.getElementById("update-customer-name");
 
-    let selectedUpdateCards = [];
+//     let selectedUpdateCards = [];
 
-    updateButton.addEventListener("click", function () {
-        if (activeMode === "delete") return; // Prevent action if delete is active
+//     updateButton.addEventListener("click", function () {
+//         if (activeMode === "delete") return; // Prevent action if delete is active
 
-        activeMode = "update"; // Set update mode active
-        updateCheckboxes.forEach(checkbox => checkbox.style.display = "inline-block");
-    });
+//         activeMode = "update"; // Set update mode active
+//         updateCheckboxes.forEach(checkbox => checkbox.style.display = "inline-block");
+//     });
 
-    updateCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener("change", function () {
-            selectedUpdateCards = [...updateCheckboxes].filter(cb => cb.checked).map(cb => cb.closest(".cust_manage_card"));
-            bulkUpdatePanel.style.bottom = selectedUpdateCards.length > 0 ? "0" : "-60px";
-        });
-    });
+//     updateCheckboxes.forEach(checkbox => {
+//         checkbox.addEventListener("change", function () {
+//             selectedUpdateCards = [...updateCheckboxes].filter(cb => cb.checked).map(cb => cb.closest(".cust_manage_card"));
+//             bulkUpdatePanel.style.bottom = selectedUpdateCards.length > 0 ? "0" : "-60px";
+//         });
+//     });
 
-    updateSelectedButton.addEventListener("click", function () {
-        if (selectedUpdateCards.length === 0) return;
+//     updateSelectedButton.addEventListener("click", function () {
+//         if (selectedUpdateCards.length === 0) return;
 
-        const firstCard = selectedUpdateCards[0];
-        const firstStatus = firstCard.querySelector(".status-dot").classList;
-        const firstMobile = firstCard.querySelector(".customer_mobile").textContent;
-        const firstName = firstCard.querySelector(".customer_name").textContent;
+//         const firstCard = selectedUpdateCards[0];
+//         const firstStatus = firstCard.querySelector(".status-dot").classList;
+//         const firstMobile = firstCard.querySelector(".customer_mobile").textContent;
+//         const firstName = firstCard.querySelector(".customer_name").textContent;
 
-        let allSameStatus = selectedUpdateCards.every(card => card.querySelector(".status-dot").classList.value === firstStatus.value);
-        let allSameMobile = selectedUpdateCards.every(card => card.querySelector(".customer_mobile").textContent === firstMobile);
-        let allSameName = selectedUpdateCards.every(card => card.querySelector(".customer_name").textContent === firstName);
+//         let allSameStatus = selectedUpdateCards.every(card => card.querySelector(".status-dot").classList.value === firstStatus.value);
+//         let allSameMobile = selectedUpdateCards.every(card => card.querySelector(".customer_mobile").textContent === firstMobile);
+//         let allSameName = selectedUpdateCards.every(card => card.querySelector(".customer_name").textContent === firstName);
 
-        statusSelect.value = allSameStatus ? (firstStatus.contains("expired") ? "red" : firstStatus.contains("expires-soon") ? "yellow" : "green") : "";
-        customerMobileInput.value = allSameMobile ? firstMobile : "";
-        customerNameInput.value = allSameName ? firstName : "";
+//         statusSelect.value = allSameStatus ? (firstStatus.contains("expired") ? "red" : firstStatus.contains("expires-soon") ? "yellow" : "green") : "";
+//         customerMobileInput.value = allSameMobile ? firstMobile : "";
+//         customerNameInput.value = allSameName ? firstName : "";
 
-        updatePopup.style.display = "flex";
-    });
+//         updatePopup.style.display = "flex";
+//     });
 
-    updateCustomerBtn.addEventListener("click", function () {
-        selectedUpdateCards.forEach(card => {
-            const statusDot = card.querySelector(".status-dot");
-            const customerMobile = card.querySelector(".customer_mobile");
-            const customerName = card.querySelector(".customer_name");
+//     updateCustomerBtn.addEventListener("click", function () {
+//         selectedUpdateCards.forEach(card => {
+//             const statusDot = card.querySelector(".status-dot");
+//             const customerMobile = card.querySelector(".customer_mobile");
+//             const customerName = card.querySelector(".customer_name");
 
-            card.classList.remove("expired", "expires-soon", "active");
-            if (statusSelect.value === "red") {
-                card.classList.add("expired");
-                statusDot.style.backgroundColor = "red";
-            } else if (statusSelect.value === "yellow") {
-                card.classList.add("expires-soon");
-                statusDot.style.backgroundColor = "yellow";
-            } else if (statusSelect.value === "green") {
-                card.classList.add("active");
-                statusDot.style.backgroundColor = "green";
-            }
+//             card.classList.remove("expired", "expires-soon", "active");
+//             if (statusSelect.value === "red") {
+//                 card.classList.add("expired");
+//                 statusDot.style.backgroundColor = "red";
+//             } else if (statusSelect.value === "yellow") {
+//                 card.classList.add("expires-soon");
+//                 statusDot.style.backgroundColor = "yellow";
+//             } else if (statusSelect.value === "green") {
+//                 card.classList.add("active");
+//                 statusDot.style.backgroundColor = "green";
+//             }
 
-            if (customerMobileInput.value) customerMobile.textContent = customerMobileInput.value;
-            if (customerNameInput.value) customerName.textContent = customerNameInput.value;
-        });
+//             if (customerMobileInput.value) customerMobile.textContent = customerMobileInput.value;
+//             if (customerNameInput.value) customerName.textContent = customerNameInput.value;
+//         });
 
-        updatePopup.style.display = "none";
-        resetBulkActions();
-    });
+//         updatePopup.style.display = "none";
+//         resetBulkActions();
+//     });
 
-    cancelUpdateButton.addEventListener("click", function () {
-        resetBulkActions();
-    });
+//     cancelUpdateButton.addEventListener("click", function () {
+//         resetBulkActions();
+//     });
 
-    cancelUpdateBtn.addEventListener("click", function () {
-        updatePopup.style.display = "none";
-    });
+//     cancelUpdateBtn.addEventListener("click", function () {
+//         updatePopup.style.display = "none";
+//     });
 
-    /** ---------------- HELPER FUNCTION ---------------- **/
-    function resetBulkActions() {
-        activeMode = null; // Reset active mode
+//     /** ---------------- HELPER FUNCTION ---------------- **/
+//     function resetBulkActions() {
+//         activeMode = null; // Reset active mode
 
-        // Hide checkboxes and panels
-        deleteCheckboxes.forEach(checkbox => {
-            checkbox.style.display = "none";
-            checkbox.checked = false;
-        });
-        updateCheckboxes.forEach(checkbox => {
-            checkbox.style.display = "none";
-            checkbox.checked = false;
-        });
+//         // Hide checkboxes and panels
+//         deleteCheckboxes.forEach(checkbox => {
+//             checkbox.style.display = "none";
+//             checkbox.checked = false;
+//         });
+//         updateCheckboxes.forEach(checkbox => {
+//             checkbox.style.display = "none";
+//             checkbox.checked = false;
+//         });
 
-        // Hide panels
-        bulkDeletePanel.style.bottom = "-60px";
-        bulkUpdatePanel.style.bottom = "-60px";
-    }
-});
+//         // Hide panels
+//         bulkDeletePanel.style.bottom = "-60px";
+//         bulkUpdatePanel.style.bottom = "-60px";
+//     }
+// });
 
 
 
@@ -836,28 +862,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Status-dot
 
-// Status-dot
+document.addEventListener("DOMContentLoaded", function () {
+    document.body.addEventListener("mouseover", function (event) {
+        if (event.target.classList.contains("status-dot")) {
+            let tooltip = document.createElement("div");
+            tooltip.classList.add("dynamic-tooltip");
+            tooltip.innerText = event.target.getAttribute("data-tooltip");
 
-document.querySelectorAll(".status-dot").forEach(dot => {
-    dot.addEventListener("mouseenter", function () {
-        let tooltip = document.createElement("div");
-        tooltip.classList.add("dynamic-tooltip");
-        tooltip.innerText = this.getAttribute("data-tooltip");
+            document.body.appendChild(tooltip);
 
-        document.body.appendChild(tooltip);
+            let rect = event.target.getBoundingClientRect();
+            let tooltipHeight = tooltip.offsetHeight;
 
-        let rect = this.getBoundingClientRect();
-        tooltip.style.left = `${rect.left + rect.width / 2}px`;
-        tooltip.style.top = `${rect.top - 30}px`; // Position above the dot
-        tooltip.style.visibility = "visible";
-        tooltip.style.opacity = "1";
+            tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2 - tooltip.offsetWidth / 2}px`;
+            tooltip.style.top = `${rect.top + window.scrollY - tooltipHeight - 10}px`; // Position above
+            tooltip.style.visibility = "visible";
+            tooltip.style.opacity = "1";
+        }
     });
 
-    dot.addEventListener("mouseleave", function () {
-        document.querySelectorAll(".dynamic-tooltip").forEach(tip => tip.remove());
+    document.body.addEventListener("mouseout", function (event) {
+        if (event.target.classList.contains("status-dot")) {
+            document.querySelectorAll(".dynamic-tooltip").forEach(tip => tip.remove());
+        }
     });
 });
-
 
 
 
@@ -1061,3 +1090,120 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+// Dynamically generating customer cards with updated rules
+
+// Dynamically generating customer cards with updated rules
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const custManageCardsContainer = document.getElementById("cust_manage_cards_container");
+    if (!custManageCardsContainer) {
+        console.error("Error: Element with ID 'cust_manage_cards_container' not found.");
+        return;
+    }
+
+    const usersEndpoint = "http://localhost:8083/api/users";
+    const transactionsEndpoint = "http://localhost:8083/api/transactions";
+
+    async function fetchData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Failed to fetch data");
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return [];
+        }
+    }
+
+    function getStatusClass(transactions) {
+        if (transactions.length === 0) return "expired"; // No transactions
+        
+        const today = new Date();
+        transactions.sort((a, b) => new Date(a.planStart) - new Date(b.planStart));
+        
+        let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
+        if (validPlans.length > 0) {
+            let activePlan = validPlans[0]; // Choose the earliest valid plan
+            let daysDifference = Math.ceil((new Date(activePlan.planEnd) - today) / (1000 * 60 * 60 * 24));
+            return daysDifference <= 3 ? "expires-soon" : "active";
+        }
+        
+        // If no valid plans, return the most recent expired plan
+        return "expired";
+    }
+
+    function getRelevantTransaction(transactions) {
+        const today = new Date();
+        transactions.sort((a, b) => new Date(b.planEnd) - new Date(a.planEnd)); // Sort by latest end date
+        
+        let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
+        if (validPlans.length > 0) return validPlans[0]; // Return earliest valid plan
+        
+        return transactions.length > 0 ? transactions[0] : null; // Return latest expired plan if no valid plan
+    }
+
+    function createCustomerCard(user, transaction, statusClass) {
+        const planName = transaction ? transaction.plan.planName : "N/A";
+        const startDate = transaction ? new Date(transaction.planStart).toLocaleDateString() : "N/A";
+        const endDate = transaction ? new Date(transaction.planEnd).toLocaleDateString() : "N/A";
+        const amount = transaction ? `₹${transaction.amount}` : "N/A";
+        const lastPayment = transaction ? new Date(transaction.purchasedOn).toLocaleDateString() : "N/A";
+
+        const card = document.createElement("div");
+        card.classList.add("cust_manage_card", statusClass);
+
+        card.innerHTML = `
+            <input type="checkbox" class="bulk-delete-checkbox">
+            <input type="checkbox" class="bulk-update-checkbox">
+            <!-- <i class="fa-solid fa-xmark delete-icon"></i> --> <!-- Commented Out -->
+              <!-- Right Chevron Icon -->
+                <div class="chevron-icon">
+                    <i class="fa fa-chevron-right"></i>
+                </div>
+            <div class="dot_div">
+                <span class="status-dot" data-tooltip="${statusClass.replace('-', ' ')}"></span>
+            </div>
+            <div class="customer_info">
+                <div class="customer_mobile_div">
+                    <span class="customer_mobile">${user.mobile}</span>
+                </div>
+                <div class="customer_name_div">
+                    <span class="customer_name">${user.name}</span>
+                </div>
+                <div class="customer_plan_div">
+                    <span class="customer_plan">${planName}</span>
+                </div>
+                <div class="customer_email_div hidden-details">
+                    <span class="customer_email">${user.email}</span>
+                </div>
+                <div class="subscription_start_div hidden-details">
+                    <span class="subscription_start">Start: ${startDate}</span>
+                </div>
+                <div class="subscription_end_div hidden-details">
+                    <span class="subscription_end">End: ${endDate}</span>
+                </div>
+                <div class="billing_amount_div hidden-details">
+                    <span class="billing_amount">${amount}</span>
+                </div>
+                <div class="last_payment_div hidden-details">
+                    <span class="last_payment">Last Payment: ${lastPayment}</span>
+                </div>
+            </div>
+            <div class="cust_card_footer">
+                <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+                <i class="fa-solid fa-pen-to-square edit-icon"></i>
+            </div>
+        `;
+
+        custManageCardsContainer.appendChild(card);
+    }
+
+    const [users, transactions] = await Promise.all([fetchData(usersEndpoint), fetchData(transactionsEndpoint)]);
+
+    users.filter(user => user.role !== "Role_Admin").forEach(user => {
+        const userTransactions = transactions.filter(t => t.user.userId === user.userId);
+        const statusClass = getStatusClass(userTransactions);
+        const relevantTransaction = getRelevantTransaction(userTransactions);
+        createCustomerCard(user, relevantTransaction, statusClass);
+    });
+});

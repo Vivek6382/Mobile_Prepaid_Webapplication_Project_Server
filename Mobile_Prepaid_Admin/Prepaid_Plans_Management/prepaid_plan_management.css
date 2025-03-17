@@ -254,6 +254,7 @@
 
 
 /* Prepaid Category Section */
+
 /* Prepaid Category Section */
 .prepaid-category_section {
     display: flex;
@@ -278,6 +279,15 @@
     margin-right: 20px; /* Added spacing between sidebar and main content */
     border-radius: 10px; /* Rounded edges for smooth look */
 }
+
+
+/* Sidebar Button Container */
+.sidebar .button-container {
+    display: flex;
+    justify-content: flex-start; /* Aligns button to the right */
+    margin-bottom: 30px; /* Adds space below the button */
+}
+
 
 /* Scrollbar Styling */
 .sidebar::-webkit-scrollbar {
@@ -305,25 +315,75 @@
 .sidebar nav {
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
+/* Sidebar Links */
 .sidebar a {
     text-decoration: none;
-    color: #ffffff;
+    color: #ffffff !important; /* Force white text */
     background-color: #2b2b2b;
     padding: 10px 15px;
     margin-bottom: 8px;
     border-radius: 5px;
     transition: 0.3s;
     font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
 }
 
 .sidebar a:hover,
 .sidebar a.active {
     background-color: orangered;
-    color: #121212;
+    color: #ffffff !important; /* Ensure hover color remains white */
     font-weight: bold;
 }
+
+/* Icon Styling */
+.icon-container {
+    cursor: pointer;
+    padding-left: 10px;
+    font-size: 16px;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    background-color: #2b2b2b; /* Dark theme background */
+    border: 1px solid orangered;
+    padding: 8px 10px;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+    min-width: 120px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    color: orangered; /* Ensure text is visible */
+}
+
+/* Dropdown Button Styling */
+.dropdown-menu button {
+    background: none;
+    border: none;
+    color: orangered; /* Default text color */
+    padding: 8px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.dropdown-menu button:hover {
+    background-color: orangered; /* Background color on hover */
+    color: #ffffff; /* Text color on hover */
+    border-radius: 3px;
+}
+
+
+
 
 
 
@@ -611,6 +671,7 @@
     border-radius: 3px;
 }
 
+
 /* Benefits */
 .benefit {
     background-color: #333;
@@ -695,6 +756,54 @@
   color: var(--highlight-color);
   transform: translateY(-3px);
 }
+
+
+
+
+/* Centering the icons properly */
+.ott-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    gap: 5px;
+  }
+  
+  /* Adjusted size of OTT icons */
+  .ott-icons .icon {
+    width: 30px;  /* Reduced size */
+    height: 30px; /* Reduced size */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    border: 2px solid white;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* OTT Logo Image */
+  .ott-icons .icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  /* Position adjustments */
+  .ott-icons .icon:nth-child(1) { z-index: 3; }
+  .ott-icons .icon:nth-child(2) { z-index: 2; }
+  .ott-icons .icon:nth-child(3) { z-index: 1; }
+  
+  .more-ott {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #bbb;
+  }
+  
+
 
 
 
@@ -1076,6 +1185,211 @@ h3 {
 
 
 
+/* Update-Pop-up-Design */
+
+/* Update Prepaid Plan Pop-up */
+#prepaid-update-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Popup Container */
+#prepaid-update-popup .prepaid-popup-content {
+    background: #1E1E1E;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+    width: 360px;
+    max-width: 90%;
+    max-height: 80vh; /* Ensures pop-up does not exceed 80% of viewport height */
+    overflow: hidden;
+}
+
+/* Heading */
+#prepaid-update-popup h3 {
+    color: orangered;
+    margin-bottom: 10px;
+}
+
+/* Scrollable Details Section */
+.prepaid-update-details {
+    margin-top: 10px;
+    text-align: left;
+    padding: 15px;
+    background: #282828;
+    border-radius: 8px;
+    max-height: 200px; /* Fixed height for scrolling */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: orangered #333;
+}
+
+/* Custom Scrollbar for WebKit Browsers */
+.prepaid-update-details::-webkit-scrollbar {
+    width: 6px;
+}
+
+.prepaid-update-details::-webkit-scrollbar-thumb {
+    background: orangered;
+    border-radius: 10px;
+}
+
+.prepaid-update-details::-webkit-scrollbar-track {
+    background: #333;
+}
+
+/* Labels */
+.prepaid-update-details label {
+    display: block;
+    color: #ddd;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+/* Input Fields */
+.prepaid-update-detail-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    background: #333;
+    border: 1px solid #555;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Buttons inside the popup */
+.prepaid-update-popup-buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Prepaid Update and Cancel Buttons */
+#prepaid-update-btn, 
+#prepaid-cancel-update-btn {
+    padding: 10px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+#prepaid-update-btn {
+    background: orangered;
+    color: white;
+}
+
+#prepaid-update-btn:hover {
+    background: #ff5722;
+}
+
+#prepaid-cancel-update-btn {
+    background: #444;
+    color: white;
+}
+
+#prepaid-cancel-update-btn:hover {
+    background: #666;
+}
+
+
+
+
+/* Update=category-pop-up-design */
+
+#cancel-update-category-btn,
+#update-category-btn{
+    padding: 10px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+
+
+#update-category-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Popup Container */
+#update-category-popup .prepaid-popup-content {
+    background: #1E1E1E;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+    width: 360px;
+    max-width: 90%;
+    max-height: 80vh; /* Ensures pop-up does not exceed 80% of viewport height */
+    overflow: hidden;
+}
+
+
+
+
+
+/* Add-caetgory-pop-up-design */
+
+
+#cancel-add-category-btn,
+#add-category-btn{
+    padding: 10px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+
+
+#add-category-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Popup Container */
+#add-category-popup .prepaid-popup-content {
+    background: #1E1E1E;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+    width: 360px;
+    max-width: 90%;
+    max-height: 80vh; /* Ensures pop-up does not exceed 80% of viewport height */
+    overflow: hidden;
+}
+
+
+
 
 
 /* Bulk Delete Panel Styles */
@@ -1261,6 +1575,9 @@ h3 {
 
 
 
+
+/* Filter-Pop-up-design */
+
 /* Filter-Pop-up-design */
 
 /* Filter Pop-up */
@@ -1280,17 +1597,34 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-/* Main Container */
-.filter-main {
+  }
+  
+  /* Close Button */
+  .close-filter {
+    position: absolute;
+    top: 10px;
+    right: 15px; /* Moved to top-right */
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .close-filter:hover {
+    color: orangered;
+  }
+  
+  /* Main Container */
+  .filter-main {
     display: flex;
     width: 100%;
     height: 100%;
-}
-
-/* Left Side - Categories */
-.filter-left {
+    position: relative; /* Ensure absolute elements are positioned correctly */
+  }
+  
+  /* Left Side - Categories */
+  .filter-left {
     width: 35%;
     padding: 15px;
     border-radius: 10px 0 0 10px;
@@ -1298,51 +1632,51 @@ h3 {
     flex-direction: column;
     justify-content: center;
     background: #292929; /* Darker background */
-}
-
-.filter-left h3 {
+  }
+  
+  .filter-left h3 {
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
     color: white;
     padding: 8px 0;
     transition: 0.3s;
-}
-
-.filter-left h3:hover,
-.filter-left h3.active {
+  }
+  
+  .filter-left h3:hover,
+  .filter-left h3.active {
     color: orangered;
-}
-
-/* Separator Line */
-.separator {
+  }
+  
+  /* Separator Line */
+  .separator {
     width: 1px;
     background: orangered;
     height: 100%;
-}
-
-/* Right Side - Options */
-.filter-right {
+  }
+  
+  /* Right Side - Options */
+  .filter-right {
     width: 65%;
     padding: 15px;
     background: #1a1a1a;
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-/* Fixed Category Header */
-.filter-header {
+  }
+  
+  /* Fixed Category Header */
+  .filter-header {
     font-size: 18px;
     font-weight: bold;
     color: orangered;
     text-align: center;
     padding-bottom: 5px;
     border-bottom: 2px solid orangered;
-}
-
-/* Filter Options */
-.filter-options {
+  }
+  
+  /* Filter Options */
+  .filter-options {
     max-height: 200px; /* Fixed height */
     width: 100%; /* Fixed width */
     overflow-y: auto; /* Scrollable */
@@ -1350,29 +1684,29 @@ h3 {
     border-radius: 5px;
     padding: 10px;
     margin: 10px 0;
-}
-
-/* Custom Scrollbar */
-.filter-options::-webkit-scrollbar {
+  }
+  
+  /* Custom Scrollbar */
+  .filter-options::-webkit-scrollbar {
     width: 6px;
-}
-
-.filter-options::-webkit-scrollbar-thumb {
+  }
+  
+  .filter-options::-webkit-scrollbar-thumb {
     background-color: orangered;
     border-radius: 4px;
-}
-
-/* Checkbox Styling */
-.filter-options label {
+  }
+  
+  /* Checkbox Styling */
+  .filter-options label {
     display: flex;
     align-items: center;
     font-size: 14px;
     margin: 8px 0;
     color: white;
     cursor: pointer;
-}
-
-.filter-options input[type="checkbox"] {
+  }
+  
+  .filter-options input[type="checkbox"] {
     appearance: none;
     width: 18px;
     height: 18px;
@@ -1382,47 +1716,49 @@ h3 {
     background: #1a1a1a;
     cursor: pointer;
     transition: 0.3s;
-}
-
-.filter-options input[type="checkbox"]:checked {
+  }
+  
+  .filter-options input[type="checkbox"]:checked {
     background-color: orangered;
-}
-
-/* Buttons */
-.filter-buttons {
+  }
+  
+  /* Buttons */
+  .filter-buttons {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
-}
-
-.reset-btn, .confirm-btn {
+  }
+  
+  .reset-btn, .confirm-btn {
     padding: 8px 15px;
     border: none;
     border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
-}
-
-.reset-btn {
+  }
+  
+  .reset-btn {
     background-color: transparent;
     border: 1px solid orangered;
     color: orangered;
-}
-
-.reset-btn:hover {
+  }
+  
+  .reset-btn:hover {
     background-color: orangered;
     color: white;
-}
-
-.confirm-btn {
+  }
+  
+  .confirm-btn {
     background-color: orangered;
     color: white;
-}
-
-.confirm-btn:hover {
+  }
+  
+  .confirm-btn:hover {
     background-color: #ff4500d9;
-}
+  }
+  
+  
 
 
 
@@ -1663,3 +1999,280 @@ h3 {
     font-size: 14px;
     border-top: 1px solid #333;
   }
+
+
+
+
+
+
+
+  /* Full-card-view-pop-up-design */
+
+
+  /* Change-Pop-up-Design */
+
+/* View-Full-Details_Pop-up */
+
+/* Hide popup initially */
+.overlay-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .overlay-custom.active {
+    display: flex;
+  }
+  
+  
+  
+  
+  
+  /* Popup Container */
+  .popup-container-custom {
+    width: 500px;
+    background-color: #1e1e1e;
+    color: white;
+    border-radius: 12px;
+    border: 2px solid orangered;
+    box-shadow: 0 4px 15px rgba(255, 69, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    max-width: 90%;
+  }
+  
+  /* Header */
+  .popup-header-custom {
+    background-color: #2a2a2a;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid orangered;
+  }
+  
+  /* Plan Info */
+  .plan-info-custom {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .plan-title-custom {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .plan-cost-custom {
+    font-size: 18px;
+    color: #ff7043;
+  }
+  
+  /* Close Button */
+  .popup-close-custom {
+    font-size: 24px;
+    color: orangered;
+    cursor: pointer;
+  }
+  
+  /* Popup Body */
+  .popup-body-custom {
+    padding: 20px;
+    background-color: #292929;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  /* Table */
+  .plan-details-custom table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .plan-details-custom th, .plan-details-custom td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+  }
+  
+  .plan-details-custom th {
+    background-color: #292929;
+    color: white;
+  }
+  
+  .plan-details-custom td {
+    color: #ccc;
+  }
+  
+  /* Perks Section */
+  .extra-perks-custom {
+    margin-top: 20px;
+  }
+  
+  .perk-item-custom {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .perk-item-custom img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  .perk-title-custom {
+    font-size: 16px;
+    color: orangered;
+  }
+  
+  /* Footer */
+  .popup-footer-custom {
+    padding: 20px;
+    text-align: center;
+    border-top: 2px solid orangered;
+  }
+  
+  .phone-input-custom {
+    padding: 10px;
+    width: 90%;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    border: 2px solid #444;
+  }
+  
+  .phone-input-custom::placeholder {
+    color: orangered;
+  }
+  
+  .purchase-button-custom {
+    background-color: orangered;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .purchase-button-custom:hover {
+    background-color: #e64a19;
+  }
+  
+  
+  
+  /* Fallback Icon Styling */
+  .fallback-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 50%;
+    text-transform: uppercase;
+  }
+  
+  /* Default fallback background */
+  .default-fallback {
+    background-color: gray;
+  }
+  
+  /* OTT Colors */
+  .netflix { background-color: #E50914; }
+  .prime { background-color: #00A8E1; }
+  .sony { background-color: #3D1F80; }
+  .sun { background-color: #D50032; }
+  .zee5 { background-color: #000000; }
+  
+  
+  
+  
+  
+  
+  /* OTT Icons Section */
+  
+  .ott-container {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    flex-direction: column;
+    background-color: #333;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  
+  /* Centering the icons properly */
+  .ott-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    gap: 5px;
+  }
+  
+  /* Adjusted size of OTT icons */
+  .ott-icons .icon {
+    width: 30px;  /* Reduced size */
+    height: 30px; /* Reduced size */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    border: 2px solid white;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* OTT Logo Image */
+  .ott-icons .icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  /* Position adjustments */
+  .ott-icons .icon:nth-child(1) { z-index: 3; }
+  .ott-icons .icon:nth-child(2) { z-index: 2; }
+  .ott-icons .icon:nth-child(3) { z-index: 1; }
+  
+  .more-ott {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #bbb;
+  }
+  
+  
+  
+  
+  /* Mobile-Input-Box-Design-Pop-up */
+  
+  .custom-phone-input {
+    padding: 10px;
+    width: 90%;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    border: 2px solid #444;
+  }
+  
+  .custom-phone-input::placeholder {
+    color: orangered;
+  }
+  
+
+
+

@@ -1,36 +1,310 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTT Plans</title>
-    <link rel="stylesheet" href="./test.css">
-</head>
-<body>
-    <div class="container">
-        <div class="sidebar">
-            <h3>Data</h3>
-            <h3>Validity</h3>
-            <h3>Price</h3>
-            <h3 class="active">OTT Plans</h3>
-            <hr />
+
+<div class="cust_manage_card active">
+    <!-- Checkbox for Bulk Delete -->
+    <input type="checkbox" class="bulk-delete-checkbox">
+
+    <!-- Checkbox for Bulk Update -->
+    <input type="checkbox" class="bulk-update-checkbox">
+
+    <i class="fa-solid fa-xmark delete-icon"></i>
+    <div class="dot_div">
+        <span class="status-dot" data-tooltip="Active"></span>
+    </div>
+    <div class="customer_info">
+
+        <!-- Always Visible -->
+        <div class="customer_mobile_div">
+            <span class="customer_mobile">+91 9123456789</span>
         </div>
-        <div class="content">
-            <h3>Subscriptions</h3>
-            <div class="scrollable">
-                <label><input type="checkbox"> Netflix Plans</label>
-                <label><input type="checkbox"> Prime Video Mobile Edition</label>
-                <label><input type="checkbox"> JioTV</label>
-                <label><input type="checkbox"> Disney+Hotstar</label>
-                <label><input type="checkbox"> Fancode</label>
-                <label><input type="checkbox"> JioSaavn Pro</label>
-                <!-- Add more as needed -->
-            </div>
-            <div class="buttons">
-                <button class="clear">Clear all</button>
-                <button class="apply">Apply</button>
-            </div>
+        <div class="customer_name_div">
+            <span class="customer_name">Alex Johnson</span>
+        </div>
+        <div class="customer_plan_div">
+            <span class="customer_plan">Silver Plan</span>
+        </div>
+
+        <!-- Hidden Details -->
+        <div class="customer_email_div hidden-details">
+            <span class="customer_email">alex.silver@example.com</span>
+        </div>
+        <div class="subscription_start_div hidden-details">
+            <span class="subscription_start">Start: 01-Feb-2024</span>
+        </div>
+        <div class="subscription_end_div hidden-details">
+            <span class="subscription_end">End: 01-Feb-2025</span>
+        </div>
+        <div class="billing_amount_div hidden-details">
+            <span class="billing_amount">₹7,500</span>
+        </div>
+        <div class="last_payment_div hidden-details">
+            <span class="last_payment">Last Payment: 10-Jan-2024</span>
         </div>
     </div>
-</body>
-</html>
+    <div class="cust_card_footer">
+        <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+        <i class="fa-solid fa-pen-to-square edit-icon"></i>
+    </div>
+</div>
+
+
+<div class="cust_manage_card active">
+    <!-- Checkbox for Bulk Delete -->
+    <input type="checkbox" class="bulk-delete-checkbox">
+
+    <!-- Checkbox for Bulk Update -->
+    <input type="checkbox" class="bulk-update-checkbox">
+
+    <i class="fa-solid fa-xmark delete-icon"></i>
+    <div class="dot_div">
+        <span class="status-dot" data-tooltip="Active"></span>
+    </div>
+    <div class="customer_info">
+
+        <!-- Always Visible -->
+        <div class="customer_mobile_div">
+            <span class="customer_mobile">+91 9123456789</span>
+        </div>
+        <div class="customer_name_div">
+            <span class="customer_name">Alex Johnson</span>
+        </div>
+        <div class="customer_plan_div">
+            <span class="customer_plan">Platinum Plan</span>
+        </div>
+
+
+        <!-- Hidden Details -->
+        <div class="customer_email_div hidden-details">
+            <span class="customer_email">alex.platinum@example.com</span>
+        </div>
+        <div class="subscription_start_div hidden-details">
+            <span class="subscription_start">Start: 01-Mar-2024</span>
+        </div>
+        <div class="subscription_end_div hidden-details">
+            <span class="subscription_end">End: 01-Mar-2025</span>
+        </div>
+        <div class="billing_amount_div hidden-details">
+            <span class="billing_amount">₹15,000</span>
+        </div>
+        <div class="last_payment_div hidden-details">
+            <span class="last_payment">Last Payment: 05-Feb-2024</span>
+        </div>
+
+
+    </div>
+    <div class="cust_card_footer">
+        <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+        <i class="fa-solid fa-pen-to-square edit-icon"></i>
+    </div>
+</div>
+
+
+<!-- Expired -->
+<div class="cust_manage_card expired">
+    <!-- Checkbox for Bulk Delete -->
+    <input type="checkbox" class="bulk-delete-checkbox">
+
+    <!-- Checkbox for Bulk Update -->
+    <input type="checkbox" class="bulk-update-checkbox">
+
+    <i class="fa-solid fa-xmark delete-icon"></i>
+
+    <!-- Status Dot -->
+    <div class="dot_div">
+        <span class="status-dot" data-tooltip="Expired"></span>
+    </div>
+
+    <!-- Customer Details -->
+    <div class="customer_info">
+
+        <!-- Always Visible -->
+        <div class="customer_mobile_div">
+            <span class="customer_mobile">+91 9876543210</span>
+        </div>
+        <div class="customer_name_div">
+            <span class="customer_name">John Doe</span>
+        </div>
+        <div class="customer_plan_div">
+            <span class="customer_plan">VIP Plan</span>
+        </div>
+
+
+        <!-- Hidden Details -->
+        <div class="customer_email_div hidden-details">
+            <span class="customer_email">john.doe@example.com</span>
+        </div>
+        <div class="subscription_start_div hidden-details">
+            <span class="subscription_start">Start: 01-Jun-2023</span>
+        </div>
+        <div class="subscription_end_div hidden-details">
+            <span class="subscription_end">End: 01-Jun-2024</span>
+        </div>
+        <div class="billing_amount_div hidden-details">
+            <span class="billing_amount">₹20,000</span>
+        </div>
+        <div class="last_payment_div hidden-details">
+            <span class="last_payment">Last Payment: 20-May-2024</span>
+        </div>
+    </div>
+
+    <!-- Card Footer -->
+    <div class="cust_card_footer">
+        <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+        <i class="fa-solid fa-pen-to-square edit-icon"></i>
+    </div>
+</div>
+
+
+
+ <!-- Expired -->
+ <div class="cust_manage_card expired">
+    <!-- Checkbox for Bulk Delete -->
+    <input type="checkbox" class="bulk-delete-checkbox">
+
+    <!-- Checkbox for Bulk Update -->
+    <input type="checkbox" class="bulk-update-checkbox">
+
+    <i class="fa-solid fa-xmark delete-icon"></i>
+
+    <!-- Status Dot -->
+    <div class="dot_div">
+        <span class="status-dot" data-tooltip="Expired"></span>
+    </div>
+
+    <!-- Customer Details -->
+    <div class="customer_info">
+        <div class="customer_mobile_div">
+            <span class="customer_mobile">+91 9876543210</span>
+        </div>
+
+        <div class="customer_name_div">
+            <span class="customer_name">John Doe</span>
+        </div>
+
+        <div class="customer_plan_div">
+            <span class="customer_plan">Premium Plan</span>
+        </div>
+
+        <!-- Hidden Details (display: none) -->
+        <div class="customer_email_div hidden-details">
+            <span class="customer_email">john.doe@example.com</span>
+        </div>
+        <div class="subscription_start_div hidden-details">
+            <span class="subscription_start">Start: 01-Feb-2024</span>
+        </div>
+        <div class="subscription_end_div hidden-details">
+            <span class="subscription_end">End: 01-Feb-2025</span>
+        </div>
+        <div class="billing_amount_div hidden-details">
+            <span class="billing_amount">₹7,500</span>
+        </div>
+        <div class="last_payment_div hidden-details">
+            <span class="last_payment">Last Payment: 10-Jan-2024</span>
+        </div>
+    </div>
+
+
+    <!-- Card Footer -->
+    <div class="cust_card_footer">
+        <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+        <i class="fa-solid fa-pen-to-square edit-icon"></i>
+    </div>
+</div>
+
+
+<!-- More Customer Cards (Duplicate for Scroll Testing) -->
+<div class="cust_manage_card expires-soon">
+    <!-- Checkbox for Bulk Delete -->
+    <input type="checkbox" class="bulk-delete-checkbox">
+
+    <!-- Checkbox for Bulk Update -->
+    <input type="checkbox" class="bulk-update-checkbox">
+
+    <i class="fa-solid fa-xmark delete-icon"></i>
+    <div class="dot_div">
+        <span class="status-dot" data-tooltip="Expires Soon"></span>
+    </div>
+    <div class="customer_info">
+
+        <!-- Always Visible -->
+        <div class="customer_mobile_div">
+            <span class="customer_mobile">+91 9988776655</span>
+        </div>
+        <div class="customer_name_div">
+            <span class="customer_name">Jane Smith</span>
+        </div>
+        <div class="customer_plan_div">
+            <span class="customer_plan">Standard Plan</span>
+        </div>
+
+
+        <!-- Hidden Details (display: none) -->
+        <div class="customer_email_div hidden-details">
+            <span class="customer_email">jane.smith@example.com</span>
+        </div>
+        <div class="subscription_start_div hidden-details">
+            <span class="subscription_start">Start: 01-Jan-2024</span>
+        </div>
+        <div class="subscription_end_div hidden-details">
+            <span class="subscription_end">End: 01-Jan-2025</span>
+        </div>
+        <div class="billing_amount_div hidden-details">
+            <span class="billing_amount">₹5,000</span>
+        </div>
+        <div class="last_payment_div hidden-details">
+            <span class="last_payment">Last Payment: 15-Dec-2023</span>
+        </div>
+
+
+    </div>
+    <div class="cust_card_footer">
+        <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+        <i class="fa-solid fa-pen-to-square edit-icon"></i>
+    </div>
+</div>
+
+
+<div class="cust_manage_card active">
+    <!-- Checkbox for Bulk Delete -->
+    <input type="checkbox" class="bulk-delete-checkbox">
+
+    <!-- Checkbox for Bulk Update -->
+    <input type="checkbox" class="bulk-update-checkbox">
+
+    <i class="fa-solid fa-xmark delete-icon"></i>
+    <div class="dot_div">
+        <span class="status-dot" data-tooltip="Active"></span>
+    </div>
+    <div class="customer_info">
+        <!-- Always Visible -->
+        <div class="customer_mobile_div">
+            <span class="customer_mobile">+91 9123456789</span>
+        </div>
+        <div class="customer_name_div">
+            <span class="customer_name">Alex Johnson</span>
+        </div>
+        <div class="customer_plan_div">
+            <span class="customer_plan">Gold Plan</span>
+        </div>
+
+        <!-- Hidden Details -->
+        <div class="customer_email_div hidden-details">
+            <span class="customer_email">alex.gold@example.com</span>
+        </div>
+        <div class="subscription_start_div hidden-details">
+            <span class="subscription_start">Start: 01-Jan-2024</span>
+        </div>
+        <div class="subscription_end_div hidden-details">
+            <span class="subscription_end">End: 01-Jan-2025</span>
+        </div>
+        <div class="billing_amount_div hidden-details">
+            <span class="billing_amount">₹10,000</span>
+        </div>
+        <div class="last_payment_div hidden-details">
+            <span class="last_payment">Last Payment: 15-Dec-2023</span>
+        </div>
+    </div>
+    <div class="cust_card_footer">
+        <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+        <i class="fa-solid fa-pen-to-square edit-icon"></i>
+    </div>
+</div>

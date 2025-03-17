@@ -1070,6 +1070,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // ✅ Open Customer Details Pop-up
 
+// ✅ Open Customer Details Pop-up
+
 document.addEventListener("DOMContentLoaded", function () {
     const cardsContainer = document.querySelector(".cust_manage_cards_container");
 
@@ -1123,3 +1125,123 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
+
+
+
+
+// Dynamically generating customer cards with updated rules
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const custManageCardsContainer = document.getElementById("cust_manage_cards_container");
+    if (!custManageCardsContainer) {
+        console.error("Error: Element with ID 'cust_manage_cards_container' not found.");
+        return;
+    }
+
+    const usersEndpoint = "http://localhost:8083/api/users";
+    const transactionsEndpoint = "http://localhost:8083/api/transactions";
+
+    async function fetchData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Failed to fetch data");
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return [];
+        }
+    }
+
+    function getStatusClass(transactions) {
+        if (transactions.length === 0) return "expired"; // No transactions
+        
+        const today = new Date();
+        transactions.sort((a, b) => new Date(a.planStart) - new Date(b.planStart));
+        
+        let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
+        if (validPlans.length > 0) {
+            let activePlan = validPlans[0]; // Choose the earliest valid plan
+            let daysDifference = Math.ceil((new Date(activePlan.planEnd) - today) / (1000 * 60 * 60 * 24));
+            return daysDifference <= 3 ? "expires-soon" : "active";
+        }
+        
+        // If no valid plans, return the most recent expired plan
+        return "expired";
+    }
+
+    function getRelevantTransaction(transactions) {
+        const today = new Date();
+        transactions.sort((a, b) => new Date(b.planEnd) - new Date(a.planEnd)); // Sort by latest end date
+        
+        let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
+        if (validPlans.length > 0) return validPlans[0]; // Return earliest valid plan
+        
+        return transactions.length > 0 ? transactions[0] : null; // Return latest expired plan if no valid plan
+    }
+
+    function createCustomerCard(user, transaction, statusClass) {
+        const planName = transaction ? transaction.plan.planName : "N/A";
+        const startDate = transaction ? new Date(transaction.planStart).toLocaleDateString() : "N/A";
+        const endDate = transaction ? new Date(transaction.planEnd).toLocaleDateString() : "N/A";
+        const amount = transaction ? `₹${transaction.amount}` : "N/A";
+        const lastPayment = transaction ? new Date(transaction.purchasedOn).toLocaleDateString() : "N/A";
+
+        const card = document.createElement("div");
+        card.classList.add("cust_manage_card", statusClass);
+
+        card.innerHTML = `
+            <input type="checkbox" class="bulk-delete-checkbox">
+            <input type="checkbox" class="bulk-update-checkbox">
+            <!-- <i class="fa-solid fa-xmark delete-icon"></i> --> <!-- Commented Out -->
+              <!-- Right Chevron Icon -->
+                <div class="chevron-icon">
+                    <i class="fa fa-chevron-right"></i>
+                </div>
+            <div class="dot_div">
+                <span class="status-dot" data-tooltip="${statusClass.replace('-', ' ')}"></span>
+            </div>
+            <div class="customer_info">
+                <div class="customer_mobile_div">
+                    <span class="customer_mobile">${user.mobile}</span>
+                </div>
+                <div class="customer_name_div">
+                    <span class="customer_name">${user.name}</span>
+                </div>
+                <div class="customer_plan_div">
+                    <span class="customer_plan">${planName}</span>
+                </div>
+                <div class="customer_email_div hidden-details">
+                    <span class="customer_email">${user.email}</span>
+                </div>
+                <div class="subscription_start_div hidden-details">
+                    <span class="subscription_start">Start: ${startDate}</span>
+                </div>
+                <div class="subscription_end_div hidden-details">
+                    <span class="subscription_end">End: ${endDate}</span>
+                </div>
+                <div class="billing_amount_div hidden-details">
+                    <span class="billing_amount">${amount}</span>
+                </div>
+                <div class="last_payment_div hidden-details">
+                    <span class="last_payment">Last Payment: ${lastPayment}</span>
+                </div>
+            </div>
+            <div class="cust_card_footer">
+                <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+                <i class="fa-solid fa-pen-to-square edit-icon"></i>
+            </div>
+        `;
+
+        custManageCardsContainer.appendChild(card);
+    }
+
+    const [users, transactions] = await Promise.all([fetchData(usersEndpoint), fetchData(transactionsEndpoint)]);
+
+    users.filter(user => user.role !== "Role_Admin").forEach(user => {
+        const userTransactions = transactions.filter(t => t.user.userId === user.userId);
+        const statusClass = getStatusClass(userTransactions);
+        const relevantTransaction = getRelevantTransaction(userTransactions);
+        createCustomerCard(user, relevantTransaction, statusClass);
+    });
+});

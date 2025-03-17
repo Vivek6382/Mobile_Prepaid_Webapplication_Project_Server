@@ -1,102 +1,187 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payouts and Payments</title>
-    <link rel="stylesheet" href="styles.css">
+<!-- // Payment-Section-Accordion
+document.addEventListener("DOMContentLoaded", function () {
+    const accordionHeaders = document.querySelectorAll(".accordion-header");
+    const upiOptions = document.querySelectorAll("input[name='upi']");
+    const closeButton = document.querySelector(".close-link");
+    const upiInput = document.getElementById("upi-id");
+    const upiButtons = document.querySelectorAll(".upi-option");
+    const upiError = document.getElementById("upiError");
+    const upiForm = document.getElementById("upiForm");
 
-    <style>
-        body {
-    font-family: Arial, sans-serif;
-    background-color: #1D1E25;
-    color: #ffffff;
-    margin: 0;
-    padding: 20px;
-}
+    // ✅ UPI ID regex pattern
+    const upiPattern = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
 
-.container {
-    max-width: 600px;
-    margin: auto;
-}
+    // ✅ Accordion Toggle Function
+    function toggleAccordion(header) {
+        let content = header.nextElementSibling;
+        let icon = header.querySelector(".accordion-icon");
 
-h2 {
-    font-size: 1.5em;
-}
+        document.querySelectorAll(".accordion-content").forEach((acc) => {
+            if (acc !== content) {
+                acc.style.maxHeight = "0";
+                acc.classList.remove("active");
+            }
+        });
 
-.payouts, .contacts, .vendor-payments {
-    background-color: #2A2B35;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
+        document.querySelectorAll(".accordion-icon").forEach((ic) => {
+            if (ic !== icon) ic.textContent = "+";
+        });
 
-.payout-item, .payment-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #444;
-}
+        if (content.classList.toggle("active")) {
+            content.style.maxHeight = content.scrollHeight + "px";
+            icon.textContent = "-";
+        } else {
+            content.style.maxHeight = "0";
+            icon.textContent = "+";
+        }
+    }
 
-.payout-item:last-child, .payment-item:last-child {
-    border-bottom: none;
-}
+    // ✅ Attach accordion event listeners
+    accordionHeaders.forEach((header) => {
+        header.addEventListener("click", () => toggleAccordion(header));
+    });
 
-.icon {
-    margin-right: 10px;
-}
+    // ✅ UPI Popup Functions
+    function showUpiPopup() {
+        let overlay = document.getElementById("upiOverlay");
+        if (overlay) overlay.classList.add("active");
 
-.amount {
-    font-weight: bold;
-}
+        if (upiInput) {
+            upiInput.value = "";
+            upiInput.placeholder = "Enter UPI ID";
+            upiError.innerHTML = "";
+        }
+    }
 
-.add-btn {
-    color: #008CFF;
-    cursor: pointer;
-}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="payouts">
-            <h2>Payouts <span class="add-btn">+ Payout</span></h2>
-            <div class="payout-item">
-                <span class="icon">⚪</span>
-                <span>Pending on you</span>
-                <span class="amount">₹ 90,876.00</span>
-            </div>
-            <div class="payout-item">
-                <span class="icon">⚫</span>
-                <span>Queued for balance</span>
-                <span class="amount">₹ 5,00,000.00</span>
-            </div>
-            <div class="payout-item">
-                <span class="icon">🗓️</span>
-                <span>Scheduled, in 2 days</span>
-                <span class="amount">₹ 1,87,020.00</span>
-            </div>
-        </div>
+    function closeUpiPopup() {
+        let overlay = document.getElementById("upiOverlay");
+        if (overlay) overlay.classList.remove("active");
 
-        <div class="contacts">
-            <h2>Contacts <span class="add-btn">+ Contact</span></h2>
-        </div>
+        if (upiInput) {
+            upiInput.value = "";
+            upiError.innerHTML = "";
+        }
 
-        <div class="vendor-payments">
-            <h2>Payment Summary <span class="add-btn">+ Mobi-Comm.</span></h2>
-            <p>This is the plan details and the total amount</p>
-            <div class="payment-item">
-                <span>Plan Name</span>
-                <span class="amount">SILVER 799</span>
-            </div>
-            <div class="payment-item">
-                <span>Price</span>
-                <span class="amount">₹799/month</span>
-            </div>
-            <div class="payment-item">
-                <span>Incomplete Payments</span>
-                <span class="amount">₹ 1,20,020.00</span>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+        document.querySelectorAll("input[name='upi']").forEach((radio) => {
+            radio.checked = false;
+        });
+    }
+
+    // ✅ Append UPI suffix to input field
+    function appendUpi(upiSuffix) {
+        let currentValue = upiInput.value.trim();
+
+        if (currentValue.length === 0) return;
+
+        currentValue = currentValue.replace(/@\w+$/, "");
+        upiInput.value = currentValue + upiSuffix;
+        upiInput.focus();
+
+        validateUpiForm(upiInput.value.trim());
+    }
+
+    upiOptions.forEach((option) => {
+        option.addEventListener("click", function () {
+            if (this.checked) showUpiPopup(this.value);
+        });
+    });
+
+    if (closeButton) {
+        closeButton.addEventListener("click", closeUpiPopup);
+    }
+
+    upiButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            appendUpi(this.textContent.trim());
+        });
+    });
+
+    // ✅ UPI ID Validation on Form Submission
+    upiForm.addEventListener("submit", function (event) {
+        let upiValue = upiInput.value.trim();
+
+        if (!validateUpiForm(upiValue)) {
+            event.preventDefault();
+            return;
+        }
+
+        // ✅ Proceed with storing transaction details if form is valid
+        storeTransactionDetails("UPI");
+    });
+
+    // ✅ Validation on Input (Error Appears as User Types)
+    upiInput.addEventListener("input", function () {
+        validateUpiForm(upiInput.value.trim());
+    });
+
+    function validateUpiForm(upiValue) {
+        let isValid = true;
+
+        if (upiValue === "") {
+            upiError.innerHTML = "<strong>⚠️ UPI ID is required.</strong>";
+            upiError.style.color = "red";
+            isValid = false;
+        } else if (!upiPattern.test(upiValue)) {
+            upiError.innerHTML = "<strong>❌ Enter a valid UPI ID (example: name@upi).</strong>";
+            upiError.style.color = "red";
+            isValid = false;
+        } else {
+            upiError.innerHTML = "<strong>✅ Looks good!</strong>";
+            upiError.style.color = "green";
+        }
+
+        return isValid;
+    }
+
+    // ✅ Store Transaction Details (UPI or Card) in localStorage per user
+    function storeTransactionDetails(paymentMode) {
+        let currentPlan = JSON.parse(sessionStorage.getItem("currentPlan"));
+        let currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer"));
+
+        if (!currentCustomer || !currentCustomer.mobile) {
+            console.error("No current customer found.");
+            return;
+        }
+
+        let userMobile = currentCustomer.mobile;
+
+        let now = new Date();
+        let purchaseDate = now.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) +
+            " - " + now.toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+        let startDate = now.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+        let endDate = new Date();
+        endDate.setDate(now.getDate() + currentPlan.validity);
+        let planEndDate = endDate.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+        let transactionId = Math.floor(100000000000 + Math.random() * 900000000000).toString();
+
+        let transactionDetails = {
+            amount: currentPlan.price,
+            status: "Successful",
+            purchased_on: purchaseDate,
+            payment_mode: paymentMode,
+            ref_number: transactionId,
+            plan_start: startDate,
+            plan_end: planEndDate,
+            plan_details: currentPlan
+        };
+
+        // ✅ Store the latest transaction in sessionStorage for pop-up display
+        sessionStorage.setItem("currentTransaction", JSON.stringify(transactionDetails));
+
+        // ✅ Fetch existing transactions from localStorage
+        let transactionsData = JSON.parse(localStorage.getItem("transaction_details")) || {};
+
+        // ✅ If user already has transactions, append, else create new array
+        if (!transactionsData[userMobile]) {
+            transactionsData[userMobile] = [];
+        }
+
+        transactionsData[userMobile].push(transactionDetails);
+
+        // ✅ Update localStorage
+        localStorage.setItem("transaction_details", JSON.stringify(transactionsData));
+    }
+}); -->

@@ -741,22 +741,25 @@ function openPopup(card) {
 // Popular-Plans-Dynamically-Generate-cards
 
 // Popular-Plans-Dynamically-Generate-cards
-
 document.addEventListener("DOMContentLoaded", function () {
     const planCategories = document.querySelectorAll(".sidebar nav a");
     const container = document.querySelector(".plan_card-container");
 
-    // Function to Load JSON Data Dynamically
-    function loadPlans(category) {
-        fetch(`./Prepaid_plans_json/${category}.json`) // ✅ Corrected Fetch Path
+    // Function to Load JSON Data from Backend API
+    function loadPlans(categoryName) {
+        fetch("http://localhost:8083/api/prepaid-plans")
             .then(response => response.json())
             .then(plans => {
-                generatePlans(plans); // Generate cards dynamically for all categories
+                // Filter plans based on selected category
+                const filteredPlans = plans.filter(plan => 
+                    plan.categories.some(category => category.categoryName === categoryName)
+                );
+                generatePlans(filteredPlans); // Generate cards dynamically
             })
-            .catch(error => console.error(`Error loading ${category}.json:`, error));
+            .catch(error => console.error(`Error fetching plans:`, error));
     }
 
-    // Function to Generate Plan Cards (Handles Missing Data)
+    // Function to Generate Plan Cards
     function generatePlans(plans) {
         container.innerHTML = ""; // Clear previous content
 
@@ -782,27 +785,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 benefitsHTML += `<div class="benefit"><i class="fas fa-envelope"></i> ${plan.sms}</div>`;
             }
 
-            // Handle OTT benefits if available
             let ottHTML = "";
             if (plan.ott && plan.ott.length > 0) {
                 ottHTML = `
                     <div class="ott-text-data" style="display: none;">
                         ${plan.ott.join(", ")}
                     </div>
-
                     <div class="ott-description-data" style="display: none;">
                         ${plan.ott.map(ott => `
                             <div data-ott="${ott}">Enjoy ${ott}'s premium content.</div>
                         `).join("")}
                     </div>
-
-                    <!-- OTT Icons -->
                     <div class="ott-icons"></div>
                     <div class="more-ott"></div>
                 `;
             }
 
-            // Handle Terms & Conditions
             let termsHTML = "";
             if (plan.terms && plan.terms.length > 0) {
                 termsHTML = `
@@ -822,13 +820,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         <i class="fa-solid fa-arrow-right open-popup"></i>
                     </div>
                 </div>
-
                 <div class="card-content">
-                    ${benefitsHTML}  <!-- Only display available benefits -->
-                    ${ottHTML}        <!-- OTT Section Added Here ✅ -->
-                    ${termsHTML}      <!-- Show Terms & Conditions if available -->
+                    ${benefitsHTML}
+                    ${ottHTML}
+                    ${termsHTML}
                 </div>
-
                 <div class="card-footer">
                     <a href="/Mobile_Prepaid_Customer/Payment_Page/payment.html" class="buy-link">
                         <button class="buy-button">Buy Now</button>
@@ -836,43 +832,80 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             `;
 
-            // Append card to container
             container.appendChild(card);
 
-            // ✅ Attach event listener to store JSON in sessionStorage when "Buy" button is clicked
             const buyButton = card.querySelector(".buy-button");
             buyButton.addEventListener("click", function () {
                 sessionStorage.setItem("currentPlan", JSON.stringify(plan));
             });
 
-            // ✅ Attach event listener to store JSON in sessionStorage when arrow is clicked
             const arrowButton = card.querySelector(".open-popup");
             arrowButton.addEventListener("click", function () {
                 sessionStorage.setItem("currentPlan", JSON.stringify(plan));
             });
         });
 
-        // Dispatch event to notify that new cards are added
         document.dispatchEvent(new Event("cardsUpdated"));
     }
 
-    // Handle Category Clicks
     planCategories.forEach(category => {
         category.addEventListener("click", function (event) {
             event.preventDefault();
 
-            // Remove active class from all links and add to the clicked one
             planCategories.forEach(cat => cat.classList.remove("active"));
             this.classList.add("active");
 
-            // Load corresponding JSON file
-            const selectedCategory = this.getAttribute("data-category");
+            const selectedCategory = this.innerText.trim();
             loadPlans(selectedCategory);
         });
     });
 
-    // Load Default Category (Popular Plans)
-    loadPlans("popular_plans");
+    loadPlans("Popular Plans");
+
+
+    async function fetchCategories() {
+        try {
+            const response = await fetch("http://localhost:8083/api/categories");
+            const categories = await response.json();
+            const categoryNav = document.getElementById("categoryNav");
+            categoryNav.innerHTML = ""; // Clear existing categories
+    
+            categories.forEach(category => {
+                const categoryName = category.categoryName;
+    
+                const categoryLink = document.createElement("a");
+                categoryLink.textContent = categoryName;
+                categoryLink.classList.add("category-item");
+    
+                // Add click event listener
+                categoryLink.addEventListener("click", function (event) {
+                    event.preventDefault();
+    
+                    // Remove 'active' class from all categories
+                    document.querySelectorAll("#categoryNav a").forEach(cat => cat.classList.remove("active"));
+                    this.classList.add("active");
+    
+                    // Load the selected category's plans
+                    loadPlans(categoryName);
+                });
+    
+                categoryNav.appendChild(categoryLink);
+    
+                // Set "Popular Plans" as active and load it by default
+                if (categoryName.toLowerCase() === "popular plans") {
+                    categoryLink.classList.add("active");
+                    loadPlans(categoryName);
+                }
+            });
+    
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    }
+    
+
+fetchCategories(); // Load categories on page load
+
 });
 
 
@@ -881,11 +914,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-
-
-
-// Recharge-Pop-up-JS
-
+// Recharge-Pop-up-JS with Backend Authentication
 
 document.addEventListener("DOMContentLoaded", function () {
     const changeBtn = document.querySelector(".change-button");
@@ -898,18 +927,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const newMobileNumber = document.getElementById("newMobileNumber");
     const newMobileError = document.getElementById("newMobileError");
 
-    // Store customer data
-    let customerData = {};
-
-    // Fetch customer details from JSON
-    fetch("/Mobile_Prepaid_Customer/Discover_Page/customer_details_json/customers.json")
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(customer => {
-                customerData[customer.mobile.trim()] = customer; // Store customer details indexed by mobile number
-            });
-        })
-        .catch(error => console.error("Error loading customer data:", error));
+    // API Endpoint for login and profile fetch
+    const LOGIN_URL = "http://localhost:8083/auth/login";
+    const PROFILE_URL = "http://localhost:8083/auth/profile";
 
     // Show pop-up
     changeBtn.addEventListener("click", () => {
@@ -923,22 +943,53 @@ document.addEventListener("DOMContentLoaded", function () {
     closePopup.addEventListener("click", closePopupFunction);
     cancelBtn.addEventListener("click", closePopupFunction);
 
-    // Update mobile number
-    confirmBtn.addEventListener("click", () => {
+    // Update mobile number and fetch customer details
+    confirmBtn.addEventListener("click", async () => {
         let newNumber = newMobileNumber.value.trim().replace(/\s+/g, ""); // Remove spaces
 
-        if (validateNewMobileNumber(newNumber)) {
-            // Check if number is registered
-            if (newNumber in customerData) {
+        if (!validateNewMobileNumber(newNumber)) return;
+
+        try {
+            // Login API Request to generate a new access token for the new user
+            let loginResponse = await fetch(LOGIN_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mobile: newNumber })
+            });
+
+            if (!loginResponse.ok) throw new Error("Failed to login. Invalid mobile number.");
+
+            let loginData = await loginResponse.json();
+            sessionStorage.setItem("accessToken", loginData.accessToken);
+
+            // Fetch user profile based on new mobile number
+            let profileResponse = await fetch(PROFILE_URL, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${loginData.accessToken}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!profileResponse.ok) throw new Error("Failed to fetch user profile.");
+
+            let userProfile = await profileResponse.json();
+
+            // Check if the entered mobile number matches the user profile
+            if (userProfile.mobile === newNumber) {
                 // Update displayed number
                 phoneNumberSpan.textContent = newNumber;
 
                 // Update current customer in session storage
-                sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[newNumber]));
+                sessionStorage.setItem("currentCustomer", JSON.stringify(userProfile));
 
                 // Close the pop-up
                 closePopupFunction();
+            } else {
+                newMobileError.textContent = "🚫 This number is not associated with your account.";
             }
+        } catch (error) {
+            newMobileError.textContent = `🚫 ${error.message}`;
         }
     });
 
@@ -979,14 +1030,12 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (number.length > 10) {
             newMobileError.textContent = "❌ Phone number should be 10 digits long.";
             isValid = false;
-        } else if (!(number in customerData)) {
-            newMobileError.textContent = "🚫 You are not a registered user of Mobi-Comm.";
-            isValid = false;
         }
 
         return isValid;
     }
 });
+
 
 
 

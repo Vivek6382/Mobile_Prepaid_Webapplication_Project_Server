@@ -118,91 +118,92 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+// Mobile-Validation-Js with Backend Authentication
 
-
-
-
-// Mobile-Validation-Js
-
-// Phone number regex pattern (10-digit number)
 var phonePattern = /^\d{10}$/;
-
-// Error span element
 var rechargePhoneError = document.getElementById("rechargePhoneError");
-
-// Input field
 var rechargePhone = document.getElementById("rechargePhone");
-
-// Form submission
 var rechargeForm = document.getElementById("rechargeForm");
 
-// Store registered users & customer details
-var customerData = {};
-
-// Fetch customer details from JSON
-fetch("./customer_details_json/customers.json")
-  .then(response => response.json())
-  .then(data => {
-    data.forEach(customer => {
-      customerData[customer.mobile.trim()] = customer; // Store customer details indexed by mobile number
-    });
-  })
-  .catch(error => console.error("Error loading customer data:", error));
+// API Endpoints
+const LOGIN_URL = "http://localhost:8083/auth/login";
+const PROFILE_URL = "http://localhost:8083/auth/profile";
 
 // Event Listener for Form Submission
-rechargeForm.addEventListener("submit", function (event) {
-    var phoneNumberValue = rechargePhone.value.trim().replace(/\s+/g, ""); // Remove spaces
+rechargeForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    var phoneNumberValue = rechargePhone.value.trim().replace(/\s+/g, "");
+    
+    if (!validateRechargeForm(phoneNumberValue)) return;
+    
+    try {
+        // Login API Request
+        let loginResponse = await fetch(LOGIN_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mobile: phoneNumberValue })
+        });
 
-    // Validate the form with the collected values
-    if (!validateRechargeForm(phoneNumberValue)) {
-        event.preventDefault();
-    } else {
-        // If valid, store customer details in sessionStorage
-        sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumberValue]));
+        if (!loginResponse.ok) {
+            throw new Error("Login failed. Invalid credentials.");
+        }
+
+        let loginData = await loginResponse.json();
+        sessionStorage.setItem("accessToken", loginData.accessToken);
+
+        // Fetch User Profile
+        let profileResponse = await fetch(PROFILE_URL, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${loginData.accessToken}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!profileResponse.ok) {
+            throw new Error("Failed to fetch user profile.");
+        }
+
+        let userProfile = await profileResponse.json();
+        sessionStorage.setItem("currentCustomer", JSON.stringify(userProfile));
+
+        // Redirect after successful login & profile retrieval
+        window.location.href = "/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html";
+    } catch (error) {
+        rechargePhoneError.innerHTML = `🚫 ${error.message}`;
     }
 });
 
-// On input change, show error message dynamically
+// Dynamic Error Display on Input Change
 rechargePhone.addEventListener("input", function () {
-    var phoneNumberValue = rechargePhone.value.trim().replace(/\s+/g, ""); // Remove spaces
-    validateRechargeForm(phoneNumberValue); // Show validation error while typing
+    var phoneNumberValue = rechargePhone.value.trim().replace(/\s+/g, "");
+    validateRechargeForm(phoneNumberValue);
 });
 
 // Validation Function
 function validateRechargeForm(phoneNumberValue) {
-    var isValid = true;
-
-    // Clear previous error messages
     rechargePhoneError.innerHTML = "";
-
-    // If empty
     if (phoneNumberValue === "") {
         rechargePhoneError.innerHTML = "📢 Phone Number is required.";
-        isValid = false;
-    } 
-    // If non-numeric characters are included
-    else if (!/^\d*$/.test(phoneNumberValue)) {
-        rechargePhoneError.innerHTML = "⚠️ Enter only digits (0-9).";
-        isValid = false;
-    } 
-    // If less than 10 digits
-    else if (phoneNumberValue.length < 10) {
-        rechargePhoneError.innerHTML = "⚠️ Enter a valid 10-digit phone number.";
-        isValid = false;
-    } 
-    // If exactly 10 digits, check registration
-    else if (phoneNumberValue.length === 10) {
-        if (!(phoneNumberValue in customerData)) {
-            rechargePhoneError.innerHTML = "🚫 You are not a registered user of Mobi-Comm.";
-            isValid = false;
-        }
-    } 
-    // If more than 10 digits
-    else if (phoneNumberValue.length > 10) {
-        rechargePhoneError.innerHTML = "❌ Phone number should be 10 digits long.";
-        isValid = false;
+        return false;
     }
-
-    return isValid;
+    if (!/^\d*$/.test(phoneNumberValue)) {
+        rechargePhoneError.innerHTML = "⚠️ Enter only digits (0-9).";
+        return false;
+    }
+    if (phoneNumberValue.length < 10) {
+        rechargePhoneError.innerHTML = "⚠️ Enter a valid 10-digit phone number.";
+        return false;
+    }
+    if (phoneNumberValue.length > 10) {
+        rechargePhoneError.innerHTML = "❌ Phone number should be 10 digits long.";
+        return false;
+    }
+    return true;
 }
+
+
+
+
+
 

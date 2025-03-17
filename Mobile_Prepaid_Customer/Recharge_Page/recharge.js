@@ -74,53 +74,73 @@
 
 // Mobile Validation & OTP Pop-up Integration with JSON-based Quick Recharge Validation
 
-// Mobile Validation & OTP Pop-up Integration with JSON-based Quick Recharge Validation
+// Mobile Validation & OTP Pop-up Integration with Backend Authentication (using access token)
 
 document.addEventListener("DOMContentLoaded", function () {
+    const LOGIN_URL = "http://localhost:8083/auth/login";
+    const PROFILE_URL = "http://localhost:8083/auth/profile";
+
     var phonePattern = /^\d{10}$/;
     var mobileError = document.getElementById("mobileError");
     var mobileInput = document.getElementById("mobile");
     var generateOtpButton = document.getElementById("generateOtp");
     var verifyOtpButton = document.querySelector(".validate-btn");
-
-    // OTP Pop-up elements
     var otpPopup = document.getElementById("otpPopup");
     var otpOverlay = document.getElementById("otpOverlay");
     var closePopup = document.getElementById("closePopup");
     var otpMessage = document.querySelector(".otp-message strong");
     var otpError = document.getElementById("otpError");
-
-    // OTP Side Notification
     var notificationContainer = document.createElement("div");
     notificationContainer.classList.add("notification-container");
     document.body.appendChild(notificationContainer);
 
+    var generatedOTP = "";
     var customerData = {};
-    var generatedOTP = ""; // Store generated OTP
 
-    // Fetch customer details from JSON
-    fetch("/Mobile_Prepaid_Customer/Discover_Page/customer_details_json/customers.json")
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(customer => {
-                customerData[customer.mobile.trim()] = customer;
+    async function fetchCustomerData(phoneNumberValue) {
+        try {
+            let loginResponse = await fetch(LOGIN_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mobile: phoneNumberValue })
             });
-        })
-        .catch(error => console.error("Error loading customer data:", error));
+
+            let loginData = await loginResponse.json();
+            if (!loginResponse.ok) throw new Error("Login failed");
+
+            sessionStorage.setItem("accessToken", loginData.accessToken);
+
+            let profileResponse = await fetch(PROFILE_URL, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${loginData.accessToken}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            let profileData = await profileResponse.json();
+            customerData[phoneNumberValue] = profileData;
+
+        } catch (error) {
+            mobileError.innerHTML = "🚫 Unable to fetch customer details. Please try again.";
+            console.error("Error fetching customer data:", error);
+        }
+    }
 
     mobileInput.addEventListener("input", function () {
         var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, "");
         validateRechargeForm(phoneNumberValue);
     });
 
-    generateOtpButton.addEventListener("click", function (event) {
+    generateOtpButton.addEventListener("click", async function (event) {
         event.preventDefault();
         var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, "");
 
         if (validateRechargeForm(phoneNumberValue)) {
-            generatedOTP = generateRandomOTP(); // Generate new OTP
-            showNotification(`OTP ${generatedOTP} sent successfully`); // Show OTP sent notification
-            openOtpPopup(phoneNumberValue); // Show OTP entry pop-up
+            await fetchCustomerData(phoneNumberValue);
+            generatedOTP = generateRandomOTP();
+            showNotification(`OTP ${generatedOTP} sent successfully`);
+            openOtpPopup(phoneNumberValue);
         }
     });
 
@@ -137,20 +157,16 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (phoneNumberValue.length < 10) {
             mobileError.innerHTML = "⚠️ Enter a valid 10-digit phone number.";
             isValid = false;
-        } else if (!(phoneNumberValue in customerData)) {
-            mobileError.innerHTML = "🚫 You are not a registered user of Mobi-Comm.";
-            isValid = false;
         }
-
         return isValid;
     }
 
     function openOtpPopup(phoneNumber) {
         otpPopup.classList.add("active");
         otpOverlay.classList.add("active");
-        otpMessage.textContent = `******${phoneNumber.slice(-4)}`; // Update phone in message
-        otpError.textContent = ""; // Clear OTP error
-        otpInputs.forEach(input => input.value = ""); // Clear previous OTP inputs
+        otpMessage.textContent = `******${phoneNumber.slice(-4)}`;
+        otpError.textContent = "";
+        otpInputs.forEach(input => input.value = "");
         otpInputs[0].focus();
         startOtpTimer(30);
     }
@@ -169,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
     otpInputs.forEach((input, index) => {
         input.addEventListener("input", function (event) {
             if (!/^\d$/.test(this.value)) {
-                this.value = ""; // Only allow digits
+                this.value = "";
                 return;
             }
             if (this.value.length === 1 && index < otpInputs.length - 1) {
@@ -185,12 +201,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         input.addEventListener("paste", function (event) {
             event.preventDefault();
-            var pasteData = event.clipboardData.getData("text").trim();
+            let pasteData = event.clipboardData.getData("text").trim();
             if (/^\d{6}$/.test(pasteData)) {
+                let digits = pasteData.split("");
                 otpInputs.forEach((input, i) => {
-                    input.value = pasteData[i] || "";
+                    input.value = digits[i] || "";
                 });
-                otpInputs[5].focus();
+                otpInputs[otpInputs.length - 1].focus();
             }
         });
     });
@@ -202,11 +219,8 @@ document.addEventListener("DOMContentLoaded", function () {
         var timeLeft = durationInSeconds;
         resendLink.style.display = "none";
         timerElement.style.display = "block";
-        var countdown = setInterval(function () {
-            var minutes = Math.floor(timeLeft / 60);
-            var seconds = timeLeft % 60;
-            timerElement.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-
+        var countdown = setInterval(() => {
+            timerElement.textContent = `00:${timeLeft.toString().padStart(2, "0")}`;
             if (timeLeft <= 0) {
                 clearInterval(countdown);
                 resendLink.style.display = "inline";
@@ -226,20 +240,21 @@ document.addEventListener("DOMContentLoaded", function () {
     verifyOtpButton.addEventListener("click", function (event) {
         event.preventDefault();
         var enteredOtp = Array.from(otpInputs).map(input => input.value).join("");
-
-        otpError.innerHTML = ""; // Clear previous error
+        otpError.innerHTML = "";
 
         if (enteredOtp.length < 6) {
             otpError.innerHTML = "⚠️ Please enter all 6 digits.";
             return;
         }
-
         if (enteredOtp !== generatedOTP) {
             otpError.innerHTML = "🚫 The OTP entered is incorrect. Please try again.";
             return;
         }
 
-        sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[mobileInput.value.trim()]));
+        let phoneNumberValue = mobileInput.value.trim();
+        if (customerData[phoneNumberValue]) {
+            sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumberValue]));
+        }
         window.location.href = "/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html";
     });
 
@@ -249,16 +264,13 @@ document.addEventListener("DOMContentLoaded", function () {
         notification.innerHTML = `<div class="icon">✔</div>
                                   <div class="notification-text">${message}</div>
                                   <button class="close-btn">&times;</button>`;
-
         notification.querySelector(".close-btn").addEventListener("click", function () {
             notification.remove();
         });
-
         notificationContainer.appendChild(notification);
-        setTimeout(() => notification.remove(), 10000); // Increased time to 10 seconds
+        setTimeout(() => notification.remove(), 10000);
     }
 });
-
 
 
 

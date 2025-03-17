@@ -206,57 +206,104 @@ document.addEventListener("DOMContentLoaded", function () {
 //Pagination Logic :
 
 document.addEventListener("DOMContentLoaded", function () {
-  const cards = document.querySelectorAll(".cust_manage_card");
-  const paginationContainer = document.querySelector(".pagination");
-  const itemsPerPage = 3;
-  let currentPage = 1;
+    const container = document.querySelector(".cust_manage_cards_container");
+    const paginationContainer = document.querySelector(".pagination");
+    const itemsPerPage = 3;
+    let currentPage = 1;
+    let allCards = [];
 
-  function showPage(page) {
-      let start = (page - 1) * itemsPerPage;
-      let end = start + itemsPerPage;
+    function initializePagination() {
+        if (allCards.length === 0) return;
 
-      cards.forEach((card, index) => {
-        card.style.display = card.classList.contains("hidden") ? "none" : (index >= start && index < end ? "block" : "none");
-      });
+        let totalPages = Math.ceil(allCards.length / itemsPerPage);
+        paginationContainer.innerHTML = "";
 
-      updatePagination(page);
-  }
+        let prevLi = document.createElement("li");
+        prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
+        prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+        prevLi.addEventListener("click", function () {
+            if (currentPage > 1) showPage(currentPage - 1);
+        });
+        paginationContainer.appendChild(prevLi);
 
-  function updatePagination(page) {
-      paginationContainer.innerHTML = "";
+        for (let i = 1; i <= totalPages; i++) {
+            let li = document.createElement("li");
+            li.className = `page-item ${i === currentPage ? "active" : ""}`;
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.addEventListener("click", function () {
+                showPage(i);
+            });
+            paginationContainer.appendChild(li);
+        }
 
-      let totalPages = Math.ceil([...cards].filter(card => !card.classList.contains("hidden")).length / itemsPerPage);
+        let nextLi = document.createElement("li");
+        nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
+        nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
+        nextLi.addEventListener("click", function () {
+            if (currentPage < totalPages) showPage(currentPage + 1);
+        });
+        paginationContainer.appendChild(nextLi);
 
+        showPage(currentPage);
+    }
 
-      let prevLi = document.createElement("li");
-      prevLi.className = `page-item ${page === 1 ? "disabled" : ""}`;
-      prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
-      prevLi.addEventListener("click", function () {
-          if (page > 1) showPage(page - 1);
-      });
-      paginationContainer.appendChild(prevLi);
+    function showPage(page) {
+        let start = (page - 1) * itemsPerPage;
+        let end = start + itemsPerPage;
+        allCards.forEach((card, index) => {
+            card.style.display = index >= start && index < end ? "block" : "none";
+        });
+        currentPage = page;
+        initializePagination();
+    }
 
-      for (let i = 1; i <= totalPages; i++) {
-          let li = document.createElement("li");
-          li.className = `page-item ${i === page ? "active" : ""}`;
-          li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-          li.addEventListener("click", function () {
-              showPage(i);
-          });
-          paginationContainer.appendChild(li);
-      }
+    fetch("http://localhost:8083/api/transactions")
+        .then(response => response.json())
+        .then(data => {
+            container.innerHTML = ""; // Clear existing content
+            allCards = [];
 
-      let nextLi = document.createElement("li");
-      nextLi.className = `page-item ${page === totalPages ? "disabled" : ""}`;
-      nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
-      nextLi.addEventListener("click", function () {
-          if (page < totalPages) showPage(page + 1);
-      });
-      paginationContainer.appendChild(nextLi);
-  }
+            data.forEach(transaction => {
+                const card = document.createElement("div");
+                card.classList.add("cust_manage_card", transaction.transactionStatus.toLowerCase());
 
-  showPage(currentPage);
+                card.innerHTML = `
+                    <span class="batch-label badge badge-secondary">${new Date(transaction.planStart).toLocaleString('en-US', { month: 'short', year: 'numeric' })}</span>
+                    <div class="dot_div"><span class="status-dot"></span></div>
+                    <div class="recharge_history_info">
+                        <div class="recharge_history_row">
+                            <div class="recharge_mobile_div">
+                                <span class="recharge_mobile">Transaction ID: <span class="recharge_plan-category">${transaction.transactionId}</span></span>
+                            </div>
+                            <div class="recharge_name_div">
+                                <span class="recharge_name">Payment Mode: <span class="recharge-total-plans">${transaction.paymentMode}</span></span>
+                            </div>
+                        </div>
+                        <div class="recharge_history_row">
+                            <div class="recharge_plan_div">
+                                <span class="recharge_plan">Purchased on: <span class="recharge-purchase-date">${new Date(transaction.purchasedOn).toLocaleDateString()}</span></span>
+                            </div>
+                            <div class="recharge_plan_div">
+                                <span class="recharge_plan">Plan: <span class="recharge-subscribed-users">${transaction.plan.planName}</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cust_card_footer">
+                        <i class="fa-solid fa-download download-icon"></i>
+                        <i class="fa-solid fa-eye view-icon"></i>
+                    </div>
+                    <div class="chevron-icon"><i class="fa fa-chevron-right"></i></div>
+                `;
+
+                allCards.push(card);
+                container.appendChild(card);
+            });
+
+            initializePagination();
+        })
+        .catch(error => console.error("Error fetching transactions:", error));
 });
+
 
 
 
@@ -264,62 +311,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Recharge-history-page
 
+//Recharge-history-page
+
 function filterResults() {
-  let input = document.getElementById("searchInput").value.toLowerCase();
-  let tableRows = document.getElementById("transactionTable").getElementsByTagName("tr");
-
-  for (let i = 0; i < tableRows.length; i++) {
-      let row = tableRows[i];
-      let rowData = row.textContent.toLowerCase();
-      if (rowData.includes(input)) {
-          row.style.display = "";
-      } else {
-          row.style.display = "none";
-      }
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let transactionCards = document.querySelectorAll(".cust_manage_card");
+  
+    transactionCards.forEach(card => {
+        let cardText = card.textContent.toLowerCase();
+        if (cardText.includes(input)) {
+            card.style.display = "flex"; // Show matching cards
+        } else {
+            card.style.display = "none"; // Hide non-matching cards
+        }
+    });
   }
-}
-
+  
 
 
 //Filter-navigation
 
+//Filter-navigation
+
 document.addEventListener("DOMContentLoaded", function () {
-  // Selecting navigation elements
-  const navLinks = document.querySelectorAll(".expires_list");
-
-  // Selecting all transaction cards
-  const transactionCards = document.querySelectorAll(".cust_manage_card");
-
-  // Function to filter transactions
-  function filterTransaction(status) {
-      transactionCards.forEach(card => {
-          if (status === "all" || card.classList.contains(status)) {
-              card.style.display = "flex"; // Show matching cards
-          } else {
-              card.style.display = "none"; // Hide non-matching cards
-          }
-      });
-
-      // Update active navigation
-      navLinks.forEach(link => link.classList.remove("active-nav"));
-      document.querySelector(`.${status}_list`)?.classList.add("active-nav");
-  }
-
-  // Adding event listeners for filter navigation
-  navLinks.forEach(link => {
-      link.addEventListener("click", function (e) {
-          e.preventDefault();
-          const status = this.classList.contains("all_list") ? "all" :
-              this.classList.contains("successful_list") ? "successful" :
-              this.classList.contains("unsuccessful_list") ? "failed" : "";
-
-          if (status) filterTransaction(status);
-      });
+    // Selecting navigation elements
+    const navLinks = document.querySelectorAll(".expires_list");
+  
+    // Function to filter transactions dynamically
+    function filterTransaction(status) {
+        const transactionCards = document.querySelectorAll(".cust_manage_card");
+  
+        transactionCards.forEach(card => {
+            if (status === "all" || card.classList.contains(status)) {
+                card.style.display = "flex"; // Show matching cards
+            } else {
+                card.style.display = "none"; // Hide non-matching cards
+            }
+        });
+  
+        // Update active navigation
+        navLinks.forEach(link => link.classList.remove("active-nav"));
+        document.querySelector(`.${status}_list`)?.classList.add("active-nav");
+    }
+  
+    // Adding event listeners for filter navigation
+    navLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
+            const status = this.classList.contains("all_list") ? "all" :
+                this.classList.contains("successful_list") ? "successful" :
+                this.classList.contains("unsuccessful_list") ? "failed" : "";
+  
+            if (status) filterTransaction(status);
+        });
+    });
+  
+    // Initialize with 'All' filter after dynamic content load
+    setTimeout(() => filterTransaction("all"), 500);
   });
-
-  // Initialize with 'All' filter
-  filterTransaction("all");
-});
+  
 
 
 
@@ -328,34 +378,39 @@ document.addEventListener("DOMContentLoaded", function () {
 //Dynamic tool-tip 
 
 document.addEventListener("DOMContentLoaded", function () {
-  const tooltip = document.createElement("div");
-  tooltip.className = "dynamic-tooltip";
-  document.body.appendChild(tooltip);
+    const tooltip = document.createElement("div");
+    tooltip.className = "dynamic-tooltip";
+    document.body.appendChild(tooltip);
 
-  const statusDots = document.querySelectorAll(".status-dot");
+    document.addEventListener("mouseover", function (event) {
+        const dot = event.target.closest(".status-dot");
+        if (dot) {
+            const card = dot.closest(".cust_manage_card");
+            const status = card.classList.contains("successful") 
+                ? "Successful Transaction" 
+                : "Failed Transaction";
 
-  statusDots.forEach(dot => {
-      dot.addEventListener("mouseenter", function (event) {
-          const status = this.closest(".cust_manage_card").classList.contains("successful") 
-              ? "Successful Transaction" 
-              : "Failed Transaction";
+            tooltip.textContent = status;
+            tooltip.style.visibility = "visible";
+            tooltip.style.opacity = "1";
+        }
+    });
 
-          tooltip.textContent = status;
-          tooltip.style.visibility = "visible";
-          tooltip.style.opacity = "1";
-      });
+    document.addEventListener("mousemove", function (event) {
+        if (tooltip.style.visibility === "visible") {
+            tooltip.style.left = event.pageX + "px";
+            tooltip.style.top = (event.pageY + 15) + "px"; // Slightly below the cursor
+        }
+    });
 
-      dot.addEventListener("mousemove", function (event) {
-          tooltip.style.left = event.pageX + "px";
-          tooltip.style.top = (event.pageY + 15) + "px"; // Slightly below the cursor
-      });
-
-      dot.addEventListener("mouseleave", function () {
-          tooltip.style.visibility = "hidden";
-          tooltip.style.opacity = "0";
-      });
-  });
+    document.addEventListener("mouseout", function (event) {
+        if (event.target.closest(".status-dot")) {
+            tooltip.style.visibility = "hidden";
+            tooltip.style.opacity = "0";
+        }
+    });
 });
+
 
 
 
@@ -363,45 +418,47 @@ document.addEventListener("DOMContentLoaded", function () {
 //Inside-Search-Js
 
 
+//Inside-Search-Js
+
 // Search Functionality for Transaction Cards
 document.addEventListener("DOMContentLoaded", function () {
-  const searchInput = document.getElementById("searchInput");
-
-  function searchTransactions() {
-      const searchTerm = searchInput.value.trim().toLowerCase();
-      const transactionCards = document.querySelectorAll(".cust_manage_card");
-
-      transactionCards.forEach((card) => {
-          const transactionID = card.querySelector(".plan-category")?.textContent.toLowerCase() || "";
-          const paymentMode = card.querySelector(".total-plans")?.textContent.toLowerCase() || "";
-          const purchaseDate = card.querySelector(".purchase-date")?.textContent.toLowerCase() || "";
-          const planDetails = card.querySelector(".subscribed-users")?.textContent.toLowerCase() || "";
-
-          if (
-              transactionID.includes(searchTerm) ||
-              paymentMode.includes(searchTerm) ||
-              purchaseDate.includes(searchTerm) ||
-              planDetails.includes(searchTerm)
-          ) {
-              card.style.display = "flex"; // Show matching cards
-          } else {
-              card.style.display = "none"; // Hide non-matching cards
-          }
-      });
-  }
-
-  // Trigger search on input change
-  searchInput.addEventListener("input", searchTransactions);
-
-  // Prevent form submission on Enter key
-  searchInput.addEventListener("keypress", function (event) {
-      if (event.key === "Enter") {
-          event.preventDefault();
-          searchTransactions();
-      }
+    const searchInput = document.getElementById("searchInput");
+  
+    function searchTransactions() {
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        const transactionCards = document.querySelectorAll(".cust_manage_card");
+  
+        transactionCards.forEach((card) => {
+            const transactionID = card.querySelector(".recharge_plan-category")?.textContent.toLowerCase() || "";
+            const paymentMode = card.querySelector(".recharge-total-plans")?.textContent.toLowerCase() || "";
+            const purchaseDate = card.querySelector(".recharge-purchase-date")?.textContent.toLowerCase() || "";
+            const planDetails = card.querySelector(".recharge-subscribed-users")?.textContent.toLowerCase() || "";
+  
+            if (
+                transactionID.includes(searchTerm) ||
+                paymentMode.includes(searchTerm) ||
+                purchaseDate.includes(searchTerm) ||
+                planDetails.includes(searchTerm)
+            ) {
+                card.style.display = "flex"; // Show matching cards
+            } else {
+                card.style.display = "none"; // Hide non-matching cards
+            }
+        });
+    }
+  
+    // Trigger search on input change
+    searchInput.addEventListener("input", searchTransactions);
+  
+    // Prevent form submission on Enter key
+    searchInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchTransactions();
+        }
+    });
   });
-});
-
+  
 
 
 
@@ -427,22 +484,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     infoItems[0].textContent = userData.dob; // DOB
     infoItems[1].textContent = userData.email; // Email
-    infoItems[2].textContent = `+91 ${userData.alternate_number}`; // Alternate Number
-    infoItems[3].textContent = userData.contact_method; // Ways to Contact
-    infoItems[4].textContent = userData.communication_language; // Communication Language
-    infoItems[5].textContent = userData.address; // Permanent Address
+    infoItems[2].textContent = `+91 ${userData.alternateNumber}`; // Alternate Number
+    infoItems[3].textContent = userData.contactMethod; // Ways to Contact
+    infoItems[4].textContent = userData.communicationLanguage; // Communication Language (Hidden)
+    infoItems[5].textContent = userData.address; // Permanent Address (Hidden)
 
-    // 🔥 Call Profile Picture Handling after user details are populated
+    // Additional Hidden Fields
+    if (userData.role) {
+        const roleItem = document.createElement("div");
+        roleItem.classList.add("info-item", "hidden");
+        roleItem.innerHTML = `<i class="fas fa-user"></i> Role: <span class="text-white">${userData.role}</span>`;
+        document.querySelector(".info-grid").appendChild(roleItem);
+    }
+
+    if (userData.username) {
+        const usernameItem = document.createElement("div");
+        usernameItem.classList.add("info-item", "hidden");
+        usernameItem.innerHTML = `<i class="fas fa-user-circle"></i> Username: <span class="text-white">${userData.username}</span>`;
+        document.querySelector(".info-grid").appendChild(usernameItem);
+    }
+
+    // Call Profile Picture Handling after user details are populated
     handleProfilePicture(userData.mobile, userData.name);
 });
 
 // ✅ Function to Handle Profile Picture Logic
 function handleProfilePicture(userMobile, userName) {
-    const profilePic = document.getElementById("profile-pic"); // Main Profile Pic
-    const profileUpload = document.getElementById("profile-upload"); // File Upload Input
-    const profileImage = document.getElementById("profile-image"); // Main Image Element
-    const profileInitial = document.getElementById("profile-initial"); // Main Profile Initial
-    const sideProfilePic = document.getElementById("user-profile-pic"); // Sidebar Profile Pic
+    const profilePic = document.getElementById("profile-pic");
+    const profileUpload = document.getElementById("profile-upload");
+    const profileImage = document.getElementById("profile-image");
+    const profileInitial = document.getElementById("profile-initial");
+    const sideProfilePic = document.getElementById("user-profile-pic");
 
     if (!profilePic || !profileUpload || !profileImage || !profileInitial || !sideProfilePic) {
         console.error("Profile picture elements not found!");
@@ -453,27 +525,21 @@ function handleProfilePicture(userMobile, userName) {
     const storedProfilePic = sessionStorage.getItem(`profilePic_${userMobile}`);
 
     if (storedProfilePic) {
-        // If an image is stored, display it
         profileImage.src = storedProfilePic;
         profileImage.style.display = "block";
-        profileInitial.style.display = "none"; // Hide initials
-
-        // Set Sidebar Profile Picture
+        profileInitial.style.display = "none";
         sideProfilePic.style.backgroundImage = `url(${storedProfilePic})`;
         sideProfilePic.style.backgroundSize = "cover";
         sideProfilePic.style.backgroundPosition = "center";
-        sideProfilePic.innerHTML = ""; // Remove initials
+        sideProfilePic.innerHTML = "";
     } else {
-        // If no image, set initials
         setProfileInitials(userName);
     }
 
-    // Clicking the main profile should open the file selector
     profilePic.addEventListener("click", function () {
         profileUpload.click();
     });
 
-    // Handle Image Upload
     profileUpload.addEventListener("change", function (event) {
         const file = event.target.files[0];
 
@@ -481,20 +547,14 @@ function handleProfilePicture(userMobile, userName) {
             const reader = new FileReader();
             reader.onload = function (e) {
                 const imageURL = e.target.result;
-
-                // Save the profile image in sessionStorage
                 sessionStorage.setItem(`profilePic_${userMobile}`, imageURL);
-
-                // Update Main Profile Pic
                 profileImage.src = imageURL;
                 profileImage.style.display = "block";
-                profileInitial.style.display = "none"; // Hide initials
-
-                // Update Sidebar Profile Pic
+                profileInitial.style.display = "none";
                 sideProfilePic.style.backgroundImage = `url(${imageURL})`;
                 sideProfilePic.style.backgroundSize = "cover";
                 sideProfilePic.style.backgroundPosition = "center";
-                sideProfilePic.innerHTML = ""; // Remove initials
+                sideProfilePic.innerHTML = "";
             };
             reader.readAsDataURL(file);
         }
@@ -505,12 +565,10 @@ function handleProfilePicture(userMobile, userName) {
 function setProfileInitials(name) {
     let userInitial = name ? name.trim().charAt(0).toUpperCase() : "U";
 
-    // Set Initial for Main Profile
     const profileInitial = document.getElementById("profile-initial");
     profileInitial.innerText = userInitial;
-    profileInitial.style.display = "flex"; // Ensure visible if no image
+    profileInitial.style.display = "flex";
 
-    // Set Initial for Sidebar Profile
     const sideProfilePic = document.getElementById("user-profile-pic");
     let sideProfileInitial = document.createElement("span");
     sideProfileInitial.innerText = userInitial;
@@ -519,10 +577,9 @@ function setProfileInitials(name) {
     sideProfileInitial.style.fontWeight = "bold";
     sideProfileInitial.style.textTransform = "uppercase";
 
-    sideProfilePic.innerHTML = ""; // Clear existing content
+    sideProfilePic.innerHTML = "";
     sideProfilePic.appendChild(sideProfileInitial);
 }
-
 
 
 
@@ -538,7 +595,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const updateBtn = document.getElementById("update-btn");
     const cancelUpdateBtn = document.getElementById("cancel-update");
     const closeBtn = document.querySelector(".close-btn");
-    
+
     // Selecting user details
     const userName = document.querySelector(".user-name");
     const userMobile = document.querySelector(".user-mobile");
@@ -547,23 +604,36 @@ document.addEventListener("DOMContentLoaded", function () {
     const userDOB = document.querySelector(".fa-calendar + span");
     const userLanguage = document.querySelector(".fa-language + span");
     const userAddress = document.querySelector(".fa-map-marker-alt + span");
-    const userAltMobile = document.querySelector(".fa-phone + span"); // Fetch alternate mobile
+    const userAltMobile = document.querySelector(".fa-phone + span");
+    const userRole = document.querySelector(".user-role");
+    const userUsername = document.querySelector(".user-username");
 
     // Select the edit button
-    const editButton = document.querySelector(".edit-icon"); 
+    const editButton = document.querySelector(".edit-icon");
 
     if (editButton) {
         editButton.addEventListener("click", function () {
             if (updatePopup) {
-                // Set values in input fields
+                // Ensure "+91" is not added
+                let mobileNumber = userMobile?.textContent.trim() || "";
+                let altMobileNumber = userAltMobile?.textContent.trim() || "";
+
                 document.getElementById("update-name").value = userName?.textContent || "";
-                document.getElementById("update-mobile").value = userMobile?.textContent || "";
-                document.getElementById("update-alt-mobile").value = userAltMobile?.textContent || ""; // Fetch alt mobile
+                document.getElementById("update-mobile").value = mobileNumber.replace(/^\+91\s*/, ""); // Remove "+91" if present
+                document.getElementById("update-alt-mobile").value = altMobileNumber.replace(/^\+91\s*/, ""); // Remove "+91" if present
                 document.getElementById("update-email").value = userEmail?.textContent || "";
-                document.getElementById("update-contact-method").value = userContactMethod?.textContent || "";
+
+                let contactMethodValue = userContactMethod?.textContent.trim() || "EMAIL";
+                let languageValue = userLanguage?.textContent.trim() || "ENGLISH";
+
+                document.getElementById("update-contact-method").value = contactMethodValue;
+                document.getElementById("update-language").value = languageValue;
+
                 document.getElementById("update-dob").value = userDOB?.textContent || "";
                 document.getElementById("update-address").value = userAddress?.textContent || "";
-                document.getElementById("update-language").value = userLanguage?.textContent || "";
+
+                document.getElementById("update-role").value = sessionStorage.getItem("userRole") || "ROLE_GUEST";
+                document.getElementById("update-username").value = userUsername?.textContent || "";
 
                 updatePopup.style.display = "flex";
             } else {
@@ -573,6 +643,39 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error("Edit button (.edit-icon) not found!");
     }
+
+    // Dynamic validation for input fields with error messages
+    document.querySelectorAll(".detail-input").forEach(input => {
+        if (input.id === "update-alt-mobile" || input.id === "update-email") {
+            input.addEventListener("input", function () {
+                let errorSpan = this.nextElementSibling;
+                if (!errorSpan || !errorSpan.classList.contains("error-message")) {
+                    errorSpan = document.createElement("span");
+                    errorSpan.classList.add("error-message");
+                    this.parentNode.appendChild(errorSpan);
+                }
+
+                if (this.id === "update-alt-mobile") {
+                    let value = this.value.replace(/\s+/g, ""); // Remove spaces
+                    if (!/^\d{10}$/.test(value)) { // Expect only 10-digit mobile number
+                        errorSpan.innerHTML = "❌ Enter a valid 10-digit mobile number!";
+                        errorSpan.style.color = "red";
+                    } else {
+                        errorSpan.innerHTML = "";
+                    }
+                }
+
+                if (this.id === "update-email") {
+                    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(this.value)) {
+                        errorSpan.innerHTML = "❌ Enter a valid email address!";
+                        errorSpan.style.color = "red";
+                    } else {
+                        errorSpan.innerHTML = "";
+                    }
+                }
+            });
+        }
+    });
 
     // Close pop-up when cancel button is clicked
     cancelUpdateBtn?.addEventListener("click", function () {
@@ -584,8 +687,19 @@ document.addEventListener("DOMContentLoaded", function () {
         updatePopup.style.display = "none";
     });
 
-    // Save updated details and update session storage
+    // Save updated details only if validation passes
     updateBtn?.addEventListener("click", function () {
+        let altMobileInput = document.getElementById("update-alt-mobile");
+        let emailInput = document.getElementById("update-email");
+
+        let altMobileValid = /^\d{10}$/.test(altMobileInput.value.replace(/\s+/g, ""));
+        let emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailInput.value);
+
+        if (!altMobileValid || !emailValid) {
+            alert("Please correct the highlighted errors before updating.");
+            return;
+        }
+
         if (userMobile) userMobile.textContent = document.getElementById("update-mobile").value;
         if (userAltMobile) userAltMobile.textContent = document.getElementById("update-alt-mobile").value;
         if (userEmail) userEmail.textContent = document.getElementById("update-email").value;
@@ -601,7 +715,9 @@ document.addEventListener("DOMContentLoaded", function () {
         currentCustomer.contactMethod = document.getElementById("update-contact-method").value;
         currentCustomer.language = document.getElementById("update-language").value;
         currentCustomer.address = document.getElementById("update-address").value;
-        
+        currentCustomer.role = document.getElementById("update-role").value; // Role is unchangeable but stored
+        currentCustomer.username = document.getElementById("update-username").value; // Hidden field remains
+
         sessionStorage.setItem("currentCustomer", JSON.stringify(currentCustomer));
 
         updatePopup.style.display = "none";
@@ -876,6 +992,8 @@ document.getElementById('close-unique-popup').addEventListener('click', function
 
 
 
+
+
 // Invoice-Details-JS
 
 // Ensure DOM is loaded before executing
@@ -1112,16 +1230,15 @@ document.addEventListener("DOMContentLoaded", function () {
 //Recharge-Plan-Pop-up-Details 
 
 // Dynamic Pop-up Content for Recharge History
-document.querySelectorAll('.view-icon').forEach(icon => {
-    icon.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        const card = this.closest('.cust_manage_card');
-        const planDetails = card.querySelector('.recharge_plan_details');
+// Dynamic Pop-up Content for Recharge History (Using Event Delegation)
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("view-icon")) {
+        const card = e.target.closest(".cust_manage_card");
+        const planDetails = card.querySelector(".recharge_plan_details");
 
         // Set Plan Name & Cost
-        document.querySelector('.plan-title-custom').textContent = planDetails.querySelector('.plan-name').textContent;
-        document.querySelector('.plan-cost-custom').textContent = planDetails.querySelector('.price').textContent;
+        document.querySelector(".plan-title-custom").textContent = planDetails.querySelector(".plan-name").textContent;
+        document.querySelector(".plan-cost-custom").textContent = planDetails.querySelector(".price").textContent;
 
         // Map icons to their respective features
         const featureMap = {
@@ -1134,15 +1251,15 @@ document.querySelectorAll('.view-icon').forEach(icon => {
         };
 
         // Populate Plan Details Table
-        const planDetailsBody = document.getElementById('plan-details-body');
-        planDetailsBody.innerHTML = '';
+        const planDetailsBody = document.getElementById("plan-details-body");
+        planDetailsBody.innerHTML = "";
 
-        planDetails.querySelectorAll('.benefit').forEach(benefit => {
-            const iconClass = benefit.querySelector('i')?.className.trim();
+        planDetails.querySelectorAll(".benefit").forEach(benefit => {
+            const iconClass = benefit.querySelector("i")?.className.trim();
             const textValue = benefit.textContent.trim();
 
             if (iconClass && textValue) {
-                const row = document.createElement('tr');
+                const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${featureMap[iconClass] || "Unknown"}</td>
                     <td class="separator"></td>
@@ -1153,13 +1270,13 @@ document.querySelectorAll('.view-icon').forEach(icon => {
         });
 
         // Populate OTT Benefits
-        const perkList = document.querySelector('.perk-list-custom');
-        perkList.innerHTML = '';
+        const perkList = document.querySelector(".perk-list-custom");
+        perkList.innerHTML = "";
 
-        const ottTextElement = planDetails.querySelector('.ott-text-data');
+        const ottTextElement = planDetails.querySelector(".ott-text-data");
         if (ottTextElement) {
-            const ottNames = ottTextElement.textContent.split(', ').map(ott => ott.trim());
-            const ottDescriptions = planDetails.querySelectorAll('.ott-description-data div');
+            const ottNames = ottTextElement.textContent.split(", ").map(ott => ott.trim());
+            const ottDescriptions = planDetails.querySelectorAll(".ott-description-data div");
 
             const logoMap = {
                 "Netflix": "./assets/Netflix_Logo.svg",
@@ -1169,45 +1286,21 @@ document.querySelectorAll('.view-icon').forEach(icon => {
                 "Zee5": "./assets/Zee5_Logo.svg"
             };
 
-            const classMap = {
-                "Netflix": "netflix",
-                "Amazon Prime": "prime",
-                "Sony LIV": "sony",
-                "Sun NXT": "sun",
-                "Zee5": "zee5"
-            };
-
-            // Function to create a fallback icon with background color
-            function createFallbackIcon(name) {
-                const fallbackDiv = document.createElement("div");
-                fallbackDiv.classList.add("fallback-icon", classMap[name] || "default-fallback");
-                fallbackDiv.innerText = name.charAt(0).toUpperCase(); // First letter
-                return fallbackDiv;
-            }
-
             ottNames.forEach(name => {
-                const desc = [...ottDescriptions].find(div => div.getAttribute('data-ott') === name)?.textContent || '';
-                const imgSrc = logoMap[name] || '';
+                const desc = [...ottDescriptions].find(div => div.getAttribute("data-ott") === name)?.textContent || "";
 
-                const perkItem = document.createElement('div');
-                perkItem.classList.add('perk-item-custom');
+                const perkItem = document.createElement("div");
+                perkItem.classList.add("perk-item-custom");
 
                 let imgElement = document.createElement("img");
-                imgElement.src = imgSrc;
+                imgElement.src = logoMap[name] || "";
                 imgElement.alt = `${name} Logo`;
 
-                // Handling fallback when image fails to load
                 imgElement.onerror = function () {
                     imgElement.remove();
-                    perkItem.insertBefore(createFallbackIcon(name), perkItem.firstChild);
                 };
 
-                if (imgSrc) {
-                    perkItem.appendChild(imgElement);
-                } else {
-                    perkItem.appendChild(createFallbackIcon(name));
-                }
-
+                perkItem.appendChild(imgElement);
                 const perkInfo = document.createElement("div");
                 perkInfo.classList.add("perk-info-custom");
                 perkInfo.innerHTML = `<span class="perk-title-custom">${name}</span><p>${desc}</p>`;
@@ -1218,33 +1311,32 @@ document.querySelectorAll('.view-icon').forEach(icon => {
         }
 
         // Set Terms & Conditions
-        const termsContainer = document.getElementById('terms-content');
-        termsContainer.innerHTML = '';
+        const termsContainer = document.getElementById("terms-content");
+        termsContainer.innerHTML = "";
 
-        planDetails.querySelectorAll('.terms-conditions p').forEach(p => {
-            const paragraph = document.createElement('p');
+        planDetails.querySelectorAll(".terms-conditions p").forEach(p => {
+            const paragraph = document.createElement("p");
             paragraph.textContent = p.textContent;
             termsContainer.appendChild(paragraph);
         });
 
-        // Show Popup
-        document.getElementById('unique-popup-overlay').classList.add('active');
-    });
+        document.getElementById("unique-popup-overlay").classList.add("active");
+    }
 });
 
 // Close Popup
-document.getElementById('close-unique-popup').addEventListener('click', function () {
-    document.getElementById('unique-popup-overlay').classList.remove('active');
+document.getElementById("close-unique-popup").addEventListener("click", function () {
+    document.getElementById("unique-popup-overlay").classList.remove("active");
 });
 
 
 
 
 
-//Transcation-Details-Pop-up-Recharge-History 
-
+// Recharge history - dynamic population from backend
 
 document.addEventListener("DOMContentLoaded", function () {
+    const container = document.querySelector(".cust_manage_cards_container");
     const popup = document.getElementById("transaction-popup");
     const doneBtn = document.getElementById("transaction-done-btn");
 
@@ -1272,14 +1364,16 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("popup-end").textContent = data.end;
     }
 
-    // Add event listener to all chevron icons in recharge cards
-    document.querySelectorAll(".cust_manage_card .chevron-icon").forEach((chevron) => {
-        chevron.addEventListener("click", function () {
-            const card = this.closest(".cust_manage_card"); // Get the closest card
-            const transactionData = getTransactionValues(card); // Extract data
-            populatePopup(transactionData); // Populate pop-up
-            popup.style.display = "flex"; // Show pop-up
-        });
+    // Event delegation: Listen for clicks on chevron icons inside dynamically created cards
+    container.addEventListener("click", function (event) {
+        if (event.target.closest(".chevron-icon")) {
+            const card = event.target.closest(".cust_manage_card"); // Get the closest card
+            if (card) {
+                const transactionData = getTransactionValues(card); // Extract data
+                populatePopup(transactionData); // Populate pop-up
+                popup.style.display = "flex"; // Show pop-up
+            }
+        }
     });
 
     // Hide pop-up when "Done" button is clicked
@@ -1302,12 +1396,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Ensure DOM is loaded before executing
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".download-icon").forEach(icon => {
-        icon.addEventListener("click", function () {
-            generateRechargeInvoice(this);
-        });
+    document.querySelector(".cust_manage_cards_container").addEventListener("click", function (event) {
+        if (event.target.classList.contains("download-icon")) {
+            generateRechargeInvoice(event.target);
+        }
     });
 });
+
 
 function generateRechargeInvoice(iconElement) {
     const { jsPDF } = window.jspdf;
@@ -1460,140 +1555,141 @@ function generateRechargeInvoice(iconElement) {
 
 // Active-plan-Transaction-Dynamic-JS
 
+// Active-plan-Transaction-Dynamic-JS (Updated to fetch data from API)
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     const planContainer = document.getElementById("Active_plans_section");
     const transactionSection = document.getElementById("transaction_section");
 
     // Get current customer from session storage
     const currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer"));
-    const transactionData = JSON.parse(localStorage.getItem("transaction_details"));
-
-    if (!currentCustomer || !transactionData) {
+    if (!currentCustomer) {
         displayNoActivePlans();
         return;
     }
 
     const mobileNumber = currentCustomer.mobile;
-    const userTransactions = transactionData[mobileNumber] || [];
-
-    if (userTransactions.length === 0) {
-        displayNoActivePlans();
-        return;
-    }
-
-    // Find the oldest non-expired transaction
-    const today = new Date();
-    let activeTransaction = null;
-
-    userTransactions.forEach(transaction => {
-        const planEndDate = new Date(transaction.plan_end.split(" ").join("-"));
-        if (planEndDate >= today) {
-            if (!activeTransaction || new Date(transaction.purchased_on.split(" - ")[0]) < new Date(activeTransaction.purchased_on.split(" - ")[0])) {
-                activeTransaction = transaction;
-            }
+    try {
+        const response = await fetch("http://localhost:8083/api/transactions");
+        if (!response.ok) throw new Error("Failed to fetch transaction data");
+        
+        const transactions = await response.json();
+        const userTransactions = transactions.filter(t => t.user.mobile === mobileNumber);
+        
+        if (userTransactions.length === 0) {
+            displayNoActivePlans();
+            return;
         }
-    });
 
-    if (!activeTransaction) {
-        displayNoActivePlans();
-        return;
-    }
+        const today = new Date();
+        let activeTransaction = null;
 
-    // Fill Active Plan Details
-    const planDetails = activeTransaction.plan_details;
-    const cardContent = document.querySelector(".card-content");
-    document.querySelector(".plan-name").textContent = planDetails.planName || "Unknown Plan";
-    document.querySelector(".price").textContent = `₹${planDetails.price || 0}`;
-
-    cardContent.innerHTML = ""; // Clear existing benefits
-
-    addBenefit(cardContent, "fas fa-calendar-alt", `${planDetails.validity} Days`);
-    if (planDetails.dailyData) addBenefit(cardContent, "fas fa-tachometer-alt", planDetails.dailyData);
-    if (planDetails.voice) addBenefit(cardContent, "fas fa-phone-alt", planDetails.voice);
-    if (planDetails.totalData) addBenefit(cardContent, "fas fa-wifi", planDetails.totalData);
-    if (planDetails.sms) addBenefit(cardContent, "fas fa-envelope", planDetails.sms);
-
-    // Populate Terms & Conditions
-    const termsElement = document.querySelector(".terms-conditions");
-    termsElement.innerHTML = ""; // Clear previous terms
-
-    if (planDetails.terms && planDetails.terms.length > 0) {
-        planDetails.terms.forEach(term => {
-            const termItem = document.createElement("p");
-            termItem.textContent = `• ${term}`;
-            termsElement.appendChild(termItem);
-        });
-    } else {
-        termsElement.innerHTML = "<p>No specific terms & conditions available.</p>";
-    }
-
-    // Dynamic OTT Icons with "+N more" Fix
-    const ottTextElement = document.querySelector(".ott-text-data");
-    const ottIconsContainer = document.createElement("div");
-    ottIconsContainer.classList.add("ott-icons");
-
-    if (planDetails.ott && planDetails.ott.length > 0) {
-        ottTextElement.textContent = planDetails.ott.join(", ");
-        const ottClassMap = {
-            "Netflix": "netflix",
-            "Amazon Prime": "prime",
-            "Sony LIV": "sony",
-            "Sun NXT": "sun",
-            "Zee5": "zee5"
-        };
-
-        const ottLogos = {
-            "Netflix": "./assets/Netflix_Logo.svg",
-            "Amazon Prime": "./assets/Prime_Logo.svg",
-            "Sony LIV": "./assets/Sony_Logo.svg",
-            "Sun NXT": "./assets/Sun_nxt_Logo.svg",
-            "Zee5": "./assets/Zee5_Logo.svg"
-        };
-
-        let loadedIcons = 0;
-        planDetails.ott.forEach((ott, index) => {
-            if (index < 3) {
-                let icon = document.createElement("div");
-                icon.classList.add("icon", ottClassMap[ott] || "");
-
-                let img = document.createElement("img");
-                img.src = ottLogos[ott] || "";
-                img.alt = ott;
-
-                let fallbackText = document.createElement("span");
-                fallbackText.classList.add("fallback-icon");
-                fallbackText.innerText = ott.charAt(0).toUpperCase();
-
-                img.onerror = function () {
-                    img.remove();
-                    icon.appendChild(fallbackText);
-                };
-
-                icon.appendChild(img);
-                ottIconsContainer.appendChild(icon);
-                loadedIcons++;
+        userTransactions.forEach(transaction => {
+            const planEndDate = new Date(transaction.planEnd);
+            if (planEndDate >= today) {
+                if (!activeTransaction || new Date(transaction.purchasedOn) < new Date(activeTransaction.purchasedOn)) {
+                    activeTransaction = transaction;
+                }
             }
         });
 
-        // If there are more than 3 OTTs, display "+N more"
-        if (planDetails.ott.length > 3) {
-            const moreText = document.createElement("span");
-            moreText.classList.add("ott-more-text");
-            moreText.textContent = `+${planDetails.ott.length - 3} more`;
-            ottIconsContainer.appendChild(moreText);
+        if (!activeTransaction) {
+            displayNoActivePlans();
+            return;
         }
-    }
-    cardContent.appendChild(ottIconsContainer);
 
-    // **Fix: Fetch Status, Plan Start Date, and Plan End Date**
-    document.getElementById("transaction-amount").textContent = `₹${activeTransaction.amount}`;
-    document.getElementById("transaction-date").textContent = activeTransaction.purchased_on;
-    document.getElementById("transaction-mode").textContent = activeTransaction.payment_mode;
-    document.getElementById("transaction-ref").textContent = activeTransaction.ref_number || "N/A";
-    document.getElementById("transaction-status").textContent = activeTransaction.status || "N/A"; // **Fix**
-    document.getElementById("transaction-start").textContent = activeTransaction.plan_start || "N/A"; // **Fix**
-    document.getElementById("transaction-end").textContent = activeTransaction.plan_end || "N/A"; // **Fix**
+        const planDetails = activeTransaction.plan;
+        const cardContent = document.querySelector(".card-content");
+        document.querySelector(".plan-name").textContent = planDetails.planName || "Unknown Plan";
+        document.querySelector(".price").textContent = `₹${planDetails.price || 0}`;
+
+        cardContent.innerHTML = "";
+        
+        addBenefit(cardContent, "fas fa-calendar-alt", `${planDetails.validity} Days`);
+        if (planDetails.dailyData) addBenefit(cardContent, "fas fa-tachometer-alt", planDetails.dailyData);
+        if (planDetails.voice) addBenefit(cardContent, "fas fa-phone-alt", planDetails.voice);
+        if (planDetails.totalData) addBenefit(cardContent, "fas fa-wifi", planDetails.totalData);
+        if (planDetails.sms) addBenefit(cardContent, "fas fa-envelope", planDetails.sms);
+
+        const termsElement = document.querySelector(".terms-conditions");
+        termsElement.innerHTML = "";
+        if (planDetails.terms?.length > 0) {
+            planDetails.terms.forEach(term => {
+                const termItem = document.createElement("p");
+                termItem.textContent = `• ${term}`;
+                termsElement.appendChild(termItem);
+            });
+        } else {
+            termsElement.innerHTML = "<p>No specific terms & conditions available.</p>";
+        }
+
+        const ottTextElement = document.querySelector(".ott-text-data");
+        const ottIconsContainer = document.createElement("div");
+        ottIconsContainer.classList.add("ott-icons");
+
+        if (planDetails.ott?.length > 0) {
+            ottTextElement.textContent = planDetails.ott.join(", ");
+            const ottClassMap = {
+                "Netflix": "netflix",
+                "Amazon Prime": "prime",
+                "Sony LIV": "sony",
+                "Sun NXT": "sun",
+                "Zee5": "zee5"
+            };
+
+            const ottLogos = {
+                "Netflix": "./assets/Netflix_Logo.svg",
+                "Amazon Prime": "./assets/Prime_Logo.svg",
+                "Sony LIV": "./assets/Sony_Logo.svg",
+                "Sun NXT": "./assets/Sun_nxt_Logo.svg",
+                "Zee5": "./assets/Zee5_Logo.svg"
+            };
+
+            let loadedIcons = 0;
+            planDetails.ott.forEach((ott, index) => {
+                if (index < 3) {
+                    let icon = document.createElement("div");
+                    icon.classList.add("icon", ottClassMap[ott] || "");
+
+                    let img = document.createElement("img");
+                    img.src = ottLogos[ott] || "";
+                    img.alt = ott;
+
+                    let fallbackText = document.createElement("span");
+                    fallbackText.classList.add("fallback-icon");
+                    fallbackText.innerText = ott.charAt(0).toUpperCase();
+
+                    img.onerror = function () {
+                        img.remove();
+                        icon.appendChild(fallbackText);
+                    };
+
+                    icon.appendChild(img);
+                    ottIconsContainer.appendChild(icon);
+                    loadedIcons++;
+                }
+            });
+
+            if (planDetails.ott.length > 3) {
+                const moreText = document.createElement("span");
+                moreText.classList.add("ott-more-text");
+                moreText.textContent = `+${planDetails.ott.length - 3} more`;
+                ottIconsContainer.appendChild(moreText);
+            }
+        }
+        cardContent.appendChild(ottIconsContainer);
+
+        document.getElementById("transaction-amount").textContent = `₹${activeTransaction.amount}`;
+        document.getElementById("transaction-date").textContent = activeTransaction.purchasedOn;
+        document.getElementById("transaction-mode").textContent = activeTransaction.paymentMode;
+        document.getElementById("transaction-ref").textContent = activeTransaction.refNumber || "N/A";
+        document.getElementById("transaction-status").textContent = activeTransaction.transactionStatus || "N/A";
+        document.getElementById("transaction-start").textContent = activeTransaction.planStart || "N/A";
+        document.getElementById("transaction-end").textContent = activeTransaction.planEnd || "N/A";
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
+        displayNoActivePlans();
+    }
 
     function addBenefit(container, iconClass, text) {
         const benefitDiv = document.createElement("div");
@@ -1606,4 +1702,117 @@ document.addEventListener("DOMContentLoaded", function () {
         planContainer.innerHTML = `<h2 style="color: orangered; text-align: center;">No Active Plans or Transaction Details Available</h2>`;
         transactionSection.style.display = "none";
     }
+});
+
+
+
+
+
+
+// Dynamically recharge history card and papulation
+
+document.addEventListener("DOMContentLoaded", function () {
+    const container = document.querySelector(".cust_manage_cards_container");
+
+    fetch("http://localhost:8083/api/transactions")
+        .then(response => response.json())
+        .then(data => {
+            container.innerHTML = ""; // Clear existing content
+
+            data.forEach(transaction => {
+                const card = document.createElement("div");
+                card.classList.add("cust_manage_card", transaction.transactionStatus.toLowerCase());
+
+                card.innerHTML = `
+                    <!-- ✅ Batch Label (Month & Year) -->
+                    <span class="batch-label badge badge-secondary">${new Date(transaction.planStart).toLocaleString('en-US', { month: 'short', year: 'numeric' })}</span>
+
+                    <div class="dot_div">
+                        <span class="status-dot"></span>
+                    </div>
+
+                    <div class="recharge_history_info">
+                        <div class="recharge_history_row">
+                            <div class="recharge_mobile_div">
+                                <span class="recharge_mobile">Transaction ID: <span class="recharge_plan-category">${transaction.transactionId}</span></span>
+                            </div>
+                            <div class="recharge_name_div">
+                                <span class="recharge_name">Payment Mode: <span class="recharge-total-plans">${transaction.paymentMode}</span></span>
+                            </div>
+                        </div>
+                        <div class="recharge_history_row">
+                            <div class="recharge_plan_div">
+                                <span class="recharge_plan">Purchased on: <span class="recharge-purchase-date">${new Date(transaction.purchasedOn).toLocaleDateString()}</span></span>
+                            </div>
+                            <div class="recharge_plan_div">
+                                <span class="recharge_plan">Plan: <span class="recharge-subscribed-users">${transaction.plan.planName}</span></span>
+                            </div>
+                        </div>
+
+                        <!-- ✅ Hidden Plan Details -->
+                        <div class="recharge_plan_details" style="display: none;">
+                            <div class="card-title-price">
+                                <div class="plan-name">ACTIVE PLAN</div>
+                                <div class="price">₹${transaction.amount}</div>
+                            </div>
+
+                            <div class="card-content">
+                                <div class="benefit"><i class="fas fa-clock"></i> <span class="expiry-badge">${new Date(transaction.planEnd).toLocaleDateString()}</span></div>
+                                <div class="benefit"><i class="fas fa-calendar-alt"></i> ${transaction.plan.validity} Days</div>
+                                <div class="benefit"><i class="fas fa-tachometer-alt"></i> ${transaction.plan.dailyData}</div>
+                                <div class="benefit"><i class="fas fa-phone-alt"></i> ${transaction.plan.voice}</div>
+                                <div class="benefit"><i class="fas fa-wifi"></i> ${transaction.plan.additionalData || "N/A"}</div>
+                                <div class="benefit"><i class="fas fa-envelope"></i> ${transaction.plan.sms}</div>
+
+                                <!-- OTT Platforms -->
+                                <div class="ott-text-data" style="display: none;">${transaction.plan.ott.join(", ")}</div>
+                                <div class="ott-icons">
+                                    ${transaction.plan.ott.map(platform => `<i class="ott-icon ${platform.toLowerCase()}"></i>`).join(" ")}
+                                </div>
+                                <div class="more-ott"></div>
+
+                                <!-- Hidden OTT Description Data -->
+                                <div class="ott-description-data" style="display: none;">
+                                    ${transaction.plan.ott.map(platform => `<div data-ott="${platform}">Enjoy ${platform}'s premium content.</div>`).join("")}
+                                </div>
+
+                                <!-- Terms & Conditions (Hidden) -->
+                                <div class="terms-conditions" style="display: none;">
+                                    ${transaction.plan.terms.map(term => `<p>${term}</p>`).join(" ")}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ✅ Hidden Transaction Details -->
+                        <div class="transaction-details" style="display: none;">
+                            <h5>Transaction Details</h5>
+                            <div class="transaction-content">
+                                <p><strong>Plan:</strong> <span class="transaction-amount">₹${transaction.amount}</span></p>
+                                <p><strong>Purchased on:</strong> <span class="transaction-date">${new Date(transaction.purchasedOn).toLocaleString()}</span></p>
+                                <p><strong>Payment Mode:</strong> <span class="transaction-mode">${transaction.paymentMode}</span></p>
+                                <p><strong>Ref. Number:</strong> <span class="transaction-ref">${transaction.refNumber}</span></p>
+
+                                <!-- Hidden Fields -->
+                                <p class="hidden"><strong>Status:</strong> <span class="transaction-status">${transaction.transactionStatus}</span></p>
+                                <p class="hidden"><strong>Plan Start Date:</strong> <span class="transaction-start">${new Date(transaction.planStart).toLocaleDateString()}</span></p>
+                                <p class="hidden"><strong>Plan End Date:</strong> <span class="transaction-end">${new Date(transaction.planEnd).toLocaleDateString()}</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ✅ Footer Icons -->
+                    <div class="cust_card_footer">
+                        <i class="fa-solid fa-download download-icon"></i>
+                        <i class="fa-solid fa-eye view-icon"></i>
+                    </div>
+
+                    <!-- ✅ Chevron Button -->
+                    <div class="chevron-icon">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        })
+        .catch(error => console.error("Error fetching transactions:", error));
 });
