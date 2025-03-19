@@ -1,84 +1,540 @@
-<!-- // Mobile-Validation-Js
 
-// Phone number regex pattern (10-digit number)
-var phonePattern = /^\d{10}$/;
+ <!-- Full Card View Pop-up -->
+ <div id="unique-popup-overlay" class="overlay-custom">
+  <div class="popup-container-custom">
+    <!-- Popup Header -->
+    <div class="popup-header-custom">
+      <div class="plan-info-custom">
+        <span class="plan-title-custom"></span>
+        <span class="plan-cost-custom"></span>
+      </div>
+      <span id="close-unique-popup" class="popup-close-custom">&times;</span>
+    </div>
 
-// Error span element
-var rechargePhoneError = document.getElementById("rechargePhoneError");
+    <!-- Popup Body -->
+    <div class="popup-body-custom">
+      <div class="plan-details-custom">
+        <h3>Plan Details</h3>
+        <div class="table-container">
+          <table>
+            <tr>
+              <th>Feature</th>
+              <th class="separator"></th>
+              <th>Details</th>
+            </tr>
+            <tbody id="plan-details-body"></tbody>
+          </table>
+        </div>
+      </div>
 
-// Input field
-var rechargePhone = document.getElementById("rechargePhone");
+      <div class="extra-perks-custom">
+        <h3>Additional Benefits</h3>
+        <div class="perk-list-custom"></div>
+      </div>
 
-// Form submission
-var rechargeForm = document.getElementById("rechargeForm");
+      <div class="popup-terms-custom">
+        <h3>Terms & Conditions</h3>
+        <div id="terms-content"></div>
+      </div>
+    </div>
 
-// Store registered users & customer details
-var customerData = {};
+    <!-- Popup Footer -->
+    <div class="popup-footer-custom">
+      <div class="input-container">
+        <input type="text" class="custom-phone-input" id="rechargePhone" placeholder="Enter your mobile number">
+        <span id="rechargePhoneError" class="phone-error-message"></span>
+      </div>
+      <button class="purchase-button-custom">Recharge Now</button>
+    </div>
+  </div>
+</div>
 
-// Fetch customer details from JSON
-fetch("./customer_details_json/customers.json")
-  .then(response => response.json())
-  .then(data => {
-    data.forEach(customer => {
-      customerData[customer.mobile.trim()] = customer; // Store customer details indexed by mobile number
-    });
-  })
-  .catch(error => console.error("Error loading customer data:", error));
 
-// Event Listener for Form Submission
-rechargeForm.addEventListener("submit", function (event) {
-    var phoneNumberValue = rechargePhone.value.trim().replace(/\s+/g, ""); // Remove spaces
 
-    // Validate the form with the collected values
-    if (!validateRechargeForm(phoneNumberValue)) {
-        event.preventDefault();
-    } else {
-        // If valid, store customer details in sessionStorage
-        sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumberValue]));
-    }
-});
 
-// On input change, show error message dynamically
-rechargePhone.addEventListener("input", function () {
-    var phoneNumberValue = rechargePhone.value.trim().replace(/\s+/g, ""); // Remove spaces
-    validateRechargeForm(phoneNumberValue); // Show validation error while typing
-});
 
-// Validation Function
-function validateRechargeForm(phoneNumberValue) {
-    var isValid = true;
 
-    // Clear previous error messages
-    rechargePhoneError.innerHTML = "";
 
-    // If empty
-    if (phoneNumberValue === "") {
-        rechargePhoneError.innerHTML = "📢 Phone Number is required.";
-        isValid = false;
-    } 
-    // If non-numeric characters are included
-    else if (!/^\d*$/.test(phoneNumberValue)) {
-        rechargePhoneError.innerHTML = "⚠️ Enter only digits (0-9).";
-        isValid = false;
-    } 
-    // If less than 10 digits
-    else if (phoneNumberValue.length < 10) {
-        rechargePhoneError.innerHTML = "⚠️ Enter a valid 10-digit phone number.";
-        isValid = false;
-    } 
-    // If exactly 10 digits, check registration
-    else if (phoneNumberValue.length === 10) {
-        if (!(phoneNumberValue in customerData)) {
-            rechargePhoneError.innerHTML = "🚫 You are not a registered user of Mobi-Comm.";
-            isValid = false;
-        }
-    } 
-    // If more than 10 digits
-    else if (phoneNumberValue.length > 10) {
-        rechargePhoneError.innerHTML = "❌ Phone number should be 10 digits long.";
-        isValid = false;
-    }
 
-    return isValid;
+
+
+
+
+
+
+/* Modern Pop-up Styling */
+
+/* Overlay */
+.overlay-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
 }
- -->
+
+.overlay-custom.active {
+  display: flex;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Popup Container */
+.popup-container-custom {
+  width: 550px;
+  background: linear-gradient(145deg, #242424, #1a1a1a);
+  color: white;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 69, 0, 0.5);
+  box-shadow: 0 10px 30px rgba(255, 69, 0, 0.3), 
+              0 0 20px rgba(255, 69, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  max-width: 90%;
+  overflow: hidden;
+  animation: scaleIn 0.3s ease forwards;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); }
+  to { transform: scale(1); }
+}
+
+/* Header */
+.popup-header-custom {
+  background: linear-gradient(90deg, #2a2a2a, #1c1c1c);
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 69, 0, 0.3);
+  position: relative;
+}
+
+.popup-header-custom::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 69, 0, 0.8), transparent);
+}
+
+/* Plan Info */
+.plan-info-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.plan-title-custom {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(90deg, #fff, #ff7043);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.plan-cost-custom {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ff7043;
+}
+
+/* Close Button */
+.popup-close-custom {
+  font-size: 28px;
+  color: #ff7043;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.popup-close-custom:hover {
+  background: rgba(255, 69, 0, 0.2);
+  transform: rotate(90deg);
+}
+
+/* Popup Body */
+.popup-body-custom {
+  padding: 24px;
+  background-color: #1e1e1e;
+  max-height: 60vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ff7043 #333;
+}
+
+.popup-body-custom::-webkit-scrollbar {
+  width: 8px;
+}
+
+.popup-body-custom::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 4px;
+}
+
+.popup-body-custom::-webkit-scrollbar-thumb {
+  background: #ff7043;
+  border-radius: 4px;
+}
+
+/* Section Titles */
+.popup-body-custom h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #ff7043;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.popup-body-custom h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, #ff7043, transparent);
+}
+
+/* Table */
+.table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.plan-details-custom table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.plan-details-custom th, .plan-details-custom td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.plan-details-custom th {
+  background-color: #2a2a2a;
+  color: #ff7043;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.plan-details-custom td {
+  color: #ddd;
+  font-size: 14px;
+}
+
+.plan-details-custom tr:last-child td {
+  border-bottom: none;
+}
+
+.plan-details-custom tr:hover td {
+  background-color: rgba(255, 69, 0, 0.05);
+}
+
+/* Perks Section */
+.extra-perks-custom {
+  margin-top: 24px;
+}
+
+.perk-list-custom {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.perk-item-custom {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.perk-item-custom:hover {
+  background: rgba(255, 69, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.perk-item-custom img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 69, 0, 0.5);
+}
+
+.perk-title-custom {
+  font-size: 15px;
+  font-weight: 500;
+  color: #ff7043;
+}
+
+.perk-description {
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+/* Terms Section */
+.popup-terms-custom {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #999;
+}
+
+#terms-content {
+  max-height: 120px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Footer */
+.popup-footer-custom {
+  padding: 20px 24px;
+  background: linear-gradient(90deg, #292929, #1e1e1e);
+  border-top: 1px solid rgba(255, 69, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Custom Input Field */
+.custom-phone-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid rgba(255, 69, 0, 0.5);
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Placeholder Styling */
+.custom-phone-input::placeholder {
+  color: rgba(255, 156, 107, 0.7);
+  transition: opacity 0.3s;
+}
+
+/* Focus Effect */
+.custom-phone-input:focus {
+  border-color: #ff7043;
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.custom-phone-input:focus::placeholder {
+  opacity: 0.5;
+}
+
+/* Error Message */
+.phone-error-message {
+  color: #ff4444;
+  font-size: 13px;
+  margin-top: 6px;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.phone-error-message.active {
+  display: block;
+}
+
+/* Input Validation (Error State) */
+.custom-phone-input.error {
+  border-color: #ff4444;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+}
+
+/* Purchase Button */
+.purchase-button-custom {
+  background: linear-gradient(45deg, #ff4500, #ff7043);
+  color: white;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.purchase-button-custom:hover {
+  background: linear-gradient(45deg, #ff5722, #ff8a65);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
+}
+
+.purchase-button-custom:active {
+  transform: translateY(1px);
+}
+
+/* OTT Icons Styling */
+.ott-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-top: 16px;
+}
+
+.ott-label {
+  font-size: 14px;
+  color: #ddd;
+  font-weight: 500;
+}
+
+.ott-icons {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.ott-icons .icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  position: relative;
+  margin-right: -10px;
+  transition: transform 0.2s ease;
+}
+
+.ott-icons .icon:hover {
+  transform: translateY(-4px);
+  z-index: 10;
+}
+
+.ott-icons .icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ott-icons .icon:last-child {
+  margin-right: 0;
+}
+
+.more-ott {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ddd;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+/* Fallback Icon Styling */
+.fallback-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+/* OTT Brand Colors */
+.netflix { background-color: #E50914; }
+.prime { background-color: #00A8E1; }
+.sony { background-color: #3D1F80; }
+.sun { background-color: #D50032; }
+.zee5 { background-color: #000000; }
+.disney { background-color: #0063e5; }
+.hbo { background-color: #5822b4; }
+
+/* Responsive Design */
+@media (max-width: 576px) {
+  .popup-container-custom {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .plan-title-custom {
+    font-size: 18px;
+  }
+  
+  .plan-cost-custom {
+    font-size: 16px;
+  }
+  
+  .popup-body-custom {
+    padding: 16px;
+    max-height: 50vh;
+  }
+  
+  .perk-list-custom {
+    grid-template-columns: 1fr;
+  }
+  
+  .purchase-button-custom {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
+
+/* Animation for content sections */
+.plan-details-custom, .extra-perks-custom, .popup-terms-custom {
+  animation: fadeSlideUp 0.5s ease forwards;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

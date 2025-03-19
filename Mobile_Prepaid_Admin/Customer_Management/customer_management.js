@@ -1,3 +1,90 @@
+// Admin Profile Dropdown JS
+
+// Admin Profile Dropdown JS
+document.addEventListener("DOMContentLoaded", function () {
+    const adminUserDropdown = document.querySelector(".admin_user_dropdown");
+    const adminUserIcon = document.getElementById("adminUserIcon");
+    const adminDropdownContent = document.getElementById("adminDropdownContent");
+    const adminSignOutBtn = document.getElementById("adminSignOutBtn");
+
+    function handleAdminLogout(event) {
+        event.preventDefault();
+        sessionStorage.removeItem("currentCustomer"); // Remove session storage
+        sessionStorage.removeItem("adminAccessToken"); // Remove admin token
+
+        // Redirect to Admin Login after logout
+        setTimeout(() => {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+        }, 100);
+    }
+
+    function checkAdminAccess() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const adminAccessToken = sessionStorage.getItem("adminAccessToken");
+
+        // Redirect to Admin Login if not logged in
+        if (!currentCustomer || !adminAccessToken) {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+            return;
+        }
+    }
+
+    function updateAdminDropdown() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const adminAccessToken = sessionStorage.getItem("adminAccessToken");
+
+        // If logged in, allow dropdown functionality
+        if (currentCustomer && adminAccessToken) {
+            adminUserIcon.onclick = function (event) {
+                event.stopPropagation();
+                adminUserDropdown.classList.toggle("active"); // Toggle dropdown visibility
+            };
+
+            // Sign-out functionality
+            if (adminSignOutBtn) {
+                adminSignOutBtn.onclick = handleAdminLogout;
+            }
+        } else {
+            // If not logged in, clicking the user icon redirects to Admin Login
+            adminUserIcon.onclick = function () {
+                window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+            };
+
+            // Ensure dropdown is hidden
+            adminUserDropdown.classList.remove("active");
+        }
+    }
+
+    // Check if admin is logged in (Access Control)
+    checkAdminAccess();
+
+    // Initialize dropdown behavior
+    updateAdminDropdown();
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+        if (!adminUserDropdown.contains(event.target)) {
+            adminUserDropdown.classList.remove("active");
+        }
+    });
+
+    // Redirect if session storage is cleared (security measure)
+    window.addEventListener("storage", function () {
+        if (!sessionStorage.getItem("currentCustomer") || !sessionStorage.getItem("adminAccessToken")) {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+        }
+    });
+
+    // Listen for login event and update dropdown dynamically
+    window.addEventListener("storage", function () {
+        if (sessionStorage.getItem("currentCustomer") && sessionStorage.getItem("adminAccessToken")) {
+            updateAdminDropdown();
+        }
+    });
+});
+
+
+
 // Delete-pop-up-JS
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -1092,8 +1179,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Dynamically generating customer cards with updated rules
 
-// Dynamically generating customer cards with updated rules
-
 document.addEventListener("DOMContentLoaded", async function () {
     const custManageCardsContainer = document.getElementById("cust_manage_cards_container");
     if (!custManageCardsContainer) {
@@ -1205,5 +1290,24 @@ document.addEventListener("DOMContentLoaded", async function () {
         const statusClass = getStatusClass(userTransactions);
         const relevantTransaction = getRelevantTransaction(userTransactions);
         createCustomerCard(user, relevantTransaction, statusClass);
+    });
+});
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("cust_manage_cards_container").addEventListener("click", function (event) {
+        const chevron = event.target.closest(".chevron-icon");
+        if (!chevron) return; // If clicked element is not the chevron, do nothing
+        
+        const customerCard = chevron.closest(".cust_manage_card"); // Get the card container
+        const mobileNumber = customerCard.querySelector(".customer_mobile").textContent.trim(); // Extract mobile number
+
+        if (mobileNumber) {
+            // Redirect to transaction history page with mobile number as query param
+            window.location.href = `/Mobile_Prepaid_Admin/Transcation_History_Page/transcation_history.html?mobile=${encodeURIComponent(mobileNumber)}`;
+        }
     });
 });

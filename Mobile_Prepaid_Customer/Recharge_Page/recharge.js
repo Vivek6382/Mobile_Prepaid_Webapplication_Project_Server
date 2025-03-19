@@ -1,6 +1,6 @@
    // Profile-DropDown-JS
 
-   document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const userDropdown = document.querySelector(".user-dropdown");
     const userIcon = document.getElementById("userIcon");
     const dropdownContent = document.querySelector(".dropdown-content");
@@ -8,8 +8,9 @@
 
     function updateDropdown() {
         const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const accessToken = sessionStorage.getItem("accessToken");
 
-        if (currentCustomer) {
+        if (currentCustomer && accessToken) {
             // Show dropdown when user icon is clicked, toggle 'active' class
             userIcon.onclick = function (event) {
                 event.stopPropagation();
@@ -22,7 +23,20 @@
             // Sign-out functionality
             signOutBtn.onclick = function (event) {
                 event.preventDefault();
-                sessionStorage.removeItem("currentCustomer"); // Remove session storage
+
+                console.log("Before clearing:", {
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    currentCustomer: sessionStorage.getItem("currentCustomer")
+                });
+
+                sessionStorage.removeItem("accessToken"); // Remove specific item
+                sessionStorage.removeItem("currentCustomer"); // Remove user data
+                localStorage.removeItem("accessToken"); // Ensure it's removed from localStorage
+
+                console.log("After clearing:", {
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    currentCustomer: sessionStorage.getItem("currentCustomer")
+                });
 
                 // Ensure the storage is cleared before redirecting
                 setTimeout(() => {
@@ -30,7 +44,7 @@
                 }, 100);
             };
         } else {
-            // If not logged in, clicking the user icon redirects to the recharge page
+            // If not logged in or missing accessToken, redirect to recharge page
             userIcon.onclick = function () {
                 window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
             };
@@ -52,21 +66,22 @@
 
     // Handle case where user manually navigates away after signing out
     window.addEventListener("storage", function () {
-        if (!sessionStorage.getItem("currentCustomer")) {
+        if (!sessionStorage.getItem("currentCustomer") || !sessionStorage.getItem("accessToken")) {
+            sessionStorage.removeItem("accessToken");
+            sessionStorage.removeItem("currentCustomer");
+            localStorage.removeItem("accessToken");
             window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
         }
     });
 
     // Listen for login event from the recharge form
     window.addEventListener("storage", function () {
-        if (sessionStorage.getItem("currentCustomer")) {
-            updateDropdown(); // Update dropdown dynamically after login
+        if (sessionStorage.getItem("currentCustomer") && sessionStorage.getItem("accessToken")) {
+            updateDropdown(); 
         }
     });
-
 });
 
-  
 
 
 
@@ -104,12 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ mobile: phoneNumberValue })
             });
-
+    
             let loginData = await loginResponse.json();
             if (!loginResponse.ok) throw new Error("Login failed");
-
-            sessionStorage.setItem("accessToken", loginData.accessToken);
-
+    
             let profileResponse = await fetch(PROFILE_URL, {
                 method: "GET",
                 headers: {
@@ -117,15 +130,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Content-Type": "application/json"
                 }
             });
-
+    
             let profileData = await profileResponse.json();
-            customerData[phoneNumberValue] = profileData;
-
+            customerData[phoneNumberValue] = { profileData, accessToken: loginData.accessToken };  // Store the token in `customerData` temporarily
+    
         } catch (error) {
             mobileError.innerHTML = "🚫 Unable to fetch customer details. Please try again.";
             console.error("Error fetching customer data:", error);
         }
     }
+    
 
     mobileInput.addEventListener("input", function () {
         var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, "");
@@ -135,14 +149,22 @@ document.addEventListener("DOMContentLoaded", function () {
     generateOtpButton.addEventListener("click", async function (event) {
         event.preventDefault();
         var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, "");
-
-        if (validateRechargeForm(phoneNumberValue)) {
-            await fetchCustomerData(phoneNumberValue);
+    
+        if (!validateRechargeForm(phoneNumberValue)) {
+            return; // Stop execution if validation fails
+        }
+    
+        await fetchCustomerData(phoneNumberValue);
+        
+        if (customerData[phoneNumberValue]) { // Only proceed if customer data is fetched successfully
             generatedOTP = generateRandomOTP();
             showNotification(`OTP ${generatedOTP} sent successfully`);
             openOtpPopup(phoneNumberValue);
+        } else {
+            mobileError.innerHTML = "🚫 Unable to fetch customer details. Please try again.";
         }
     });
+    
 
     function validateRechargeForm(phoneNumberValue) {
         var isValid = true;
@@ -241,7 +263,7 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         var enteredOtp = Array.from(otpInputs).map(input => input.value).join("");
         otpError.innerHTML = "";
-
+    
         if (enteredOtp.length < 6) {
             otpError.innerHTML = "⚠️ Please enter all 6 digits.";
             return;
@@ -250,13 +272,16 @@ document.addEventListener("DOMContentLoaded", function () {
             otpError.innerHTML = "🚫 The OTP entered is incorrect. Please try again.";
             return;
         }
-
+    
         let phoneNumberValue = mobileInput.value.trim();
         if (customerData[phoneNumberValue]) {
-            sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumberValue]));
+            sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumberValue].profileData));
+            sessionStorage.setItem("accessToken", customerData[phoneNumberValue].accessToken); // Store token only after verification
         }
+    
         window.location.href = "/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html";
     });
+    
 
     function showNotification(message) {
         var notification = document.createElement("div");

@@ -21,7 +21,7 @@
 
 
 
-  // Validate-Admin-Login-Js
+// Validate-Admin-Login-Js
 
 // Patterns for Validation
 var userNamePattern = /^[a-zA-Z][a-zA-Z0-9_]{5,15}$/;
@@ -67,16 +67,16 @@ form.addEventListener("submit", async function (event) {
         }
 
         const loginData = await loginResponse.json();
-        const accessToken = loginData.accessToken;
+        const adminAccessToken = loginData.accessToken;
 
-        // Store access token in session storage
-        sessionStorage.setItem("accessToken", accessToken);
+        // Store admin access token separately in session storage
+        sessionStorage.setItem("adminAccessToken", adminAccessToken);
 
         // 2️⃣ Fetch user profile
         const profileResponse = await fetch("http://localhost:8083/auth/profile", {
             method: "GET",
             headers: {
-                "Authorization": "Bearer " + accessToken
+                "Authorization": "Bearer " + adminAccessToken
             }
         });
 

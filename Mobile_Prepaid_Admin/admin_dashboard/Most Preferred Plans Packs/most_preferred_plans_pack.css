@@ -118,6 +118,7 @@ body {
 }
 
 /* User Dropdown */
+/* User Dropdown */
 .admin_user_dropdown {
     position: relative;
     cursor: pointer;
@@ -159,6 +160,7 @@ body {
 .admin_user_dropdown.active .admin_dropdown_content {
     display: block;
 }
+
 
 /* Navigation Styling */
 .admin_navigation {
@@ -1281,7 +1283,8 @@ body {
 
 
 /* Add Customer Pop-up */
-#add-popup {
+
+/* #add-popup {
     position: fixed;
     top: 0;
     left: 0;
@@ -1293,7 +1296,7 @@ body {
     justify-content: center;
 }
 
-/* Popup Container */
+
 #add-popup .popup-content {
     background: #1E1E1E;
     padding: 20px;
@@ -1304,13 +1307,13 @@ body {
     max-width: 90%;
 }
 
-/* Headings */
+
 #add-popup h3 {
     color: orangered;
     margin-bottom: 10px;
 }
 
-/* Editable Fields */
+
 .details {
     margin-top: 10px;
     text-align: left;
@@ -1337,7 +1340,7 @@ body {
     font-size: 14px;
 }
 
-/* Buttons */
+
 .popup-buttons {
     margin-top: 15px;
     display: flex;
@@ -1372,7 +1375,7 @@ body {
 
 #cancel-add:hover {
     background: #666;
-}
+} */
 
 
 
@@ -1615,3 +1618,157 @@ body {
 #close-details-popup:hover {
     background: #666;
 }
+
+
+
+
+/* Add Category Pop-up Design */
+
+
+/* Add Category Pop-up */
+#add-category-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Popup Container */
+#add-category-popup .prepaid-popup-content {
+    background: #1E1E1E;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+    width: 360px;
+    max-width: 90%;
+}
+
+/* Headings */
+#add-category-popup h3 {
+    color: orangered;
+    margin-bottom: 10px;
+}
+
+/* Editable Fields */
+.prepaid-details {
+    margin-top: 10px;
+    text-align: left;
+    padding: 15px;
+    background: #282828;
+    border-radius: 8px;
+}
+
+.prepaid-details label {
+    display: block;
+    color: #ddd;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.prepaid-detail-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    background: #333;
+    border: 1px solid #555;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Error Message */
+.error-msg {
+    color: #FF6347;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Buttons */
+.prepaid-popup-buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#add-category-btn {
+    background: orangered;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+#add-category-btn:hover {
+    background: #ff5722;
+}
+
+#cancel-add-category-btn {
+    background: #444;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+#cancel-add-category-btn:hover {
+    background: #666;
+}
+
+
+
+
+
+
+/* Update=category-pop-up-design */
+
+#cancel-update-category-btn,
+#update-category-btn{
+    padding: 10px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+
+
+#update-category-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Popup Container */
+#update-category-popup .prepaid-popup-content {
+    background: #1E1E1E;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(255, 69, 0, 0.5);
+    width: 360px;
+    max-width: 90%;
+    max-height: 80vh; /* Ensures pop-up does not exceed 80% of viewport height */
+    overflow: hidden;
+}
+
+

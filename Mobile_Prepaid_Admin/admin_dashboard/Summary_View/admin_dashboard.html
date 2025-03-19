@@ -30,23 +30,24 @@
         <h4><a href="/Mobile_Prepaid_Admin/admin_dashboard/Summary_View/admin_dashboard.html"><span>MOBI</span>-COMM.</a></h4>
     </div>
     <div class="admin_header_controls">
-        <div class="admin_customer_btn">
+        <!-- <div class="admin_customer_btn">
             <i class="fa-solid fa-store"></i>
             <p><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html">Customer</a></p>
-        </div>
+        </div> -->
 
-        <div class="admin_search">
+        <!-- <div class="admin_search">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" placeholder="Search...">
-        </div>
+        </div> -->
 
         <div class="admin_user_dropdown">
-            <i class="fa-solid fa-user"></i>
-            <div class="admin_dropdown_content">
-                <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html">My Account</a>
-                <a href="#">Sign-out</a>
+            <i class="fa-solid fa-user" id="adminUserIcon"></i>
+            <div class="admin_dropdown_content" id="adminDropdownContent">
+                <!-- <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html">My Account</a> -->
+                <a href="#" id="adminSignOutBtn">Sign-out</a>
             </div>
         </div>
+
     </div>
 </header>
 
@@ -56,12 +57,11 @@
             <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Summary_View/admin_dashboard.html">Dashboard</a></li>
             <li><a href="/Mobile_Prepaid_Admin/Prepaid_Plans_Management/prepaid_plan_management.html">Prepaid Plans Management</a></li>
             <li><a href="/Mobile_Prepaid_Admin/Customer_Management/customer_management.html">Customer Management</a></li>
-            <li><a href="#">SIM Management</a></li>
-            <li><a href="#">Support Management</a></li>
+            <li><a href="/Mobile_Prepaid_Admin/Transcation_History_Page/transcation_history.html">Transcation Management</a></li>
+            <!-- <li><a href="#">Support Management</a></li> -->
         </ul>
     </nav>
 </div>
-
 
 
 <!-- Admin-DashBoard -->
@@ -73,7 +73,7 @@
             <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Expiring Customer-Plans/expiring-customer.html">Expiring Plans</a></li>
             <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/Most Preferred Plans Packs/most_preferred_plans_pack.html">Most Preferred Plan Packs</a></li>
             <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/User Growth Over Time/user_growth_over_time.html">User Growth Over Time</a></li>
-            <li><a href="#">Revenue</a></li>
+            <!-- <li><a href="#">Revenue</a></li> -->
         </ul>
     </nav>
 
@@ -113,11 +113,11 @@
             </div>
 
             <!-- KPI Cards Container -->
-            <div class="kpi-container">
+            <!-- <div class="kpi-container">
                 <div class="kpi-card">
                     <div>Revenue Overview (This Month)</div>
                     <div class="kpi-value">₹12,50,000</div>
-                    <div class="kpi-performance positive">+5%</div> <!-- Signal for performance -->
+                    <div class="kpi-performance positive">+5%</div> 
                 </div>
                 <div class="kpi-card">
                     <div>Total Revenue</div>
@@ -134,7 +134,7 @@
                     <div class="kpi-value">+10%</div>
                     <div class="kpi-performance positive">+10%</div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </main>
 </section>

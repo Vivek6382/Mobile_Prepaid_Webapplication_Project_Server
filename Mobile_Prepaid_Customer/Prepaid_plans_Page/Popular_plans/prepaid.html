@@ -26,10 +26,10 @@
         </div>
         <div class="second_header_part">
 
-            <div class="search-container">
+            <!-- <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" placeholder="Search...">
-            </div>
+            </div> -->
             <div class="user-dropdown">
                 <i class="fa-solid fa-user" id="userIcon"></i> <!-- Added ID -->
                 <div class="dropdown-content">
@@ -47,8 +47,8 @@
                 <li><a href="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">Prepaid Plans</a>
                 </li>
                 <li><a href="/Mobile_Prepaid_Customer/Recharge_Page/recharge.html">Recharge</a></li>
-                <li><a href="">SIM Management</a></li>
-                <li><a href="/Mobile_Prepaid_Customer/Support/support.html">Support</a></li>
+                <!-- <li><a href="">SIM Management</a></li> -->
+                <!-- <li><a href="/Mobile_Prepaid_Customer/Support/support.html">Support</a></li> -->
             </ul>
         </nav>
     </div>
@@ -190,8 +190,6 @@
         <p>&copy; 2025 Mobi-Comm. All rights reserved.</p>
     </div>
 
-
-
     <!-- Full Card View Pop-up -->
     <!-- Full Card View Pop-up -->
     <div id="unique-popup-overlay" class="overlay-custom">
@@ -231,10 +229,14 @@
             </div>
 
             <!-- Popup Footer -->
+            <!-- Popup Footer -->
             <div class="popup-footer-custom">
-                <input type="text" class="custom-phone-input" placeholder="Enter your mobile number">
+                <input type="text" class="custom-phone-input" id="rechargePhone" placeholder="Enter your mobile number">
+                <span id="rechargePhoneError" class="phone-error-message"
+                    style="color: red; display: block; margin-top: 5px;"></span>
                 <button class="purchase-button-custom">Recharge</button>
             </div>
+
         </div>
     </div>
 

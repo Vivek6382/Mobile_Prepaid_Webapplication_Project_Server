@@ -1,75 +1,89 @@
 
-     // Profile-DropDown-JS
+// Profile-DropDown-JS
 
-     document.addEventListener("DOMContentLoaded", function () {
-        const userDropdown = document.querySelector(".user-dropdown");
-        const userIcon = document.getElementById("userIcon");
-        const dropdownContent = document.querySelector(".dropdown-content");
-        const signOutBtn = document.getElementById("signOutBtn");
-    
-        function updateDropdown() {
-            const currentCustomer = sessionStorage.getItem("currentCustomer");
-    
-            if (currentCustomer) {
-                // Show dropdown when user icon is clicked, toggle 'active' class
-                userIcon.onclick = function (event) {
-                    event.stopPropagation();
-                    userDropdown.classList.toggle("active");
-                };
-    
-                // Ensure dropdown starts hidden
-                userDropdown.classList.remove("active");
-    
-                // Sign-out functionality
-                signOutBtn.onclick = function (event) {
-                    event.preventDefault();
-                    sessionStorage.removeItem("currentCustomer"); // Remove session storage
-    
-                    // Ensure the storage is cleared before redirecting
-                    setTimeout(() => {
-                        window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
-                    }, 100);
-                };
-            } else {
-                // If not logged in, clicking the user icon redirects to the recharge page
-                userIcon.onclick = function () {
+document.addEventListener("DOMContentLoaded", function () {
+    const userDropdown = document.querySelector(".user-dropdown");
+    const userIcon = document.getElementById("userIcon");
+    const dropdownContent = document.querySelector(".dropdown-content");
+    const signOutBtn = document.getElementById("signOutBtn");
+
+    function updateDropdown() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const accessToken = sessionStorage.getItem("accessToken");
+
+        if (currentCustomer && accessToken) {
+            // Show dropdown when user icon is clicked, toggle 'active' class
+            userIcon.onclick = function (event) {
+                event.stopPropagation();
+                userDropdown.classList.toggle("active");
+            };
+
+            // Ensure dropdown starts hidden
+            userDropdown.classList.remove("active");
+
+            // Sign-out functionality
+            signOutBtn.onclick = function (event) {
+                event.preventDefault();
+
+                console.log("Before clearing:", {
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    currentCustomer: sessionStorage.getItem("currentCustomer")
+                });
+
+                sessionStorage.removeItem("accessToken"); // Remove specific item
+                sessionStorage.removeItem("currentCustomer"); // Remove user data
+                localStorage.removeItem("accessToken"); // Ensure it's removed from localStorage
+
+                console.log("After clearing:", {
+                    accessToken: sessionStorage.getItem("accessToken"),
+                    currentCustomer: sessionStorage.getItem("currentCustomer")
+                });
+
+                // Ensure the storage is cleared before redirecting
+                setTimeout(() => {
                     window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
-                };
-    
-                // Ensure dropdown is hidden
-                userDropdown.classList.remove("active");
-            }
-        }
-    
-        // Initialize dropdown behavior
-        updateDropdown();
-    
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function (event) {
-            if (!userDropdown.contains(event.target)) {
-                userDropdown.classList.remove("active");
-            }
-        });
-    
-        // Handle case where user manually navigates away after signing out
-        window.addEventListener("storage", function () {
-            if (!sessionStorage.getItem("currentCustomer")) {
+                }, 100);
+            };
+        } else {
+            // If not logged in or missing accessToken, redirect to recharge page
+            userIcon.onclick = function () {
                 window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
-            }
-        });
-    
-        // Listen for login event from the recharge form
-        window.addEventListener("storage", function () {
-            if (sessionStorage.getItem("currentCustomer")) {
-                updateDropdown(); // Update dropdown dynamically after login
-            }
-        });
-    
+            };
+
+            // Ensure dropdown is hidden
+            userDropdown.classList.remove("active");
+        }
+    }
+
+    // Initialize dropdown behavior
+    updateDropdown();
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+        if (!userDropdown.contains(event.target)) {
+            userDropdown.classList.remove("active");
+        }
     });
-    
-    
 
+    // Handle case where user manually navigates away after signing out
+    window.addEventListener("storage", function () {
+        if (!sessionStorage.getItem("currentCustomer") || !sessionStorage.getItem("accessToken")) {
+            sessionStorage.removeItem("accessToken");
+            sessionStorage.removeItem("currentCustomer");
+            localStorage.removeItem("accessToken");
+            window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
+        }
+    });
 
+    // Listen for login event from the recharge form
+    window.addEventListener("storage", function () {
+        if (sessionStorage.getItem("currentCustomer") && sessionStorage.getItem("accessToken")) {
+            updateDropdown(); 
+        }
+    });
+});
+      
+    
 
 
 
@@ -355,6 +369,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // Dynamic-OTT-JS for Multiple Cards
+
 document.addEventListener("DOMContentLoaded", function() {
     function updateOTTIcons() {
         document.querySelectorAll(".vi_card").forEach(card => {
@@ -413,6 +428,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Run after dynamically generated cards are added
     document.addEventListener("cardsUpdated", updateOTTIcons);
 });
+
 
 
 
@@ -497,12 +513,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // Dynamic Pop-up Content JS
+
 // Dynamic Pop-up Content JS
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("./Prepaid_plans_json/popular_plans.json")
-        .then(response => response.json())
-        .then(plans => generatePopularPlans(plans))
-        .catch(error => console.error("Error loading plans:", error));
 
     // Attach event listener to the container to handle dynamically added elements
     document.querySelector(".plan_card-container").addEventListener("click", function (e) {
@@ -521,104 +534,111 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("unique-popup-overlay").classList.remove("active");
     });
 
-    // Fetch customer details from JSON and store them in an object
-    let customerData = {};
+    // Mobile Validation JS with Backend Authentication
+    const rechargePhoneError = document.getElementById("rechargePhoneError");
+    const rechargePhone = document.getElementById("rechargePhone");
+    const rechargeButton = document.querySelector(".purchase-button-custom");
 
-    fetch("/Mobile_Prepaid_Customer/Discover_Page/customer_details_json/customers.json")
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(customer => {
-                customerData[customer.mobile.trim()] = customer; // Store customer details indexed by mobile number
-            });
-        })
-        .catch(error => console.error("Error loading customer data:", error));
+    // API Endpoints
+    const LOGIN_URL = "http://localhost:8083/auth/login";
+    const PROFILE_URL = "http://localhost:8083/auth/profile";
 
-    // Select elements
-    const phoneInput = document.querySelector(".custom-phone-input");
-    const purchaseButton = document.querySelector(".purchase-button-custom");
-
-    // Create error message span and insert it below the input field and above the button
-    const errorSpan = document.createElement("span");
-    errorSpan.classList.add("phone-error-message");
-    errorSpan.style.color = "red"; // ✅ Error message color set to red
-    errorSpan.style.display = "block";
-    errorSpan.style.marginTop = "5px";
-    
-    // Insert error message below input field
-    phoneInput.parentNode.insertBefore(errorSpan, purchaseButton);
-
-    // Check session storage and hide phone input field if currentCustomer exists
+    // Check if currentCustomer exists in session storage
     const currentCustomer = sessionStorage.getItem("currentCustomer");
 
     if (currentCustomer) {
-        phoneInput.style.display = "none";
-        errorSpan.style.display = "none"; // Hide error message if the phone input is hidden
-    }
+        // Hide input field if currentCustomer exists
+        rechargePhone.style.display = "none";
+        rechargePhoneError.style.display = "none";
 
-    // Event Listener for Recharge Button Click
-    purchaseButton.addEventListener("click", function (event) {
-        event.preventDefault(); // Prevent default action
-
-        // If currentCustomer exists, redirect immediately without validation
-        if (currentCustomer) {
+        // Directly redirect to the payment page on recharge button click
+        rechargeButton.addEventListener("click", function (event) {
+            event.preventDefault();
             window.location.href = "/Mobile_Prepaid_Customer/Payment_Page/payment.html";
-            return;
-        }
+        });
 
-        // If currentCustomer does not exist, validate phone number
-        const phoneNumber = phoneInput.value.trim().replace(/\s+/g, ""); // Remove spaces
+    } else {
+        // Event Listener for Recharge Button Click
+        rechargeButton.addEventListener("click", async function (event) {
+            event.preventDefault();
+            const phoneNumberValue = rechargePhone.value.trim().replace(/\s+/g, "");
 
-        if (validatePhoneNumber(phoneNumber)) {
-            // Store user details in sessionStorage
-            sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumber]));
+            // Frontend Validation
+            if (!validateRechargeForm(phoneNumberValue)) return;
 
-            // Redirect to payment page
-            window.location.href = "/Mobile_Prepaid_Customer/Payment_Page/payment.html";
-        }
-    });
+            try {
+                // Backend Validation: Check if the number exists
+                let loginResponse = await fetch(LOGIN_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ mobile: phoneNumberValue })
+                });
 
-    // On input change, show error message dynamically
-    phoneInput.addEventListener("input", function () {
-        const phoneNumber = phoneInput.value.trim().replace(/\s+/g, ""); // Remove spaces
-        validatePhoneNumber(phoneNumber);
-    });
+                if (!loginResponse.ok) {
+                    throw new Error("🚫 Invalid phone number. Please enter a valid registered number.");
+                }
 
-    // Function to validate phone number
-    function validatePhoneNumber(phoneNumber) {
-        let isValid = true;
-        errorSpan.innerHTML = ""; // Clear previous errors
+                let loginData = await loginResponse.json();
+                sessionStorage.setItem("accessToken", loginData.accessToken);
 
-        // If empty
-        if (phoneNumber === "") {
-            errorSpan.innerHTML = "📢 Phone Number is required.";
-            isValid = false;
-        }
-        // If non-numeric characters are included
-        else if (!/^\d*$/.test(phoneNumber)) {
-            errorSpan.innerHTML = "⚠️ Enter only digits (0-9).";
-            isValid = false;
-        }
-        // If less than 10 digits
-        else if (phoneNumber.length < 10) {
-            errorSpan.innerHTML = "⚠️ Enter a valid 10-digit phone number.";
-            isValid = false;
-        }
-        // If exactly 10 digits, check registration
-        else if (phoneNumber.length === 10) {
-            if (!(phoneNumber in customerData)) {
-                errorSpan.innerHTML = "🚫 You are not a registered user of Mobi-Comm.";
-                isValid = false;
+                // Fetch User Profile
+                let profileResponse = await fetch(PROFILE_URL, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${loginData.accessToken}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!profileResponse.ok) {
+                    throw new Error("🚫 Failed to fetch user profile. Please try again.");
+                }
+
+                let userProfile = await profileResponse.json();
+                sessionStorage.setItem("currentCustomer", JSON.stringify(userProfile));
+
+                // ✅ Redirect to Payment Page on Success
+                window.location.href = "/Mobile_Prepaid_Customer/Payment_Page/payment.html";
+
+            } catch (error) {
+                rechargePhoneError.innerHTML = error.message;
             }
-        }
-        // If more than 10 digits
-        else if (phoneNumber.length > 10) {
-            errorSpan.innerHTML = "❌ Phone number should be 10 digits long.";
-            isValid = false;
-        }
+        });
 
-        return isValid;
+        // Dynamic Error Display on Input Change
+        rechargePhone.addEventListener("input", function () {
+            const phoneNumberValue = rechargePhone.value.trim().replace(/\s+/g, "");
+            validateRechargeForm(phoneNumberValue);
+        });
     }
+
+    // Validation Function
+    function validateRechargeForm(phoneNumberValue) {
+        rechargePhoneError.innerHTML = ""; // Clear previous errors
+
+        if (phoneNumberValue === "") {
+            rechargePhoneError.innerHTML = "📢 Phone Number is required.";
+            return false;
+        }
+        if (!/^\d*$/.test(phoneNumberValue)) {
+            rechargePhoneError.innerHTML = "⚠️ Enter only digits (0-9).";
+            return false;
+        }
+        if (phoneNumberValue.length < 10) {
+            rechargePhoneError.innerHTML = "⚠️ Enter a valid 10-digit phone number.";
+            return false;
+        }
+        if (phoneNumberValue.length > 10) {
+            rechargePhoneError.innerHTML = "❌ Phone number should be exactly 10 digits.";
+            return false;
+        }
+        return true;
+    }
+
 });
+
+
+
 
 // Function to open the popup dynamically
 function openPopup(card) {
@@ -1042,7 +1062,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 //Recharge-card-display-fetch-js
-
 
 document.addEventListener("DOMContentLoaded", function () {
     const phoneNumberSpan = document.getElementById("phoneNumber");

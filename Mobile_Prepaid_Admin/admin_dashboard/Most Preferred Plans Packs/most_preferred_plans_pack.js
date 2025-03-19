@@ -1,231 +1,272 @@
-// Register the Data Labels Plugin
-const barCtx = document.getElementById('barChart').getContext('2d');
+// Admin Profile Dropdown JS
 
-const barChart = new Chart(barCtx, {
-    type: 'bar',
-    data: {
-        labels: [
-            'Popular Plans', 'True 5G Unlimited Plans', 'True Unlimited Upgrade', 
-            'Entertainment Plans', 'Data Booster', 'Annual Plans', 'International Roaming', 
-            'ISD', 'In-Flight Packs', 'Top-up', 'Value Packs', 'Data Packs', 
-            'Individual Plans', 'Cricket Plans'
-        ],
-        datasets: [{
-            label: 'Customer Preference (%)',
-            data: [80, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15], // Sample values
-            backgroundColor: '#FF5733', // Single color for all bars
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false, // Allows chart to take full space
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    stepSize: 10,
-                    callback: function(value) {
-                        return value + '%'; // Adds percentage sign on y-axis
+// Admin Profile Dropdown JS
+document.addEventListener("DOMContentLoaded", function () {
+    const adminUserDropdown = document.querySelector(".admin_user_dropdown");
+    const adminUserIcon = document.getElementById("adminUserIcon");
+    const adminDropdownContent = document.getElementById("adminDropdownContent");
+    const adminSignOutBtn = document.getElementById("adminSignOutBtn");
+
+    function handleAdminLogout(event) {
+        event.preventDefault();
+        sessionStorage.removeItem("currentCustomer"); // Remove session storage
+        sessionStorage.removeItem("adminAccessToken"); // Remove admin token
+
+        // Redirect to Admin Login after logout
+        setTimeout(() => {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+        }, 100);
+    }
+
+    function checkAdminAccess() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const adminAccessToken = sessionStorage.getItem("adminAccessToken");
+
+        // Redirect to Admin Login if not logged in
+        if (!currentCustomer || !adminAccessToken) {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+            return;
+        }
+    }
+
+    function updateAdminDropdown() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const adminAccessToken = sessionStorage.getItem("adminAccessToken");
+
+        // If logged in, allow dropdown functionality
+        if (currentCustomer && adminAccessToken) {
+            adminUserIcon.onclick = function (event) {
+                event.stopPropagation();
+                adminUserDropdown.classList.toggle("active"); // Toggle dropdown visibility
+            };
+
+            // Sign-out functionality
+            if (adminSignOutBtn) {
+                adminSignOutBtn.onclick = handleAdminLogout;
+            }
+        } else {
+            // If not logged in, clicking the user icon redirects to Admin Login
+            adminUserIcon.onclick = function () {
+                window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+            };
+
+            // Ensure dropdown is hidden
+            adminUserDropdown.classList.remove("active");
+        }
+    }
+
+    // Check if admin is logged in (Access Control)
+    checkAdminAccess();
+
+    // Initialize dropdown behavior
+    updateAdminDropdown();
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+        if (!adminUserDropdown.contains(event.target)) {
+            adminUserDropdown.classList.remove("active");
+        }
+    });
+
+    // Redirect if session storage is cleared (security measure)
+    window.addEventListener("storage", function () {
+        if (!sessionStorage.getItem("currentCustomer") || !sessionStorage.getItem("adminAccessToken")) {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+        }
+    });
+
+    // Listen for login event and update dropdown dynamically
+    window.addEventListener("storage", function () {
+        if (sessionStorage.getItem("currentCustomer") && sessionStorage.getItem("adminAccessToken")) {
+            updateAdminDropdown();
+        }
+    });
+});
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        // Fetch data from backend endpoints
+        const [categories, plans, transactions] = await Promise.all([
+            fetch("http://localhost:8083/api/categories").then(res => res.json()),
+            fetch("http://localhost:8083/api/prepaid-plans").then(res => res.json()),
+            fetch("http://localhost:8083/api/transactions").then(res => res.json())
+        ]);
+
+        // Prepare chart data
+        const labels = categories.map(category => category.categoryName);
+        const data = categories.map(category => {
+            const categoryId = category.categoryId;
+            const categoryTransactions = transactions.filter(transaction => 
+                transaction.plan.categories.some(cat => cat.categoryId === categoryId)
+            );
+            return categoryTransactions.length; // Number of transactions as preference
+        });
+
+        // Get canvas context
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        
+        // Create Bar Chart
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Customer Preference (Transactions)',
+                    data: data,
+                    backgroundColor: '#FF5733',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 10,
+                            callback: function(value) {
+                                return value + ' Transactions';
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Number of Transactions'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Plan Category'
+                        },
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
                     }
                 },
-                title: {
-                    display: true,
-                    text: 'Customer Preference (%)'
-                }
-            },
-            x: {
-                title: {
-                    display: true,
-                    text: 'Plan Category'
+                elements: {
+                    bar: {
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        categoryPercentage: 0.7,
+                        barPercentage: 0.9
+                    }
                 },
-                ticks: {
-                    autoSkip: false, // Ensures all labels are shown
-                    maxRotation: 45, // Slightly rotates labels to fit
-                    minRotation: 45
+                plugins: {
+                    tooltip: {
+                        backgroundColor: "#2b2b2b",
+                        bodyColor: "white",
+                        titleColor: "orangered",
+                        padding: 10
+                    }
                 }
             }
-        },
-        elements: {
-            bar: {
-                borderWidth: 1,
-                borderRadius: 5, // Slight rounding for bars
-                categoryPercentage: 0.7, // Adjusts bar width
-                barPercentage: 0.9 // Ensures bars are properly spaced
-            }
-        },
-        plugins: {
-            tooltip: {
-                backgroundColor: "#2b2b2b",
-                bodyColor: "white",
-                titleColor: "orangered",
-                padding: 10
-            }
-        }
+        });
+    } catch (error) {
+        console.error("Error fetching data for bar chart:", error);
     }
 });
-
-
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    const deletePopup = document.getElementById("delete-popup");
-    const confirmDeleteBtn = document.getElementById("confirm-delete");
-    const cancelDeleteBtn = document.getElementById("cancel-delete");
-
-    // Pop-up details elements
-    const popupCategorySpan = document.getElementById("popup-plan-category");
-    const popupTotalPlansSpan = document.getElementById("popup-total-plans");
-    const popupSubscribersSpan = document.getElementById("popup-subscribers");
-    const popupRevenueSpan = document.getElementById("popup-revenue");
-
-    let currentCard = null;
-
-    // Ensure pop-up is hidden initially
-    deletePopup.style.display = "none";
-
-    // Function to show the delete pop-up with details
-    function openDeletePopup(cardElement) {
-        if (!cardElement) return;
-
-        currentCard = cardElement;
-
-        // Fetch and display details dynamically in the pop-up
-        popupCategorySpan.innerText = cardElement.querySelector(".plan-category")?.innerText || "N/A";
-        popupTotalPlansSpan.innerText = cardElement.querySelector(".total-plans")?.innerText || "N/A";
-        popupSubscribersSpan.innerText = cardElement.querySelector(".subscribed-users")?.innerText || "N/A";
-        popupRevenueSpan.innerText = cardElement.querySelector(".revenue-generated")?.innerText || "N/A";
-
-        // Show the pop-up
-        deletePopup.style.display = "flex";
-    }
-
-    // Event listener for delete icon click
-    document.body.addEventListener("click", function (event) {
-        if (event.target.classList.contains("delete-icon")) {
-            const card = event.target.closest(".cust_manage_card");
-            if (card) {
-                openDeletePopup(card);
-            }
-        }
-    });
-
-    // Confirm delete: Remove plan category card
-    confirmDeleteBtn.addEventListener("click", function () {
-        if (currentCard) {
-            currentCard.remove(); // Remove the card from the DOM
-            currentCard = null;
-        }
-        deletePopup.style.display = "none"; // Close the pop-up
-    });
-
-    // Cancel delete action
-    cancelDeleteBtn.addEventListener("click", function () {
-        deletePopup.style.display = "none";
-        currentCard = null;
-    });
-});
-
-
-
 
 
 
 
 //Update-JS
 
-document.addEventListener("DOMContentLoaded", function () {
-    const updatePopup = document.getElementById("update-popup");
-    const updatePlanBtn = document.getElementById("update-plan-btn");
-    const cancelUpdateBtn = document.getElementById("cancel-update");
+// document.addEventListener("DOMContentLoaded", function () {
+//     const updatePopup = document.getElementById("update-popup");
+//     const updatePlanBtn = document.getElementById("update-plan-btn");
+//     const cancelUpdateBtn = document.getElementById("cancel-update");
 
-    const statusSelect = document.getElementById("status-dot");
-    const planCategoryInput = document.getElementById("update-plan-category");
+//     const statusSelect = document.getElementById("status-dot");
+//     const planCategoryInput = document.getElementById("update-plan-category");
 
-    let currentCard = null;
+//     let currentCard = null;
 
-    updatePopup.style.display = "none";
+//     updatePopup.style.display = "none";
 
-    // Open update popup when clicking the edit icon
-    document.addEventListener("click", function (event) {
-        if (event.target.classList.contains("edit-icon")) {
-            const card = event.target.closest(".cust_manage_card");
-            if (card) {
-                openUpdatePopup(card);
-            }
-        }
-    });
+//     // Open update popup when clicking the edit icon
+//     document.addEventListener("click", function (event) {
+//         if (event.target.classList.contains("edit-icon")) {
+//             const card = event.target.closest(".cust_manage_card");
+//             if (card) {
+//                 openUpdatePopup(card);
+//             }
+//         }
+//     });
 
-    function openUpdatePopup(cardElement) {
-        currentCard = cardElement;
+//     function openUpdatePopup(cardElement) {
+//         currentCard = cardElement;
 
-        const planCategory = currentCard.querySelector(".plan-category");
+//         const planCategory = currentCard.querySelector(".plan-category");
 
-        // Determine current status from class
-        if (currentCard.classList.contains("suspended")) {
-            statusSelect.value = "suspended";
-        } else if (currentCard.classList.contains("active")) {
-            statusSelect.value = "active";
-        }
+//         // Determine current status from class
+//         if (currentCard.classList.contains("suspended")) {
+//             statusSelect.value = "suspended";
+//         } else if (currentCard.classList.contains("active")) {
+//             statusSelect.value = "active";
+//         }
 
-        // Set plan category input field
-        planCategoryInput.value = planCategory.textContent;
+//         // Set plan category input field
+//         planCategoryInput.value = planCategory.textContent;
 
-        updatePopup.style.display = "flex";
-    }
+//         updatePopup.style.display = "flex";
+//     }
 
-    // Close update popup
-    cancelUpdateBtn.addEventListener("click", function () {
-        updatePopup.style.display = "none";
-        currentCard = null;
-    });
+//     // Close update popup
+//     cancelUpdateBtn.addEventListener("click", function () {
+//         updatePopup.style.display = "none";
+//         currentCard = null;
+//     });
 
-    // Apply updates when clicking update button
-    updatePlanBtn.addEventListener("click", function () {
-        if (currentCard) {
-            const statusDot = currentCard.querySelector(".status-dot");
-            const planCategory = currentCard.querySelector(".plan-category");
+//     // Apply updates when clicking update button
+//     updatePlanBtn.addEventListener("click", function () {
+//         if (currentCard) {
+//             const statusDot = currentCard.querySelector(".status-dot");
+//             const planCategory = currentCard.querySelector(".plan-category");
 
-            // Remove all status classes before applying a new one
-            currentCard.classList.remove("expired", "active", "suspended");
+//             // Remove all status classes before applying a new one
+//             currentCard.classList.remove("expired", "active", "suspended");
 
-            let tooltipText = "";
+//             let tooltipText = "";
 
-            // Apply new status
-            if (statusSelect.value === "suspended") {
-                currentCard.classList.add("suspended"); // Use "suspended" instead of "expired"
-                statusDot.style.backgroundColor = "red";
-                tooltipText = "Suspended";
-            } else if (statusSelect.value === "active") {
-                currentCard.classList.add("active");
-                statusDot.style.backgroundColor = "green";
-                tooltipText = "Active";
-            }
+//             // Apply new status
+//             if (statusSelect.value === "suspended") {
+//                 currentCard.classList.add("suspended"); // Use "suspended" instead of "expired"
+//                 statusDot.style.backgroundColor = "red";
+//                 tooltipText = "Suspended";
+//             } else if (statusSelect.value === "active") {
+//                 currentCard.classList.add("active");
+//                 statusDot.style.backgroundColor = "green";
+//                 tooltipText = "Active";
+//             }
 
-            // Update tooltip text dynamically
-            statusDot.setAttribute("data-tooltip", tooltipText);
+//             // Update tooltip text dynamically
+//             statusDot.setAttribute("data-tooltip", tooltipText);
 
-            // Update only the plan category
-            planCategory.textContent = planCategoryInput.value;
+//             // Update only the plan category
+//             planCategory.textContent = planCategoryInput.value;
 
-            // Refresh the UI to reflect the updated category
-            categorizeCustomers(document.querySelector(".active-nav")?.dataset.category || "all-category");
-        }
+//             // Refresh the UI to reflect the updated category
+//             categorizeCustomers(document.querySelector(".active-nav")?.dataset.category || "all-category");
+//         }
 
-        updatePopup.style.display = "none";
-    });
+//         updatePopup.style.display = "none";
+//     });
 
-    // Function to filter customers (ensures updated cards move to correct category)
-    function categorizeCustomers(categoryClass) {
-        document.querySelectorAll(".cust_manage_card").forEach((card) => {
-            card.style.display =
-                categoryClass === "all-category" || card.classList.contains(categoryClass) ? "flex" : "none";
-        });
-    }
-});
+//     // Function to filter customers (ensures updated cards move to correct category)
+//     function categorizeCustomers(categoryClass) {
+//         document.querySelectorAll(".cust_manage_card").forEach((card) => {
+//             card.style.display =
+//                 categoryClass === "all-category" || card.classList.contains(categoryClass) ? "flex" : "none";
+//         });
+//     }
+// });
 
 
 
@@ -234,167 +275,167 @@ document.addEventListener("DOMContentLoaded", function () {
 // Add-pop-up-js
 
 
-document.addEventListener("DOMContentLoaded", function () {
-    const addPopup = document.getElementById("add-popup");
-    const addCustomerBtn = document.getElementById("add-customer-btn");
-    const cancelAddBtn = document.getElementById("cancel-add");
-    const addButton = document.querySelector(".outline-button:nth-child(1)");
+// document.addEventListener("DOMContentLoaded", function () {
+//     const addPopup = document.getElementById("add-popup");
+//     const addCustomerBtn = document.getElementById("add-customer-btn");
+//     const cancelAddBtn = document.getElementById("cancel-add");
+//     const addButton = document.querySelector(".outline-button:nth-child(1)");
 
-    // Get input fields
-    const statusSelect = document.getElementById("add-status-dot");
-    const customerMobileInput = document.getElementById("add-customer-mobile");
-    const customerNameInput = document.getElementById("add-customer-name");
-    const customerPlanInput = document.getElementById("add-customer-plan");
-    const customerEmailInput = document.getElementById("add-customer-email");
-    const subscriptionStartInput = document.getElementById("add-subscription-start");
-    const subscriptionEndInput = document.getElementById("add-subscription-end");
-    const billingAmountInput = document.getElementById("add-billing-amount");
-    const lastPaymentInput = document.getElementById("add-last-payment");
+//     // Get input fields
+//     const statusSelect = document.getElementById("add-status-dot");
+//     const customerMobileInput = document.getElementById("add-customer-mobile");
+//     const customerNameInput = document.getElementById("add-customer-name");
+//     const customerPlanInput = document.getElementById("add-customer-plan");
+//     const customerEmailInput = document.getElementById("add-customer-email");
+//     const subscriptionStartInput = document.getElementById("add-subscription-start");
+//     const subscriptionEndInput = document.getElementById("add-subscription-end");
+//     const billingAmountInput = document.getElementById("add-billing-amount");
+//     const lastPaymentInput = document.getElementById("add-last-payment");
 
-    const cardsContainer = document.querySelector(".cust_manage_cards_container");
+//     const cardsContainer = document.querySelector(".cust_manage_cards_container");
 
-    // Open Add Pop-up
-    addButton.addEventListener("click", function () {
-        addPopup.style.display = "flex";
-    });
+//     // Open Add Pop-up
+//     addButton.addEventListener("click", function () {
+//         addPopup.style.display = "flex";
+//     });
 
-    // Close Add Pop-up
-    cancelAddBtn.addEventListener("click", function () {
-        addPopup.style.display = "none";
-    });
+//     // Close Add Pop-up
+//     cancelAddBtn.addEventListener("click", function () {
+//         addPopup.style.display = "none";
+//     });
 
-    // Function to attach tooltip events
-    function attachTooltipEvents() {
-        document.querySelectorAll(".status-dot").forEach(dot => {
-            dot.addEventListener("mouseenter", function () {
-                let tooltip = document.createElement("div");
-                tooltip.classList.add("dynamic-tooltip");
-                tooltip.innerText = this.getAttribute("data-tooltip");
+//     // Function to attach tooltip events
+//     function attachTooltipEvents() {
+//         document.querySelectorAll(".status-dot").forEach(dot => {
+//             dot.addEventListener("mouseenter", function () {
+//                 let tooltip = document.createElement("div");
+//                 tooltip.classList.add("dynamic-tooltip");
+//                 tooltip.innerText = this.getAttribute("data-tooltip");
 
-                document.body.appendChild(tooltip);
+//                 document.body.appendChild(tooltip);
 
-                let rect = this.getBoundingClientRect();
-                tooltip.style.left = `${rect.left + rect.width / 2}px`;
-                tooltip.style.top = `${rect.top - 30}px`; // Position above the dot
-                tooltip.style.visibility = "visible";
-                tooltip.style.opacity = "1";
-            });
+//                 let rect = this.getBoundingClientRect();
+//                 tooltip.style.left = `${rect.left + rect.width / 2}px`;
+//                 tooltip.style.top = `${rect.top - 30}px`; // Position above the dot
+//                 tooltip.style.visibility = "visible";
+//                 tooltip.style.opacity = "1";
+//             });
 
-            dot.addEventListener("mouseleave", function () {
-                document.querySelectorAll(".dynamic-tooltip").forEach(tip => tip.remove());
-            });
-        });
-    }
+//             dot.addEventListener("mouseleave", function () {
+//                 document.querySelectorAll(".dynamic-tooltip").forEach(tip => tip.remove());
+//             });
+//         });
+//     }
 
     
 
-    // Add Customer Card
-    addCustomerBtn.addEventListener("click", function () {
-        const mobileNumber = customerMobileInput.value.trim();
-        const customerName = customerNameInput.value.trim();
-        const customerPlan = customerPlanInput.value.trim();
-        const customerEmail = customerEmailInput.value.trim();
-        const subscriptionStart = subscriptionStartInput.value.trim();
-        const subscriptionEnd = subscriptionEndInput.value.trim();
-        const billingAmount = billingAmountInput.value.trim();
-        const lastPayment = lastPaymentInput.value.trim();
-        const status = statusSelect.value;
+//     // Add Customer Card
+//     addCustomerBtn.addEventListener("click", function () {
+//         const mobileNumber = customerMobileInput.value.trim();
+//         const customerName = customerNameInput.value.trim();
+//         const customerPlan = customerPlanInput.value.trim();
+//         const customerEmail = customerEmailInput.value.trim();
+//         const subscriptionStart = subscriptionStartInput.value.trim();
+//         const subscriptionEnd = subscriptionEndInput.value.trim();
+//         const billingAmount = billingAmountInput.value.trim();
+//         const lastPayment = lastPaymentInput.value.trim();
+//         const status = statusSelect.value;
 
-        if (!mobileNumber || !customerName || !customerPlan || !customerEmail || !subscriptionStart || !subscriptionEnd || !billingAmount || !lastPayment) {
-            alert("Please fill in all fields.");
-            return;
-        }
+//         if (!mobileNumber || !customerName || !customerPlan || !customerEmail || !subscriptionStart || !subscriptionEnd || !billingAmount || !lastPayment) {
+//             alert("Please fill in all fields.");
+//             return;
+//         }
 
-        // Determine tooltip text based on selected status
-        let tooltipText = status === "red" ? "Expired" : status === "yellow" ? "Expires Soon" : "Active";
+//         // Determine tooltip text based on selected status
+//         let tooltipText = status === "red" ? "Expired" : status === "yellow" ? "Expires Soon" : "Active";
 
-        // Create a new customer card
-        const newCard = document.createElement("div");
-        newCard.classList.add("cust_manage_card", "all-category"); // Always in "All" category
+//         // Create a new customer card
+//         const newCard = document.createElement("div");
+//         newCard.classList.add("cust_manage_card", "all-category"); // Always in "All" category
 
-        if (status === "red") {
-            newCard.classList.add("expired");
-        } else if (status === "yellow") {
-            newCard.classList.add("expires-soon");
-        } else {
-            newCard.classList.add("active");
-        }
+//         if (status === "red") {
+//             newCard.classList.add("expired");
+//         } else if (status === "yellow") {
+//             newCard.classList.add("expires-soon");
+//         } else {
+//             newCard.classList.add("active");
+//         }
 
-        newCard.innerHTML = `
-            <!-- Bulk Checkboxes -->
-            <input type="checkbox" class="bulk-delete-checkbox">
-            <input type="checkbox" class="bulk-update-checkbox">
+//         newCard.innerHTML = `
+//             <!-- Bulk Checkboxes -->
+//             <input type="checkbox" class="bulk-delete-checkbox">
+//             <input type="checkbox" class="bulk-update-checkbox">
 
-            <!-- Delete Icon -->
-            <i class="fa-solid fa-xmark delete-icon"></i>
+//             <!-- Delete Icon -->
+//             <i class="fa-solid fa-xmark delete-icon"></i>
 
-            <!-- Status Dot -->
-            <div class="dot_div">
-                <span class="status-dot" style="background-color: ${status};" data-tooltip="${tooltipText}"></span>
-            </div>
+//             <!-- Status Dot -->
+//             <div class="dot_div">
+//                 <span class="status-dot" style="background-color: ${status};" data-tooltip="${tooltipText}"></span>
+//             </div>
 
-            <!-- Customer Details -->
-            <div class="customer_info">
+//             <!-- Customer Details -->
+//             <div class="customer_info">
 
-                <!-- Always Visible -->
-                <div class="customer_mobile_div">
-                    <span class="customer_mobile">${mobileNumber}</span>
-                </div>
-                <div class="customer_name_div">
-                    <span class="customer_name">${customerName}</span>
-                </div>
-                <div class="customer_plan_div">
-                    <span class="customer_plan">${customerPlan}</span>
-                </div>
+//                 <!-- Always Visible -->
+//                 <div class="customer_mobile_div">
+//                     <span class="customer_mobile">${mobileNumber}</span>
+//                 </div>
+//                 <div class="customer_name_div">
+//                     <span class="customer_name">${customerName}</span>
+//                 </div>
+//                 <div class="customer_plan_div">
+//                     <span class="customer_plan">${customerPlan}</span>
+//                 </div>
 
-                <!-- Hidden Details -->
-                <div class="customer_email_div hidden-details">
-                    <span class="customer_email">${customerEmail}</span>
-                </div>
-                <div class="subscription_start_div hidden-details">
-                    <span class="subscription_start">Start: ${subscriptionStart}</span>
-                </div>
-                <div class="subscription_end_div hidden-details">
-                    <span class="subscription_end">End: ${subscriptionEnd}</span>
-                </div>
-                <div class="billing_amount_div hidden-details">
-                    <span class="billing_amount">₹${billingAmount}</span>
-                </div>
-                <div class="last_payment_div hidden-details">
-                    <span class="last_payment">Last Payment: ${lastPayment}</span>
-                </div>
-            </div>
+//                 <!-- Hidden Details -->
+//                 <div class="customer_email_div hidden-details">
+//                     <span class="customer_email">${customerEmail}</span>
+//                 </div>
+//                 <div class="subscription_start_div hidden-details">
+//                     <span class="subscription_start">Start: ${subscriptionStart}</span>
+//                 </div>
+//                 <div class="subscription_end_div hidden-details">
+//                     <span class="subscription_end">End: ${subscriptionEnd}</span>
+//                 </div>
+//                 <div class="billing_amount_div hidden-details">
+//                     <span class="billing_amount">₹${billingAmount}</span>
+//                 </div>
+//                 <div class="last_payment_div hidden-details">
+//                     <span class="last_payment">Last Payment: ${lastPayment}</span>
+//                 </div>
+//             </div>
 
-            <!-- Card Footer -->
-            <div class="cust_card_footer">
-                <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
-                <i class="fa-solid fa-pen-to-square edit-icon"></i>
-            </div>
-        `;
+//             <!-- Card Footer -->
+//             <div class="cust_card_footer">
+//                 <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+//                 <i class="fa-solid fa-pen-to-square edit-icon"></i>
+//             </div>
+//         `;
 
-        // Append to container
-        cardsContainer.appendChild(newCard);
+//         // Append to container
+//         cardsContainer.appendChild(newCard);
 
-        // Re-apply event listeners to all status dots
-        attachTooltipEvents();
+//         // Re-apply event listeners to all status dots
+//         attachTooltipEvents();
 
-        // Clear input fields
-        customerMobileInput.value = "";
-        customerNameInput.value = "";
-        customerPlanInput.value = "";
-        customerEmailInput.value = "";
-        subscriptionStartInput.value = "";
-        subscriptionEndInput.value = "";
-        billingAmountInput.value = "";
-        lastPaymentInput.value = "";
+//         // Clear input fields
+//         customerMobileInput.value = "";
+//         customerNameInput.value = "";
+//         customerPlanInput.value = "";
+//         customerEmailInput.value = "";
+//         subscriptionStartInput.value = "";
+//         subscriptionEndInput.value = "";
+//         billingAmountInput.value = "";
+//         lastPaymentInput.value = "";
 
-        // Close pop-up
-        addPopup.style.display = "none";
-    });
+//         // Close pop-up
+//         addPopup.style.display = "none";
+//     });
 
-    // Attach event listeners on page load
-    attachTooltipEvents();
-});
+//     // Attach event listeners on page load
+//     attachTooltipEvents();
+// });
 
 
 
@@ -989,3 +1030,246 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
+
+
+
+// Show delete confirmation pop-up
+function showDeletePopup(categoryId, categoryName, totalPlans, subscribers, revenueGenerated) {
+    // Update pop-up details dynamically
+    document.querySelectorAll("#popup-plan-category").forEach(el => el.textContent = categoryName);
+    document.querySelectorAll("#popup-total-plans").forEach(el => el.textContent = totalPlans);
+    document.querySelectorAll("#popup-subscribers").forEach(el => el.textContent = subscribers);
+    document.querySelectorAll("#popup-revenue").forEach(el => el.textContent = `₹${revenueGenerated}`);
+
+    document.getElementById("confirm-delete").setAttribute("data-category-id", categoryId);
+
+    // Show the delete confirmation pop-up
+    document.getElementById("delete-popup").style.display = "flex";
+}
+
+
+
+
+
+
+// Dynamic-card-creating and category delete 
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const container = document.querySelector(".cust_manage_cards_container");
+
+    try {
+        const [categories, plans, transactions] = await Promise.all([
+            fetch("http://localhost:8083/api/categories").then(res => res.json()),
+            fetch("http://localhost:8083/api/prepaid-plans").then(res => res.json()),
+            fetch("http://localhost:8083/api/transactions").then(res => res.json())
+        ]);
+
+        container.innerHTML = "";
+
+        categories.forEach(category => {
+            const categoryId = category.categoryId;
+            const categoryName = category.categoryName;
+
+            const totalPlans = plans.filter(plan => 
+                plan.categories.some(cat => cat.categoryId === categoryId)
+            ).length;
+
+            const categoryTransactions = transactions.filter(transaction => 
+                transaction.plan.categories.some(cat => cat.categoryId === categoryId)
+            );
+
+            const subscribers = new Set(categoryTransactions.map(transaction => transaction.user.userId)).size;
+
+            const revenueGenerated = categoryTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+
+            const card = document.createElement("div");
+            card.classList.add("cust_manage_card", "active");
+            card.innerHTML = `
+                <div class="dot_div">
+                    <span class="status-dot" data-tooltip="Active"></span>
+                </div>
+                <div class="bulk-actions">
+                    <input type="checkbox" class="bulk-delete-checkbox">
+                    <input type="checkbox" class="bulk-update-checkbox">
+                </div>
+                <i class="fa-solid fa-xmark delete-icon" 
+                    data-category-id="${categoryId}" 
+                    data-category-name="${categoryName}" 
+                    data-total-plans="${totalPlans}" 
+                    data-subscribers="${subscribers}" 
+                    data-revenue="${revenueGenerated.toFixed(2)}">
+                </i>
+              
+                <div class="customer_info">
+                    <div class="customer_info_row">
+                        <div class="customer_mobile_div">
+                            <span class="customer_mobile">Category: <span class="plan-category">${categoryName}</span></span>
+                        </div>
+                        <div class="customer_name_div">
+                            <span class="customer_name">Total Plans: <span class="total-plans">${totalPlans}</span></span>
+                        </div>
+                    </div>
+                    <div class="customer_info_row">
+                        <div class="customer_plan_div">
+                            <span class="customer_plan">Subscribers: <span class="subscribed-users">${subscribers}</span></span>
+                        </div>
+                        <div class="customer_email_div hidden-details">
+                            <span class="customer_email">Revenue: ₹<span class="revenue-generated">${revenueGenerated.toFixed(2)}</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="cust_card_footer">
+                    <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+                      <i class="fa-solid fa-pen-to-square edit-icon" 
+                    data-category-id="${categoryId}" 
+                    data-category-name="${categoryName}">
+                </i>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        document.querySelectorAll(".delete-icon").forEach(icon => {
+            icon.addEventListener("click", function () {
+                const categoryId = this.getAttribute("data-category-id");
+                const categoryName = this.getAttribute("data-category-name");
+                const totalPlans = this.getAttribute("data-total-plans");
+                const subscribers = this.getAttribute("data-subscribers");
+                const revenueGenerated = this.getAttribute("data-revenue");
+                showDeletePopup(categoryId, categoryName, totalPlans, subscribers, revenueGenerated);
+            });
+        });
+
+        document.querySelectorAll(".edit-icon").forEach(icon => {
+            icon.addEventListener("click", function () {
+                const categoryId = this.getAttribute("data-category-id");
+                const categoryName = this.getAttribute("data-category-name");
+                showUpdatePopup(categoryId, categoryName);
+            });
+        });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+});
+
+function showDeletePopup(categoryId, categoryName, totalPlans, subscribers, revenueGenerated) {
+    document.querySelectorAll("#popup-plan-category").forEach(el => el.textContent = categoryName);
+    document.querySelectorAll("#popup-total-plans").forEach(el => el.textContent = totalPlans);
+    document.querySelectorAll("#popup-subscribers").forEach(el => el.textContent = subscribers);
+    document.querySelectorAll("#popup-revenue").forEach(el => el.textContent = `₹${revenueGenerated}`);
+    document.getElementById("confirm-delete").setAttribute("data-category-id", categoryId);
+    document.getElementById("delete-popup").style.display = "flex";
+}
+
+document.getElementById("confirm-delete").addEventListener("click", async function () {
+    const categoryId = this.getAttribute("data-category-id");
+    try {
+        const response = await fetch(`http://localhost:8083/api/categories/${categoryId}`, {
+            method: "DELETE"
+        });
+        if (response.ok) {
+            document.getElementById("delete-popup").style.display = "none";
+            window.location.reload();
+        } else {
+            console.error("Failed to delete category.");
+        }
+    } catch (error) {
+        console.error("Error deleting category:", error);
+    }
+});
+
+document.getElementById("cancel-delete").addEventListener("click", function () {
+    document.getElementById("delete-popup").style.display = "none";
+});
+
+function showUpdatePopup(categoryId, categoryName) {
+    document.getElementById("update-category-name").value = categoryName;
+    document.getElementById("update-category-btn").setAttribute("data-category-id", categoryId);
+    document.getElementById("update-category-popup").style.display = "flex";
+}
+
+document.getElementById("cancel-update-category-btn").addEventListener("click", function () {
+    document.getElementById("update-category-popup").style.display = "none";
+});
+
+document.getElementById("update-category-btn").addEventListener("click", async function () {
+    const categoryId = this.getAttribute("data-category-id");
+    const updatedCategoryName = document.getElementById("update-category-name").value.trim();
+    if (!updatedCategoryName) {
+        document.getElementById("update-error-category").textContent = "Category name cannot be empty!";
+        return;
+    }
+    try {
+        const response = await fetch(`http://localhost:8083/api/categories/${categoryId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ categoryName: updatedCategoryName })
+        });
+        if (response.ok) {
+            document.getElementById("update-category-popup").style.display = "none";
+            window.location.reload();
+        } else {
+            console.error("Failed to update category.");
+        }
+    } catch (error) {
+        console.error("Error updating category:", error);
+    }
+});
+
+
+
+
+
+
+
+// Add-category-js
+
+document.addEventListener("DOMContentLoaded", function () {
+    const addCategoryPopup = document.getElementById("add-category-popup");
+    const addCategoryButton = document.querySelector(".outline-button"); // Button that opens the pop-up
+    const addCategoryInput = document.getElementById("add-category-name");
+    const addCategorySubmit = document.getElementById("add-category-btn");
+    const cancelAddCategory = document.getElementById("cancel-add-category-btn");
+    const errorMessage = document.getElementById("add-error-category");
+
+    // Open the "Add Category" pop-up
+    addCategoryButton.addEventListener("click", function () {
+        addCategoryPopup.style.display = "block";
+        addCategoryInput.value = "";
+        errorMessage.textContent = "";
+    });
+
+    // Close the pop-up when "Cancel" is clicked
+    cancelAddCategory.addEventListener("click", function () {
+        addCategoryPopup.style.display = "none";
+    });
+
+    // Handle "Add" button click
+    addCategorySubmit.addEventListener("click", function () {
+        const newCategoryName = addCategoryInput.value.trim();
+
+        // Validation: Ensure input is not empty
+        if (newCategoryName === "") {
+            errorMessage.textContent = "Category name cannot be empty.";
+            return;
+        }
+
+        // API request to add the new category
+        fetch("http://localhost:8083/api/categories", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ categoryName: newCategoryName })
+        })
+        .then(response => response.json())
+        .then(() => {
+            // Close the pop-up after successful addition
+            addCategoryPopup.style.display = "none";
+        })
+        .catch(error => {
+            console.error("Error adding category:", error);
+            errorMessage.textContent = "Failed to add category. Please try again.";
+        });
+    });
+});

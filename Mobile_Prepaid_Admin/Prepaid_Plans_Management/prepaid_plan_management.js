@@ -1,3 +1,92 @@
+// Admin Profile Dropdown JS
+
+// Admin Profile Dropdown JS
+document.addEventListener("DOMContentLoaded", function () {
+    const adminUserDropdown = document.querySelector(".admin_user_dropdown");
+    const adminUserIcon = document.getElementById("adminUserIcon");
+    const adminDropdownContent = document.getElementById("adminDropdownContent");
+    const adminSignOutBtn = document.getElementById("adminSignOutBtn");
+
+    function handleAdminLogout(event) {
+        event.preventDefault();
+        sessionStorage.removeItem("currentCustomer"); // Remove session storage
+        sessionStorage.removeItem("adminAccessToken"); // Remove admin token
+
+        // Redirect to Admin Login after logout
+        setTimeout(() => {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+        }, 100);
+    }
+
+    function checkAdminAccess() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const adminAccessToken = sessionStorage.getItem("adminAccessToken");
+
+        // Redirect to Admin Login if not logged in
+        if (!currentCustomer || !adminAccessToken) {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+            return;
+        }
+    }
+
+    function updateAdminDropdown() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const adminAccessToken = sessionStorage.getItem("adminAccessToken");
+
+        // If logged in, allow dropdown functionality
+        if (currentCustomer && adminAccessToken) {
+            adminUserIcon.onclick = function (event) {
+                event.stopPropagation();
+                adminUserDropdown.classList.toggle("active"); // Toggle dropdown visibility
+            };
+
+            // Sign-out functionality
+            if (adminSignOutBtn) {
+                adminSignOutBtn.onclick = handleAdminLogout;
+            }
+        } else {
+            // If not logged in, clicking the user icon redirects to Admin Login
+            adminUserIcon.onclick = function () {
+                window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+            };
+
+            // Ensure dropdown is hidden
+            adminUserDropdown.classList.remove("active");
+        }
+    }
+
+    // Check if admin is logged in (Access Control)
+    checkAdminAccess();
+
+    // Initialize dropdown behavior
+    updateAdminDropdown();
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+        if (!adminUserDropdown.contains(event.target)) {
+            adminUserDropdown.classList.remove("active");
+        }
+    });
+
+    // Redirect if session storage is cleared (security measure)
+    window.addEventListener("storage", function () {
+        if (!sessionStorage.getItem("currentCustomer") || !sessionStorage.getItem("adminAccessToken")) {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+        }
+    });
+
+    // Listen for login event and update dropdown dynamically
+    window.addEventListener("storage", function () {
+        if (sessionStorage.getItem("currentCustomer") && sessionStorage.getItem("adminAccessToken")) {
+            updateAdminDropdown();
+        }
+    });
+});
+
+
+
+
+
 // Single-delete
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -919,15 +1008,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Attach event listener to the container to handle dynamically added elements
     document.querySelector(".plan_card-container").addEventListener("click", function (e) {
-        if (
-            e.target.classList.contains("view-icon") ||
-            e.target.closest(".view-icon") ||
-            e.target.classList.contains("buy-button") // ✅ Buy Now button triggers popup
-        ) {
+        // Ensure only the view icon triggers the pop-up
+        if (e.target.classList.contains("view-icon") || e.target.closest(".view-icon")) {
             e.preventDefault();
             openPopup(e.target.closest(".vi_card"));
         }
     });
+    
 
     // Close popup event
     document.getElementById("close-unique-popup").addEventListener("click", function () {
@@ -1257,7 +1344,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
 
                     <!-- Buy Button (Shifted Up) -->
-                    <a href="/Mobile_Prepaid_Customer/Payment_Page/payment.html" class="buy-link">
+                    <a class="buy-link">
                         <button class="buy-button">Buy Now</button>
                     </a>
                 </div>
@@ -1266,10 +1353,10 @@ document.addEventListener("DOMContentLoaded", function () {
             container.appendChild(card);
 
             // Store plan in sessionStorage when clicking Buy Now
-            const buyButton = card.querySelector(".buy-button");
-            buyButton.addEventListener("click", function () {
-                sessionStorage.setItem("currentPlan", JSON.stringify(plan));
-            });
+            // const buyButton = card.querySelector(".buy-button");
+            // buyButton.addEventListener("click", function () {
+            //     sessionStorage.setItem("currentPlan", JSON.stringify(plan));
+            // });
         });
 
         document.dispatchEvent(new Event("cardsUpdated"));

@@ -284,3 +284,10 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 });
+
+
+
+
+function goBack() {
+  window.location.href = "/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html";
+}

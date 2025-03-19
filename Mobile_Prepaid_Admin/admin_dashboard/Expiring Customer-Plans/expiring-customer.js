@@ -1,56 +1,186 @@
-// Register the Data Labels Plugin
-Chart.register(ChartDataLabels);
+// Admin Profile Dropdown JS
 
-// Pie Chart for Expiring Customer Plans
-const ctx = document.getElementById('expiringPlansChart').getContext('2d');
+// Admin Profile Dropdown JS
+document.addEventListener("DOMContentLoaded", function () {
+    const adminUserDropdown = document.querySelector(".admin_user_dropdown");
+    const adminUserIcon = document.getElementById("adminUserIcon");
+    const adminDropdownContent = document.getElementById("adminDropdownContent");
+    const adminSignOutBtn = document.getElementById("adminSignOutBtn");
 
-const expiringPlansChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['Expiring in 3 Days', 'Expired', 'Active'],
-        datasets: [{
-            data: [40, 10, 50],
-            backgroundColor: ['yellow', 'red', 'green'],
-            borderWidth: 2,
-            hoverOffset: 10
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        layout: {
-            padding: 10
-        },
-        plugins: {
-            legend: { 
-                display: false, // Custom legend used instead
-            },
-            tooltip: {
-                backgroundColor: "#2b2b2b",
-                bodyColor: "white",
-                titleColor: "orangered",
-                padding: 10
-            },
-            // Enable Data Labels Plugin
-            datalabels: {
-                display: true,
-                color: '#FF5733', // Label color
-                font: {
-                    weight: 'bold',
-                    size: 14
-                },
-                formatter: function(value, context) {
-                    return `${context.chart.data.labels[context.dataIndex]} - ${value}%`; // Custom label format
-                },
-                anchor: 'end',  // Anchor the label at the end of each slice
-                align: 'end', // Align the label to the outside of the slice
-                offset: 10      // Adjust label offset to avoid overlap
-            }
+    function handleAdminLogout(event) {
+        event.preventDefault();
+        sessionStorage.removeItem("currentCustomer"); // Remove session storage
+        sessionStorage.removeItem("adminAccessToken"); // Remove admin token
+
+        // Redirect to Admin Login after logout
+        setTimeout(() => {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+        }, 100);
+    }
+
+    function checkAdminAccess() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const adminAccessToken = sessionStorage.getItem("adminAccessToken");
+
+        // Redirect to Admin Login if not logged in
+        if (!currentCustomer || !adminAccessToken) {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+            return;
         }
     }
+
+    function updateAdminDropdown() {
+        const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const adminAccessToken = sessionStorage.getItem("adminAccessToken");
+
+        // If logged in, allow dropdown functionality
+        if (currentCustomer && adminAccessToken) {
+            adminUserIcon.onclick = function (event) {
+                event.stopPropagation();
+                adminUserDropdown.classList.toggle("active"); // Toggle dropdown visibility
+            };
+
+            // Sign-out functionality
+            if (adminSignOutBtn) {
+                adminSignOutBtn.onclick = handleAdminLogout;
+            }
+        } else {
+            // If not logged in, clicking the user icon redirects to Admin Login
+            adminUserIcon.onclick = function () {
+                window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+            };
+
+            // Ensure dropdown is hidden
+            adminUserDropdown.classList.remove("active");
+        }
+    }
+
+    // Check if admin is logged in (Access Control)
+    checkAdminAccess();
+
+    // Initialize dropdown behavior
+    updateAdminDropdown();
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function (event) {
+        if (!adminUserDropdown.contains(event.target)) {
+            adminUserDropdown.classList.remove("active");
+        }
+    });
+
+    // Redirect if session storage is cleared (security measure)
+    window.addEventListener("storage", function () {
+        if (!sessionStorage.getItem("currentCustomer") || !sessionStorage.getItem("adminAccessToken")) {
+            window.location.href = "/Mobile_Prepaid_Admin/Admin_Login/admin_login.html";
+        }
+    });
+
+    // Listen for login event and update dropdown dynamically
+    window.addEventListener("storage", function () {
+        if (sessionStorage.getItem("currentCustomer") && sessionStorage.getItem("adminAccessToken")) {
+            updateAdminDropdown();
+        }
+    });
 });
 
 
+
+
+// Register the Data Labels Plugin
+Chart.register(ChartDataLabels);
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const usersEndpoint = "http://localhost:8083/api/users";
+    const transactionsEndpoint = "http://localhost:8083/api/transactions";
+
+    async function fetchData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Failed to fetch data");
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return [];
+        }
+    }
+
+    function categorizeTransactions(users, transactions) {
+        let active = 0, expired = 0, expiresSoon = 0;
+        const today = new Date();
+
+        users.forEach(user => {
+            const userTransactions = transactions.filter(t => t.user.userId === user.userId);
+
+            // If the user has no transactions, consider them expired
+            if (userTransactions.length === 0) {
+                expired++;
+                return;
+            }
+
+            userTransactions.sort((a, b) => new Date(b.planEnd) - new Date(a.planEnd)); // Latest first
+            const latestTransaction = userTransactions[0];
+            const planEnd = new Date(latestTransaction.planEnd);
+            const daysRemaining = Math.ceil((planEnd - today) / (1000 * 60 * 60 * 24));
+
+            if (planEnd < today) {
+                expired++;
+            } else if (daysRemaining <= 3) {
+                expiresSoon++;
+            } else {
+                active++;
+            }
+        });
+
+        return { active, expired, expiresSoon };
+    }
+
+    async function updateChart() {
+        const [users, transactions] = await Promise.all([
+            fetchData(usersEndpoint),
+            fetchData(transactionsEndpoint)
+        ]);
+        const { active, expired, expiresSoon } = categorizeTransactions(users, transactions);
+
+        const ctx = document.getElementById('expiringPlansChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Expiring in 3 Days', 'Expired', 'Active'],
+                datasets: [{
+                    data: [expiresSoon, expired, active],
+                    backgroundColor: ['yellow', 'red', 'green'],
+                    borderWidth: 2,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                layout: { padding: 10 },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: "#2b2b2b",
+                        bodyColor: "white",
+                        titleColor: "orangered",
+                        padding: 10
+                    },
+                    datalabels: {
+                        display: true,
+                        color: '#FF5733',
+                        font: { weight: 'bold', size: 14 },
+                        formatter: (value, context) => `${context.chart.data.labels[context.dataIndex]} - ${value}`,
+                        anchor: 'end',
+                        align: 'end',
+                        offset: 10
+                    }
+                }
+            }
+        });
+    }
+
+    await updateChart();
+});
 
 
 
@@ -143,6 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Update-pop-up-JS
 
 // Update-pop-up-JS
+
 document.addEventListener("DOMContentLoaded", function () {
     const updatePopup = document.getElementById("update-popup");
     const updateCustomerBtn = document.getElementById("update-customer");
@@ -156,6 +287,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const subscriptionEndInput = document.getElementById("update-subscription-end");
     const billingAmountInput = document.getElementById("update-billing-amount");
     const lastPaymentInput = document.getElementById("update-last-payment");
+
+    const emailErrorSpan = document.getElementById("email-error");
 
     let currentCard = null;
 
@@ -183,20 +316,21 @@ document.addEventListener("DOMContentLoaded", function () {
         const lastPayment = currentCard.querySelector(".last_payment");
 
         if (currentCard.classList.contains("expired")) {
-            statusSelect.value = "red"; // Expired
+            statusSelect.value = "red";
         } else if (currentCard.classList.contains("expires-soon")) {
-            statusSelect.value = "yellow"; // Expires Soon
+            statusSelect.value = "yellow";
         } else if (currentCard.classList.contains("active")) {
-            statusSelect.value = "green"; // Active
+            statusSelect.value = "green";
         }
 
         customerMobileInput.value = customerMobile.textContent;
         customerNameInput.value = customerName.textContent;
         customerEmailInput.value = customerEmail ? customerEmail.textContent : "";
-        subscriptionStartInput.value = subscriptionStart ? subscriptionStart.textContent.replace("Start: ", "") : "";
-        subscriptionEndInput.value = subscriptionEnd ? subscriptionEnd.textContent.replace("End: ", "") : "";
+        subscriptionStartInput.value = subscriptionStart ? subscriptionStart.textContent.split(": ").pop() : "";
+        subscriptionEndInput.value = subscriptionEnd ? subscriptionEnd.textContent.split(": ").pop() : "";
+        lastPaymentInput.value = lastPayment ? lastPayment.textContent.split(": ").pop() : "";        
         billingAmountInput.value = billingAmount ? billingAmount.textContent.replace("₹", "") : "";
-        lastPaymentInput.value = lastPayment ? lastPayment.textContent.replace("Last Payment: ", "") : "";
+      
 
         updatePopup.style.display = "flex";
     }
@@ -206,16 +340,22 @@ document.addEventListener("DOMContentLoaded", function () {
         currentCard = null;
     });
 
+    // Email Validation on Input
+    customerEmailInput.addEventListener("input", function () {
+        const email = customerEmailInput.value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            emailErrorSpan.textContent = "Please enter a valid email address.";
+            emailErrorSpan.style.color = "red";
+        } else {
+            emailErrorSpan.textContent = "";
+        }
+    });
+
     updateCustomerBtn.addEventListener("click", function () {
         if (currentCard) {
             const statusDot = currentCard.querySelector(".status-dot");
-            const customerMobile = currentCard.querySelector(".customer_mobile");
-            const customerName = currentCard.querySelector(".customer_name");
-            const customerEmail = currentCard.querySelector(".customer_email");
-            const subscriptionStart = currentCard.querySelector(".subscription_start");
-            const subscriptionEnd = currentCard.querySelector(".subscription_end");
-            const billingAmount = currentCard.querySelector(".billing_amount");
-            const lastPayment = currentCard.querySelector(".last_payment");
 
             // Remove old status classes
             currentCard.classList.remove("expired", "expires-soon", "active");
@@ -239,16 +379,34 @@ document.addEventListener("DOMContentLoaded", function () {
             // Update tooltip text dynamically
             statusDot.setAttribute("data-tooltip", tooltipText);
 
-            customerMobile.textContent = customerMobileInput.value;
-            customerName.textContent = customerNameInput.value;
-            if (customerEmail) customerEmail.textContent = customerEmailInput.value;
-            if (subscriptionStart) subscriptionStart.textContent = "Start: " + subscriptionStartInput.value;
-            if (subscriptionEnd) subscriptionEnd.textContent = "End: " + subscriptionEndInput.value;
-            if (billingAmount) billingAmount.textContent = "₹" + billingAmountInput.value;
-            if (lastPayment) lastPayment.textContent = "Last Payment: " + lastPaymentInput.value;
+            if (customerEmailInput.value.trim() !== "") {
+                updateEmail(customerEmailInput.value);
+            }
         }
         updatePopup.style.display = "none";
     });
+
+    function updateEmail(newEmail) {
+        fetch("http://localhost:8083/api/users/1/email", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: newEmail }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to update email.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Email updated successfully:", data);
+            })
+            .catch(error => {
+                console.error("Error updating email:", error);
+            });
+    }
 });
 
 
@@ -1243,5 +1401,24 @@ document.addEventListener("DOMContentLoaded", async function () {
         const statusClass = getStatusClass(userTransactions);
         const relevantTransaction = getRelevantTransaction(userTransactions);
         createCustomerCard(user, relevantTransaction, statusClass);
+    });
+});
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("cust_manage_cards_container").addEventListener("click", function (event) {
+        const chevron = event.target.closest(".chevron-icon");
+        if (!chevron) return; // If clicked element is not the chevron, do nothing
+        
+        const customerCard = chevron.closest(".cust_manage_card"); // Get the card container
+        const mobileNumber = customerCard.querySelector(".customer_mobile").textContent.trim(); // Extract mobile number
+
+        if (mobileNumber) {
+            // Redirect to transaction history page with mobile number as query param
+            window.location.href = `/Mobile_Prepaid_Admin/Transcation_History_Page/transcation_history.html?mobile=${encodeURIComponent(mobileNumber)}`;
+        }
     });
 });

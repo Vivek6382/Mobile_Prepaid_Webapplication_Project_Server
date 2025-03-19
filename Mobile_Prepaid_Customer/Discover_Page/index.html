@@ -30,13 +30,13 @@
     <div class="second_header_part">
       <div class="admin_btn">
         <i class="fa-solid fa-user-shield"></i>
-        <p><a href="/Mobile_Prepaid_Admin/Admin_Login/admin_login.html">Admin</a></p>
+        <p><a href="/Mobile_Prepaid_Admin/Admin_Login/admin_login.html">Go To Admin</a></p>
       </div>
 
-      <div class="search-container">
+      <!-- <div class="search-container">
         <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" placeholder="Search...">
-      </div>
+      </div> -->
       <div class="user-dropdown">
         <i class="fa-solid fa-user" id="userIcon"></i> <!-- Added ID -->
         <div class="dropdown-content">
@@ -54,8 +54,8 @@
         <li><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html">Home</a></li>
         <li><a href="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">Prepaid Plans</a></li>
         <li><a href="/Mobile_Prepaid_Customer/Recharge_Page/recharge.html">Recharge</a></li>
-        <li><a href="">SIM Management</a></li>
-        <li><a href="/Mobile_Prepaid_Customer/Support/support.html">Support</a></li>
+        <!-- <li><a href="">SIM Management</a></li> -->
+        <!-- <li><a href="/Mobile_Prepaid_Customer/Support/support.html">Support</a></li> -->
       </ul>
     </nav>
   </div>
@@ -107,13 +107,21 @@
 
 
   <!-- Quick-Recharge -->
+
+
   <section class="quick_recharge_section">
+
+    <div class="best_plans_title" style="display: inline-block;">
+      <h5>Quick Recharge</h5>
+    </div>
+
+
     <div class="main-recharge">
       <div class="recharge_title">
         <h5>Recharge</h5>
       </div>
       <div class="recharge_input_box">
-        <form id="rechargeForm" action="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">
+        <form id="rechargeForm-quick" action="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">
           <div class="recharge_input_container">
 
             <div class="rechange_input_elements">
@@ -122,7 +130,7 @@
               </div>
 
               <div class="phoneNumber_input_div">
-                <input id="rechargePhone" type="tel" placeholder="Mobi-comm number">
+                <input id="rechargePhone-quick" type="tel" placeholder="Mobi-comm number">
               </div>
             </div>
 
@@ -130,16 +138,16 @@
               <input type="submit" value="Recharge">
             </div>
           </div>
-          <span class="error-message" id="rechargePhoneError"></span>
+          <span class="error-message" id="rechargePhoneError-quick"></span>
         </form>
       </div>
 
       <!-- New SIM Title -->
-      <div class="sim_management_title">
+      <!-- <div class="sim_management_title">
         <h5>Need a New SIM?</h5>
-      </div>
+      </div> -->
 
-      <div class="sim_managements">
+      <!-- <div class="sim_managements">
         <div class="get_mobi-comm_sim">
           <img src="./assets/sim_card_images/sim-card_1.png" alt="Get SIM">
           <p>Buy a mobi-comm SIM</p>
@@ -152,137 +160,72 @@
           <img src="./assets/sim_card_images/port_sim.png" alt="Port SIM">
           <p>Port to mobi-comm SIM</p>
         </div>
-      </div>
+      </div> -->
     </div>
   </section>
 
 
 
   <section class="best_plans_cards">
-
     <div class="best_plans_title">
-      <h5>best prepaid plans</h5>
+      <h5>Best Prepaid Plans</h5>
     </div>
-
     <div class="best_plans_div">
-
-      <div class="best_card">
-        <div class="card-header">REDX 1201 - ₹1201/month</div>
-        <div class="card-content">
-          <div class="plan_basic_details">
-            <div class="benefit">📞 Unlimited Calls (Local, STD, Roaming)</div>
-            <div class="benefit">📶 Unlimited Data</div>
-            <div class="benefit">✉️ 3000 SMS/Month</div>
-          </div>
-          <div class="plan_benifit_details">
-            <p>Fully loaded with benefits</p>
-            <div class="benefit"><img src="./assets/best_popular_plans/Netflix.svg" alt="Netflix"> Netflix Basic</div>
-            <div class="benefit"><img src="./assets/best_popular_plans/Prime.svg" alt="Prime"> Amazon Prime</div>
-            <div class="benefit"><img src="./assets/best_popular_plans/Disney_Hotstar.svg" alt="Disney"> Disney+ Hotstar
-            </div>
-          </div>
-        </div>
-        <div class="card-footer">
-          <a href="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">
-            <button class="buy-button">Buy Now</button>
-          </a>
-        </div>
-      </div>
-
-      <div class="best_card">
-        <div class="card-header">GOLD 999 - ₹999/month</div>
-        <div class="card-content">
-          <div class="plan_basic_details">
-            <div class="benefit">📞 Unlimited Calls (Local, STD, Roaming)</div>
-            <div class="benefit">📶 100GB Data</div>
-            <div class="benefit">✉️ 2000 SMS/Month</div>
-          </div>
-          <div class="plan_benifit_details">
-            <p>Fully loaded with benefits</p>
-            <div class="benefit"><img src="./assets/best_popular_plans/Netflix.svg" alt="Netflix"> Netflix Basic</div>
-            <div class="benefit"><img src="./assets/best_popular_plans/Prime.svg" alt="Prime"> Amazon Prime</div>
-          </div>
-        </div>
-        <div class="card-footer">
-          <a href="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">
-            <button class="buy-button">Buy Now</button>
-          </a>
-        </div>
-      </div>
-
-      <div class="best_card">
-        <div class="card-header">SILVER 799 - ₹799/month</div>
-        <div class="card-content">
-          <div class="plan_basic_details">
-            <div class="benefit">📞 Unlimited Calls (Local, STD, Roaming)</div>
-            <div class="benefit">📶 50GB Data</div>
-            <div class="benefit">✉️ 1500 SMS/Month</div>
-          </div>
-          <div class="plan_benifit_details">
-            <p>Fully loaded with benefits</p>
-            <div class="benefit"><img src="./assets/best_popular_plans/Prime.svg" alt="Prime"> Amazon Prime</div>
-          </div>
-        </div>
-        <div class="card-footer">
-          <a href="/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html">
-            <button class="buy-button">Buy Now</button>
-          </a>
-        </div>
-      </div>
-
+      <!-- Dynamically inserted plans will appear here -->
     </div>
   </section>
 
 
 
-
+  <!-- Why Choose Us Section -->
   <!-- Why Choose Us Section -->
   <section class="why_choose_section">
     <div class="feat bg-gray pt-5 pb-5">
       <div class="container">
         <div class="section-head col-sm-12 text-center">
-          <h4><span>Why Choose</span> Us?</h4>
-          <p>When you choose us, you'll feel the benefit of 10 years' experience of Web Development. Because we know the
-            digital world and how to handle it. With working knowledge of online, SEO, and social media.</p>
+          <h4><span>Why Choose</span> Mobi-Comm?</h4>
+          <p>Mobi-Comm is your ultimate prepaid mobile solution, offering seamless recharges, exclusive offers, and
+            superior customer support. Enjoy a hassle-free mobile experience tailored to your needs.</p>
         </div>
 
         <div class="splide" id="why-choose-slider">
           <div class="splide__track">
             <div class="splide__list">
               <div class="splide__slide">
-                <div class="item"> <span class="icon feature_box_col_one"><i class="fa fa-globe"></i></span>
-                  <h6>Modern Design</h6>
-                  <p>We use the latest technology for the modern world because we understand user demands.</p>
+                <div class="item"> <span class="icon feature_box_col_one"><i class="fa fa-mobile"></i></span>
+                  <h6>Instant Recharge</h6>
+                  <p>Top-up your prepaid account instantly with our secure and quick recharge options.</p>
                 </div>
               </div>
               <div class="splide__slide">
-                <div class="item"> <span class="icon feature_box_col_two"><i class="fa fa-anchor"></i></span>
-                  <h6>Creative Design</h6>
-                  <p>We are always creative, listen to our customers, and merge both to craft the best designs.</p>
+                <div class="item"> <span class="icon feature_box_col_two"><i class="fa fa-tags"></i></span>
+                  <h6>Exclusive Offers</h6>
+                  <p>Enjoy special discounts and cashback offers tailored to your mobile usage.</p>
                 </div>
               </div>
               <div class="splide__slide">
-                <div class="item"> <span class="icon feature_box_col_three"><i class="fa fa-hourglass-half"></i></span>
-                  <h6>24 x 7 User Support</h6>
-                  <p>Our customers can always count on us for help and support whenever they need it.</p>
+                <div class="item"> <span class="icon feature_box_col_three"><i class="fa fa-headphones"></i></span>
+                  <h6>24/7 Customer Support</h6>
+                  <p>Our dedicated support team is available round the clock to assist you with any queries.</p>
                 </div>
               </div>
               <div class="splide__slide">
-                <div class="item"> <span class="icon feature_box_col_four"><i class="fa fa-database"></i></span>
-                  <h6>Business Growth</h6>
-                  <p>Success isn't just reaching the top; it's about enjoying the journey of growth.</p>
+                <div class="item"> <span class="icon feature_box_col_four"><i class="fa fa-line-chart"></i></span>
+                  <h6>Flexible Plans</h6>
+                  <p>Choose from a variety of prepaid plans that fit your data, call, and SMS needs.</p>
                 </div>
               </div>
               <div class="splide__slide">
-                <div class="item"> <span class="icon feature_box_col_five"><i class="fa fa-upload"></i></span>
-                  <h6>Market Strategy</h6>
-                  <p>We embrace technology to innovate and stay ahead in a competitive landscape.</p>
+                <div class="item"> <span class="icon feature_box_col_five"><i class="fa fa-lock"></i></span>
+                  <h6>Secure Transactions</h6>
+                  <p>We ensure all your transactions are encrypted and protected for a worry-free experience.</p>
                 </div>
               </div>
               <div class="splide__slide">
-                <div class="item"> <span class="icon feature_box_col_six"><i class="fa fa-camera"></i></span>
-                  <h6>Affordable Cost</h6>
-                  <p>We offer the best quality at competitive prices, ensuring value for our clients.</p>
+                <div class="item">
+                  <span class="icon feature_box_col_six"><i class="fa fa-money-bill-wave"></i></span>
+                  <h6>Affordable Pricing</h6>
+                  <p>Get the best mobile services at unbeatable prices with Mobi-Comm.</p>
                 </div>
               </div>
             </div>
@@ -297,17 +240,18 @@
   <!-- Font Awesome for icons -->
 
   <!-- Support Section -->
-  <section class="support_section">
+
+  <!-- <section class="support_section">
     <div class="support-container">
       <h1 class="support-title"> <i class="fas fa-question-circle"></i> Need Help? We're Here! </h1>
       <p class="subtitle">Find answers to your questions through FAQs and tutorials.</p>
 
       <div class="support-content">
 
-        <!-- FAQ Section -->
+     
         <div class="faq-section">
           <h2><i class="fas fa-info-circle"></i> Frequently Asked Questions</h2>
-          <i class="fas fa-question-circle section-icon"></i> <!-- Replaced image with icon -->
+          <i class="fas fa-question-circle section-icon"></i> 
           <ul>
             <li><a href="/Mobile_Prepaid_Customer/Support/support.html"><i class="fas fa-play-circle"></i> How to get
                 started?</a></li>
@@ -318,12 +262,12 @@
           </ul>
         </div>
 
-        <!-- Support Navigation Section (Using social-links design) -->
+       
         <div class="support-navigation">
           <h2><i class="fas fa-hands-helping"></i> Need More Help?</h2>
           <p>Explore our detailed tutorials, step-by-step guides, and FAQs.</p>
 
-          <div class="support-icon-container"> <!-- Added flex container -->
+          <div class="support-icon-container">
             <i class="fas fa-headset section-icon"></i>
             <a href="/Mobile_Prepaid_Customer/Support/support.html" class="support-btn">
               <i class="fas fa-arrow-right"></i> Visit Support Page
@@ -334,14 +278,14 @@
 
       </div>
     </div>
-  </section>
+  </section> -->
 
 
 
   <footer class="footer">
     <div class="footer-section">
       <div class="footer-logo">Mobi-Comm</div>
-      <p>Connecting you to the world with seamless communication.</p>
+      <p class="footer-tagline">Connecting you to the world with seamless communication.</p>
     </div>
     <div class="footer-section">
       <h3>Our Offerings</h3>
@@ -374,20 +318,78 @@
     <div class="footer-section">
       <h3>Connect with Us</h3>
       <div class="social-icons">
-        <a href="#">&#xf099;</a>
-        <a href="#">&#xf16d;</a>
-        <a href="#">&#xf09a;</a>
-        <a href="#">&#xf167;</a>
-        <a href="#">&#xf08c;</a>
+        <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
       </div>
     </div>
   </footer>
+
   <div class="footer-bottom">
     <p>&copy; 2025 Mobi-Comm. All rights reserved.</p>
   </div>
 
 
+
+
+  <!-- Full Card View Pop-up -->
+  <div id="unique-popup-overlay" class="overlay-custom">
+    <div class="popup-container-custom">
+      <!-- Popup Header -->
+      <div class="popup-header-custom">
+        <div class="plan-info-custom">
+          <span class="plan-title-custom"></span>
+          <span class="plan-cost-custom"></span>
+        </div>
+        <span id="close-unique-popup" class="popup-close-custom">&times;</span>
+      </div>
+
+      <!-- Popup Body -->
+      <div class="popup-body-custom">
+        <div class="plan-details-custom">
+          <h3>Plan Details</h3>
+          <table>
+            <tr>
+              <th>Feature</th>
+              <th class="separator"></th> <!-- Vertical separator -->
+              <th>Details</th>
+            </tr>
+            <tbody id="plan-details-body"></tbody>
+          </table>
+        </div>
+
+        <div class="extra-perks-custom" style="display: none;"> <!-- Hidden by default -->
+          <h3>Additional Benefits</h3>
+          <div class="perk-list-custom"></div>
+        </div>
+
+        <div class="popup-terms-custom" style="display: none;"> <!-- Hidden by default -->
+          <h3>Terms & Conditions</h3>
+          <div id="terms-content"></div>
+        </div>
+      </div>
+
+      <!-- Popup Footer -->
+
+      <div class="popup-footer-custom">
+        <input type="text" class="custom-phone-input" id="rechargePhone" placeholder="Enter your mobile number">
+        <span id="rechargePhoneError" class="phone-error-message"
+          style="color: red; display: block; margin-top: 5px;"></span>
+        <button class="purchase-button-custom">Recharge</button>
+      </div>
+
+    </div>
+  </div>
+
+
 </body>
+
+
+<!-- Include FontAwesome for Social Icons -->
+<script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+
 
 <!-- Bootstrap 5 JS (Includes Popper.js) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

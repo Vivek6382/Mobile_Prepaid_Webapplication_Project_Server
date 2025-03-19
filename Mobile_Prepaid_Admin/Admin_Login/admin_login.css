@@ -294,17 +294,20 @@ p, label {
 .form-control {
   background-color: #121212; /* Dark background */
   border: 1px solid #ff4500; /* Orangered border */
-  color: #ffffff; /* White text */
+  color: #ffffff !important; /* White text */
 }
 
 .form-control::placeholder {
-  color: #ddd; /* Light border color */
+  color: #ddd; /* Light gray placeholder */
 }
 
 .form-control:focus {
   border-color: #ffffff; /* White border */
-  background: #121212; /* Dark background */
+  background-color: #121212; /* Dark background */
+  color: #ffffff !important; /* Ensure white text */
+  caret-color: #ffffff; /* Ensure cursor is visible */
 }
+
 
 .btn {
   background-color: #ff4500; /* Orangered button */

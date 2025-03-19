@@ -9,13 +9,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileMenu = document.querySelector(".profile-menu");
     const userIcon = document.querySelector(".profile-menu i"); // User icon inside the profile menu
     const dropdownOptions = document.querySelector(".dropdown-options");
-    const signOutBtn = document.getElementById("signOutBtn");
+    const signOutBtn = document.getElementById("signOutBtn"); // Dropdown logout button
     const logoutBtn = document.getElementById("logout-btn"); // Sidebar logout button
 
     function handleLogout(event) {
         event.preventDefault();
-        sessionStorage.removeItem("currentCustomer"); // Remove session storage
-
+        
+        // Remove session storage items
+        sessionStorage.removeItem("currentCustomer"); // Remove customer session
+        sessionStorage.removeItem("accessToken"); // Remove access token
+        
         // Ensure storage is cleared before redirecting
         setTimeout(() => {
             window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
@@ -24,8 +27,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateDropdown() {
         const currentCustomer = sessionStorage.getItem("currentCustomer");
+        const accessToken = sessionStorage.getItem("accessToken");
 
-        if (currentCustomer) {
+        if (currentCustomer && accessToken) {
             // Show dropdown when user icon is clicked
             userIcon.onclick = function (event) {
                 event.stopPropagation();
@@ -35,15 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {
             // Ensure dropdown starts hidden
             profileMenu.classList.remove("active");
 
-            // Sign-out functionality (Dropdown Logout)
-            if (signOutBtn) {
-                signOutBtn.onclick = handleLogout;
-            }
-
-            // Sidebar Logout Button
-            if (logoutBtn) {
-                logoutBtn.onclick = handleLogout;
-            }
+            // Attach logout functionality to both buttons
+            if (signOutBtn) signOutBtn.onclick = handleLogout;
+            if (logoutBtn) logoutBtn.onclick = handleLogout;
 
         } else {
             // If not logged in, clicking the user icon redirects to the recharge page
@@ -68,14 +66,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle case where user manually navigates away after signing out
     window.addEventListener("storage", function () {
-        if (!sessionStorage.getItem("currentCustomer")) {
+        if (!sessionStorage.getItem("currentCustomer") || !sessionStorage.getItem("accessToken")) {
             window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
         }
     });
 
     // Listen for login event from the recharge form
     window.addEventListener("storage", function () {
-        if (sessionStorage.getItem("currentCustomer")) {
+        if (sessionStorage.getItem("currentCustomer") && sessionStorage.getItem("accessToken")) {
             updateDropdown(); // Update dropdown dynamically after login
         }
     });
@@ -197,114 +195,6 @@ document.addEventListener("DOMContentLoaded", function () {
     showSection(accountSection);
   });
   
-
-
-
-
-
-
-//Pagination Logic :
-
-document.addEventListener("DOMContentLoaded", function () {
-    const container = document.querySelector(".cust_manage_cards_container");
-    const paginationContainer = document.querySelector(".pagination");
-    const itemsPerPage = 3;
-    let currentPage = 1;
-    let allCards = [];
-
-    function initializePagination() {
-        if (allCards.length === 0) return;
-
-        let totalPages = Math.ceil(allCards.length / itemsPerPage);
-        paginationContainer.innerHTML = "";
-
-        let prevLi = document.createElement("li");
-        prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
-        prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
-        prevLi.addEventListener("click", function () {
-            if (currentPage > 1) showPage(currentPage - 1);
-        });
-        paginationContainer.appendChild(prevLi);
-
-        for (let i = 1; i <= totalPages; i++) {
-            let li = document.createElement("li");
-            li.className = `page-item ${i === currentPage ? "active" : ""}`;
-            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-            li.addEventListener("click", function () {
-                showPage(i);
-            });
-            paginationContainer.appendChild(li);
-        }
-
-        let nextLi = document.createElement("li");
-        nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
-        nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
-        nextLi.addEventListener("click", function () {
-            if (currentPage < totalPages) showPage(currentPage + 1);
-        });
-        paginationContainer.appendChild(nextLi);
-
-        showPage(currentPage);
-    }
-
-    function showPage(page) {
-        let start = (page - 1) * itemsPerPage;
-        let end = start + itemsPerPage;
-        allCards.forEach((card, index) => {
-            card.style.display = index >= start && index < end ? "block" : "none";
-        });
-        currentPage = page;
-        initializePagination();
-    }
-
-    fetch("http://localhost:8083/api/transactions")
-        .then(response => response.json())
-        .then(data => {
-            container.innerHTML = ""; // Clear existing content
-            allCards = [];
-
-            data.forEach(transaction => {
-                const card = document.createElement("div");
-                card.classList.add("cust_manage_card", transaction.transactionStatus.toLowerCase());
-
-                card.innerHTML = `
-                    <span class="batch-label badge badge-secondary">${new Date(transaction.planStart).toLocaleString('en-US', { month: 'short', year: 'numeric' })}</span>
-                    <div class="dot_div"><span class="status-dot"></span></div>
-                    <div class="recharge_history_info">
-                        <div class="recharge_history_row">
-                            <div class="recharge_mobile_div">
-                                <span class="recharge_mobile">Transaction ID: <span class="recharge_plan-category">${transaction.transactionId}</span></span>
-                            </div>
-                            <div class="recharge_name_div">
-                                <span class="recharge_name">Payment Mode: <span class="recharge-total-plans">${transaction.paymentMode}</span></span>
-                            </div>
-                        </div>
-                        <div class="recharge_history_row">
-                            <div class="recharge_plan_div">
-                                <span class="recharge_plan">Purchased on: <span class="recharge-purchase-date">${new Date(transaction.purchasedOn).toLocaleDateString()}</span></span>
-                            </div>
-                            <div class="recharge_plan_div">
-                                <span class="recharge_plan">Plan: <span class="recharge-subscribed-users">${transaction.plan.planName}</span></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="cust_card_footer">
-                        <i class="fa-solid fa-download download-icon"></i>
-                        <i class="fa-solid fa-eye view-icon"></i>
-                    </div>
-                    <div class="chevron-icon"><i class="fa fa-chevron-right"></i></div>
-                `;
-
-                allCards.push(card);
-                container.appendChild(card);
-            });
-
-            initializePagination();
-        })
-        .catch(error => console.error("Error fetching transactions:", error));
-});
-
-
 
 
 
@@ -614,13 +504,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (editButton) {
         editButton.addEventListener("click", function () {
             if (updatePopup) {
-                // Ensure "+91" is not added
                 let mobileNumber = userMobile?.textContent.trim() || "";
                 let altMobileNumber = userAltMobile?.textContent.trim() || "";
 
                 document.getElementById("update-name").value = userName?.textContent || "";
-                document.getElementById("update-mobile").value = mobileNumber.replace(/^\+91\s*/, ""); // Remove "+91" if present
-                document.getElementById("update-alt-mobile").value = altMobileNumber.replace(/^\+91\s*/, ""); // Remove "+91" if present
+                document.getElementById("update-mobile").value = mobileNumber.replace(/^\+91\s*/, "");
+                document.getElementById("update-alt-mobile").value = altMobileNumber.replace(/^\+91\s*/, "");
                 document.getElementById("update-email").value = userEmail?.textContent || "";
 
                 let contactMethodValue = userContactMethod?.textContent.trim() || "EMAIL";
@@ -644,37 +533,31 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Edit button (.edit-icon) not found!");
     }
 
-    // Dynamic validation for input fields with error messages
-    document.querySelectorAll(".detail-input").forEach(input => {
-        if (input.id === "update-alt-mobile" || input.id === "update-email") {
-            input.addEventListener("input", function () {
-                let errorSpan = this.nextElementSibling;
-                if (!errorSpan || !errorSpan.classList.contains("error-message")) {
-                    errorSpan = document.createElement("span");
-                    errorSpan.classList.add("error-message");
-                    this.parentNode.appendChild(errorSpan);
-                }
-
-                if (this.id === "update-alt-mobile") {
-                    let value = this.value.replace(/\s+/g, ""); // Remove spaces
-                    if (!/^\d{10}$/.test(value)) { // Expect only 10-digit mobile number
-                        errorSpan.innerHTML = "❌ Enter a valid 10-digit mobile number!";
-                        errorSpan.style.color = "red";
-                    } else {
-                        errorSpan.innerHTML = "";
-                    }
-                }
-
-                if (this.id === "update-email") {
-                    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(this.value)) {
-                        errorSpan.innerHTML = "❌ Enter a valid email address!";
-                        errorSpan.style.color = "red";
-                    } else {
-                        errorSpan.innerHTML = "";
-                    }
-                }
-            });
+    // Dynamic validation for editable fields
+    const validateInput = (input, regex, errorMessage) => {
+        let errorSpan = input.nextElementSibling;
+        if (!errorSpan || !errorSpan.classList.contains("error-message")) {
+            errorSpan = document.createElement("span");
+            errorSpan.classList.add("error-message");
+            input.parentNode.appendChild(errorSpan);
         }
+
+        if (!regex.test(input.value.trim())) {
+            errorSpan.innerHTML = `❌ ${errorMessage}`;
+            errorSpan.style.color = "red";
+            return false;
+        } else {
+            errorSpan.innerHTML = "";
+            return true;
+        }
+    };
+
+    document.getElementById("update-alt-mobile").addEventListener("input", function () {
+        validateInput(this, /^\d{10}$/, "Enter a valid 10-digit mobile number!");
+    });
+
+    document.getElementById("update-email").addEventListener("input", function () {
+        validateInput(this, /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Enter a valid email address!");
     });
 
     // Close pop-up when cancel button is clicked
@@ -687,40 +570,64 @@ document.addEventListener("DOMContentLoaded", function () {
         updatePopup.style.display = "none";
     });
 
-    // Save updated details only if validation passes
+    // Save updated details with API call
     updateBtn?.addEventListener("click", function () {
         let altMobileInput = document.getElementById("update-alt-mobile");
         let emailInput = document.getElementById("update-email");
 
-        let altMobileValid = /^\d{10}$/.test(altMobileInput.value.replace(/\s+/g, ""));
-        let emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailInput.value);
+        let altMobileValid = validateInput(altMobileInput, /^\d{10}$/, "Enter a valid 10-digit mobile number!");
+        let emailValid = validateInput(emailInput, /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Enter a valid email address!");
 
         if (!altMobileValid || !emailValid) {
             alert("Please correct the highlighted errors before updating.");
             return;
         }
 
-        if (userMobile) userMobile.textContent = document.getElementById("update-mobile").value;
-        if (userAltMobile) userAltMobile.textContent = document.getElementById("update-alt-mobile").value;
-        if (userEmail) userEmail.textContent = document.getElementById("update-email").value;
-        if (userContactMethod) userContactMethod.textContent = document.getElementById("update-contact-method").value;
-        if (userLanguage) userLanguage.textContent = document.getElementById("update-language").value;
-        if (userAddress) userAddress.textContent = document.getElementById("update-address").value;
+        let updatedDetails = {
+            alternateNumber: altMobileInput.value.trim(),
+            email: emailInput.value.trim(),
+            contactMethod: document.getElementById("update-contact-method").value,
+            communicationLanguage: document.getElementById("update-language").value,
+        };
 
-        // Update session storage
-        let currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer")) || {};
-        currentCustomer.mobile = document.getElementById("update-mobile").value;
-        currentCustomer.altMobile = document.getElementById("update-alt-mobile").value;
-        currentCustomer.email = document.getElementById("update-email").value;
-        currentCustomer.contactMethod = document.getElementById("update-contact-method").value;
-        currentCustomer.language = document.getElementById("update-language").value;
-        currentCustomer.address = document.getElementById("update-address").value;
-        currentCustomer.role = document.getElementById("update-role").value; // Role is unchangeable but stored
-        currentCustomer.username = document.getElementById("update-username").value; // Hidden field remains
+        fetch("http://localhost:8083/api/users/1/update-details", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedDetails),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to update details.");
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log(data);
+            alert("User details updated successfully!");
 
-        sessionStorage.setItem("currentCustomer", JSON.stringify(currentCustomer));
+            // Update UI
+            if (userAltMobile) userAltMobile.textContent = updatedDetails.alternateNumber;
+            if (userEmail) userEmail.textContent = updatedDetails.email;
+            if (userContactMethod) userContactMethod.textContent = updatedDetails.contactMethod;
+            if (userLanguage) userLanguage.textContent = updatedDetails.communicationLanguage;
 
-        updatePopup.style.display = "none";
+            // Update session storage
+            let currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer")) || {};
+            currentCustomer.altMobile = updatedDetails.alternateNumber;
+            currentCustomer.email = updatedDetails.email;
+            currentCustomer.contactMethod = updatedDetails.contactMethod;
+            currentCustomer.language = updatedDetails.communicationLanguage;
+
+            sessionStorage.setItem("currentCustomer", JSON.stringify(currentCustomer));
+
+            updatePopup.style.display = "none";
+        })
+        .catch(error => {
+            console.error("Error updating details:", error);
+            alert("An error occurred while updating details.");
+        });
     });
 });
 
@@ -994,6 +901,17 @@ document.getElementById('close-unique-popup').addEventListener('click', function
 
 
 
+//Download Invoice - Tanscation details :
+
+const downloadInvoiceBtn = document.getElementById("transaction-download-btn");
+
+// Attach event listener for "Download Invoice" button
+downloadInvoiceBtn.addEventListener("click", function () {
+    generateInvoice(); // Call the invoice generation function
+});
+
+
+
 // Invoice-Details-JS
 
 // Ensure DOM is loaded before executing
@@ -1148,57 +1066,95 @@ function generateInvoice() {
 // Dynamic-Sidebar-Data-Fetch
 
 
-// Dynamic Sidebar Data Fetch
-document.addEventListener("DOMContentLoaded", function () {
+// Dynamic Sidebar Data Fetch (Updated)
+document.addEventListener("DOMContentLoaded", async function () {
     // Fetch user details dynamically from account details
     const userNameElement = document.querySelector("#user-name");
     const userContactElement = document.querySelector(".user-contact");
 
-    // Selecting user details from the main account details section
-    const accountUserName = document.querySelector(".details-container .user-name");
-    const accountUserMobile = document.querySelector(".details-container .user-mobile");
+    // Selecting user details from session storage
+    const currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer"));
 
-    if (accountUserName && userNameElement) {
-        userNameElement.textContent = accountUserName.textContent.trim();
+    if (currentCustomer) {
+        userNameElement.textContent = currentCustomer.name || "User";
+        userContactElement.textContent = currentCustomer.mobile || "Not Available";
     } else {
         userNameElement.textContent = "User";
-    }
-
-    if (accountUserMobile && userContactElement) {
-        userContactElement.textContent = accountUserMobile.textContent.trim();
-    } else {
         userContactElement.textContent = "Not Available";
     }
 
-    // Fetch total recharges count
-    const totalRecharges = document.querySelector("#total-recharges");
-    const rechargeCards = document.querySelectorAll(".cust_manage_card");
+    // Fetch active plan details dynamically
+    try {
+        const response = await fetch("http://localhost:8083/api/transactions");
+        if (!response.ok) throw new Error("Failed to fetch transaction data");
 
-    if (totalRecharges) {
-        totalRecharges.textContent = `${rechargeCards.length} Recharges`;
+        const transactions = await response.json();
+        const userTransactions = transactions.filter(t => t.user.mobile === currentCustomer?.mobile);
+
+        if (userTransactions.length === 0) {
+            updateSidebarWithNoPlan();
+            return;
+        }
+
+        const today = new Date();
+        let activeTransaction = null;
+
+        userTransactions.forEach(transaction => {
+            const planEndDate = new Date(transaction.planEnd);
+            if (planEndDate >= today) {
+                if (!activeTransaction || new Date(transaction.purchasedOn) < new Date(activeTransaction.purchasedOn)) {
+                    activeTransaction = transaction;
+                }
+            }
+        });
+
+        if (!activeTransaction) {
+            updateSidebarWithNoPlan();
+            return;
+        }
+
+        // ✅ Wait for transactions to be rendered, then update sidebar
+        setTimeout(() => {
+            updateSidebarWithPlan(activeTransaction);
+        }, 100); // Small delay to allow DOM to update
+
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
+        updateSidebarWithNoPlan();
     }
 
-    // Fetch active plan details
-    const activePlanCard = document.querySelector(".vi_card");
-    const activePlanText = document.querySelector("#active-plan");
+    function updateSidebarWithPlan(transaction) {
+        const planDetails = transaction.plan;
 
-    if (activePlanCard && activePlanText) {
-        const planName = activePlanCard.querySelector(".plan-name")?.textContent || "Unknown Plan";
-        const price = activePlanCard.querySelector(".price")?.textContent || "₹0";
-        const duration = activePlanCard.querySelector(".fa-calendar-alt")?.nextSibling?.textContent.trim() || "No Duration";
+        const activePlanText = document.querySelector("#active-plan");
+        const expiryDateSpan = document.querySelector("#expiry-date");
+        const totalRecharges = document.querySelector("#total-recharges");
 
-        activePlanText.textContent = `${price} - ${duration}`;
+        // ✅ Ensure the recharge count updates AFTER rendering
+        const rechargeCards = document.querySelectorAll(".cust_manage_card");
+        if (totalRecharges) {
+            totalRecharges.textContent = `${rechargeCards.length} Recharges`;
+        }
+
+
+        if (activePlanText) {
+            const planName = planDetails.planName || "Unknown Plan";
+            const price = planDetails.price ? `₹${planDetails.price}` : "₹0";
+            const duration = planDetails.validity ? `${planDetails.validity} Days` : "No Duration";
+            activePlanText.textContent = `${price} - ${duration}`;
+        }
+
+        if (expiryDateSpan) {
+            expiryDateSpan.textContent = `Expires: ${transaction.planEnd ? new Date(transaction.planEnd).toLocaleDateString() : "Not Available"}`;
+        }
     }
 
-    // Fetch expiry date
-    const expiryDateSpan = document.querySelector("#expiry-date");
-
-    if (activePlanCard && expiryDateSpan) {
-        const expiryDate = activePlanCard.querySelector(".expiry-badge")?.textContent || "Not Available";
-        expiryDateSpan.textContent = `Expires: ${expiryDate}`;
+    function updateSidebarWithNoPlan() {
+        document.querySelector("#active-plan").textContent = "No Active Plan";
+        document.querySelector("#expiry-date").textContent = "Expires: Not Available";
+        document.querySelector("#total-recharges").textContent = "0 Recharges";
     }
 });
-
 
 
 
@@ -1328,6 +1284,7 @@ document.addEventListener("click", function (e) {
 document.getElementById("close-unique-popup").addEventListener("click", function () {
     document.getElementById("unique-popup-overlay").classList.remove("active");
 });
+
 
 
 
@@ -1815,4 +1772,188 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         })
         .catch(error => console.error("Error fetching transactions:", error));
+});
+
+
+
+
+
+
+
+
+
+
+
+//Pagination Logic :
+
+document.addEventListener("DOMContentLoaded", function () {
+    const container = document.querySelector(".cust_manage_cards_container");
+    const paginationContainer = document.querySelector(".pagination");
+    const itemsPerPage = 3;
+    let currentPage = 1;
+    let allCards = [];
+
+    function initializePagination() {
+        if (allCards.length === 0) return;
+
+        let totalPages = Math.ceil(allCards.length / itemsPerPage);
+        paginationContainer.innerHTML = "";
+
+        let prevLi = document.createElement("li");
+        prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
+        prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+        prevLi.addEventListener("click", function () {
+            if (currentPage > 1) showPage(currentPage - 1);
+        });
+        paginationContainer.appendChild(prevLi);
+
+        for (let i = 1; i <= totalPages; i++) {
+            let li = document.createElement("li");
+            li.className = `page-item ${i === currentPage ? "active" : ""}`;
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.addEventListener("click", function () {
+                showPage(i);
+            });
+            paginationContainer.appendChild(li);
+        }
+
+        let nextLi = document.createElement("li");
+        nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
+        nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
+        nextLi.addEventListener("click", function () {
+            if (currentPage < totalPages) showPage(currentPage + 1);
+        });
+        paginationContainer.appendChild(nextLi);
+
+        showPage(currentPage);
+    }
+
+    function showPage(page) {
+        let start = (page - 1) * itemsPerPage;
+        let end = start + itemsPerPage;
+        allCards.forEach((card, index) => {
+            card.style.display = index >= start && index < end ? "block" : "none";
+        });
+        currentPage = page;
+        initializePagination();
+    }
+
+    fetch("http://localhost:8083/api/transactions")
+    .then(response => response.json())
+    .then(data => {
+        container.innerHTML = ""; // Clear existing content
+        allCards = [];
+
+        // ✅ Get logged-in user ID from session storage
+        const currentUser = JSON.parse(sessionStorage.getItem("currentCustomer"));
+        const currentUserId = currentUser ? currentUser.userId : null;
+
+        if (!currentUserId) {
+            console.error("User is not logged in.");
+            return;
+        }
+
+        // ✅ Filter transactions based on logged-in user ID
+        const userTransactions = data.filter(transaction => transaction.user.userId === currentUserId);
+
+        userTransactions.forEach(transaction => {
+            const card = document.createElement("div");
+            card.classList.add("cust_manage_card", transaction.transactionStatus.toLowerCase());
+
+            card.innerHTML = `
+                <!-- ✅ Batch Label (Month & Year) -->
+                <span class="batch-label badge badge-secondary">${new Date(transaction.planStart).toLocaleString('en-US', { month: 'short', year: 'numeric' })}</span>
+
+                <div class="dot_div">
+                    <span class="status-dot"></span>
+                </div>
+
+                <div class="recharge_history_info">
+                    <div class="recharge_history_row">
+                        <div class="recharge_mobile_div">
+                            <span class="recharge_mobile">Transaction ID: <span class="recharge_plan-category">${transaction.refNumber}</span></span>
+                        </div>
+                        <div class="recharge_name_div">
+                            <span class="recharge_name">Payment Mode: <span class="recharge-total-plans">${transaction.paymentMode}</span></span>
+                        </div>
+                    </div>
+                    <div class="recharge_history_row">
+                        <div class="recharge_plan_div">
+                            <span class="recharge_plan">Purchased on: <span class="recharge-purchase-date">${new Date(transaction.purchasedOn).toLocaleDateString()}</span></span>
+                        </div>
+                        <div class="recharge_plan_div">
+                            <span class="recharge_plan">Plan: <span class="recharge-subscribed-users">${transaction.plan.planName}</span></span>
+                        </div>
+                    </div>
+
+                    <!-- ✅ Hidden Plan Details -->
+                    <div class="recharge_plan_details" style="display: none;">
+                        <div class="card-title-price">
+                            <div class="plan-name">ACTIVE PLAN</div>
+                            <div class="price">₹${transaction.amount}</div>
+                        </div>
+
+                        <div class="card-content">
+                            <div class="benefit"><i class="fas fa-clock"></i> <span class="expiry-badge">${new Date(transaction.planEnd).toLocaleDateString()}</span></div>
+                            <div class="benefit"><i class="fas fa-calendar-alt"></i> ${transaction.plan.validity} Days</div>
+                            <div class="benefit"><i class="fas fa-tachometer-alt"></i> ${transaction.plan.dailyData}</div>
+                            <div class="benefit"><i class="fas fa-phone-alt"></i> ${transaction.plan.voice}</div>
+                            <div class="benefit"><i class="fas fa-wifi"></i> ${transaction.plan.additionalData || "N/A"}</div>
+                            <div class="benefit"><i class="fas fa-envelope"></i> ${transaction.plan.sms}</div>
+
+                            <!-- OTT Platforms -->
+                            <div class="ott-text-data" style="display: none;">${transaction.plan.ott.join(", ")}</div>
+                            <div class="ott-icons">
+                                ${transaction.plan.ott.map(platform => `<i class="ott-icon ${platform.toLowerCase()}"></i>`).join(" ")}
+                            </div>
+                            <div class="more-ott"></div>
+
+                            <!-- Hidden OTT Description Data -->
+                            <div class="ott-description-data" style="display: none;">
+                                ${transaction.plan.ott.map(platform => `<div data-ott="${platform}">Enjoy ${platform}'s premium content.</div>`).join("")}
+                            </div>
+
+                            <!-- Terms & Conditions (Hidden) -->
+                            <div class="terms-conditions" style="display: none;">
+                                ${transaction.plan.terms.map(term => `<p>${term}</p>`).join(" ")}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ✅ Hidden Transaction Details -->
+                    <div class="transaction-details" style="display: none;">
+                        <h5>Transaction Details</h5>
+                        <div class="transaction-content">
+                            <p><strong>Plan:</strong> <span class="transaction-amount">₹${transaction.amount}</span></p>
+                            <p><strong>Purchased on:</strong> <span class="transaction-date">${new Date(transaction.purchasedOn).toLocaleString()}</span></p>
+                            <p><strong>Payment Mode:</strong> <span class="transaction-mode">${transaction.paymentMode}</span></p>
+                            <p><strong>Ref. Number:</strong> <span class="transaction-ref">${transaction.refNumber}</span></p>
+
+                            <!-- Hidden Fields -->
+                            <p class="hidden"><strong>Status:</strong> <span class="transaction-status">${transaction.transactionStatus}</span></p>
+                            <p class="hidden"><strong>Plan Start Date:</strong> <span class="transaction-start">${new Date(transaction.planStart).toLocaleDateString()}</span></p>
+                            <p class="hidden"><strong>Plan End Date:</strong> <span class="transaction-end">${new Date(transaction.planEnd).toLocaleDateString()}</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅ Footer Icons -->
+                <div class="cust_card_footer">
+                    <i class="fa-solid fa-download download-icon"></i>
+                    <i class="fa-solid fa-eye view-icon"></i>
+                </div>
+
+                <!-- ✅ Chevron Button -->
+                <div class="chevron-icon">
+                    <i class="fa fa-chevron-right"></i>
+                </div>
+            `;
+
+            allCards.push(card);
+            container.appendChild(card);
+        });
+
+        initializePagination();
+    })
+    .catch(error => console.error("Error fetching transactions:", error));
 });

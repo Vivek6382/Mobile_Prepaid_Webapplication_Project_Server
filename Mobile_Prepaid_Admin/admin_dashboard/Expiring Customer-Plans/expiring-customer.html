@@ -35,23 +35,24 @@
             </h4>
         </div>
         <div class="admin_header_controls">
-            <div class="admin_customer_btn">
+            <!-- <div class="admin_customer_btn">
                 <i class="fa-solid fa-store"></i>
                 <p><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html">Customer</a></p>
-            </div>
+            </div> -->
 
-            <div class="admin_search">
+            <!-- <div class="admin_search">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" placeholder="Search...">
-            </div>
+            </div> -->
 
             <div class="admin_user_dropdown">
-                <i class="fa-solid fa-user"></i>
-                <div class="admin_dropdown_content">
-                    <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html">My Account</a>
-                    <a href="#">Sign-out</a>
+                <i class="fa-solid fa-user" id="adminUserIcon"></i>
+                <div class="admin_dropdown_content" id="adminDropdownContent">
+                    <!-- <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html">My Account</a> -->
+                    <a href="#" id="adminSignOutBtn">Sign-out</a>
                 </div>
             </div>
+    
         </div>
     </header>
 
@@ -63,8 +64,8 @@
                         Management</a></li>
                 <li><a href="/Mobile_Prepaid_Admin/Customer_Management/customer_management.html">Customer Management</a>
                 </li>
-                <li><a href="#">SIM Management</a></li>
-                <li><a href="#">Support Management</a></li>
+                <li><a href="/Mobile_Prepaid_Admin/Transcation_History_Page/transcation_history.html">Transcation Management</a></li>
+                <!-- <li><a href="#">Support Management</a></li> -->
             </ul>
         </nav>
     </div>
@@ -83,7 +84,7 @@
                         Preferred Plan Packs</a></li>
                 <li><a href="/Mobile_Prepaid_Admin/admin_dashboard/User Growth Over Time/user_growth_over_time.html">User
                         Growth Over Time</a></li>
-                <li><a href="#">Revenue</a></li>
+                <!-- <li><a href="#">Revenue</a></li> -->
             </ul>
         </nav>
 
@@ -232,47 +233,49 @@
 
             <!-- Update Customer Pop-up -->
             <!-- Update Customer Pop-up -->
-            <div id="update-popup" class="popup-overlay">
-                <div class="popup-content">
-                    <h3>Update Customer Details</h3>
-                    <p>Edit the details of this <strong>customer</strong> below.</p>
+    <div id="update-popup" class="popup-overlay">
+        <div class="popup-content">
+            <h3>Update Customer Details</h3>
+            <p>Edit the details of this <strong>customer</strong> below.</p>
 
-                    <div class="details">
-                        <label for="status-dot"><strong>Status:</strong></label>
-                        <select id="status-dot" class="detail-input">
-                            <option value="green">Active</option>
-                            <option value="yellow">Pending</option>
-                            <option value="red">Expired</option>
-                        </select>
+            <div class="details">
+                <label for="status-dot"><strong>Status:</strong></label>
+                <select id="status-dot" class="detail-input">
+                    <option value="green">Active</option>
+                    <option value="yellow">Pending</option>
+                    <option value="red">Expired</option>
+                </select>
 
-                        <label for="update-customer-mobile"><strong>Mobile Number:</strong></label>
-                        <input type="text" id="update-customer-mobile" class="detail-input">
+                <label for="update-customer-mobile"><strong>Mobile Number:</strong></label>
+                <input type="text" id="update-customer-mobile" class="detail-input" readonly>
 
-                        <label for="update-customer-name"><strong>Customer Name:</strong></label>
-                        <input type="text" id="update-customer-name" class="detail-input">
+                <label for="update-customer-name"><strong>Customer Name:</strong></label>
+                <input type="text" id="update-customer-name" class="detail-input" readonly>
 
-                        <label for="update-customer-email"><strong>Email:</strong></label>
-                        <input type="text" id="update-customer-email" class="detail-input">
+                <label for="update-customer-email"><strong>Email:</strong></label>
+                <input type="text" id="update-customer-email" class="detail-input">
+                <span id="email-error" class="error-message"></span> <!-- Error message span -->
 
-                        <label for="update-subscription-start"><strong>Subscription Start:</strong></label>
-                        <input type="text" id="update-subscription-start" class="detail-input">
+                <label for="update-subscription-start"><strong>Subscription Start:</strong></label>
+                <input type="text" id="update-subscription-start" class="detail-input" readonly>
 
-                        <label for="update-subscription-end"><strong>Subscription End:</strong></label>
-                        <input type="text" id="update-subscription-end" class="detail-input">
+                <label for="update-subscription-end"><strong>Subscription End:</strong></label>
+                <input type="text" id="update-subscription-end" class="detail-input" readonly>
 
-                        <label for="update-billing-amount"><strong>Billing Amount:</strong></label>
-                        <input type="text" id="update-billing-amount" class="detail-input">
+                <label for="update-billing-amount"><strong>Billing Amount:</strong></label>
+                <input type="text" id="update-billing-amount" class="detail-input" readonly>
 
-                        <label for="update-last-payment"><strong>Last Payment:</strong></label>
-                        <input type="text" id="update-last-payment" class="detail-input">
-                    </div>
-
-                    <div class="popup-buttons">
-                        <button id="update-customer">Update</button>
-                        <button id="cancel-update">Cancel</button>
-                    </div>
-                </div>
+                <label for="update-last-payment"><strong>Last Payment:</strong></label>
+                <input type="text" id="update-last-payment" class="detail-input" readonly>
             </div>
+
+            <div class="popup-buttons">
+                <button id="update-customer">Update</button>
+                <button id="cancel-update">Cancel</button>
+            </div>
+        </div>
+    </div>
+
 
 
 

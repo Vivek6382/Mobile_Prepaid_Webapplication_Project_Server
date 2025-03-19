@@ -118,6 +118,7 @@ body {
 }
 
 /* User Dropdown */
+/* User Dropdown */
 .admin_user_dropdown {
     position: relative;
     cursor: pointer;
@@ -159,6 +160,7 @@ body {
 .admin_user_dropdown.active .admin_dropdown_content {
     display: block;
 }
+
 
 /* Navigation Styling */
 .admin_navigation {

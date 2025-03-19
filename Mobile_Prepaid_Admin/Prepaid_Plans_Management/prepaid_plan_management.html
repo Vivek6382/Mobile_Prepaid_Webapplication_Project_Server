@@ -29,23 +29,24 @@
             </h4>
         </div>
         <div class="admin_header_controls">
-            <div class="admin_customer_btn">
+            <!-- <div class="admin_customer_btn">
                 <i class="fa-solid fa-store"></i>
                 <p><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html">Customer</a></p>
-            </div>
+            </div> -->
 
-            <div class="admin_search">
+            <!-- <div class="admin_search">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" placeholder="Search...">
-            </div>
+            </div> -->
 
             <div class="admin_user_dropdown">
-                <i class="fa-solid fa-user"></i>
-                <div class="admin_dropdown_content">
-                    <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html">My Account</a>
-                    <a href="#">Sign-out</a>
+                <i class="fa-solid fa-user" id="adminUserIcon"></i>
+                <div class="admin_dropdown_content" id="adminDropdownContent">
+                    <!-- <a href="/Mobile_Prepaid_Customer/My_Account/My_Account.html">My Account</a> -->
+                    <a href="#" id="adminSignOutBtn">Sign-out</a>
                 </div>
             </div>
+
         </div>
     </header>
 
@@ -56,8 +57,9 @@
                 <li><a href="#">Prepaid Plans Management</a></li>
                 <li><a href="/Mobile_Prepaid_Admin/Customer_Management/customer_management.html">Customer Management</a>
                 </li>
-                <li><a href="#">SIM Management</a></li>
-                <li><a href="#">Support Management</a></li>
+                <li><a href="/Mobile_Prepaid_Admin/Transcation_History_Page/transcation_history.html">Transcation
+                        Management</a></li>
+                <!-- <li><a href="#">Support Management</a></li> -->
             </ul>
         </nav>
     </div>
@@ -70,7 +72,7 @@
     <!-- Sidebar (Prepaid Categories) -->
     <section class="prepaid-category_section">
 
-    
+
         <aside class="sidebar">
             <div class="button-container">
                 <button class="outline-button">Add Category</button>
@@ -80,10 +82,10 @@
                 <!-- Dynamic categories will be inserted here by JavaScript -->
             </nav>
         </aside>
-        
-        
-        
-        
+
+
+
+
 
 
 
@@ -98,7 +100,7 @@
                 <div class="cust_manage_bulk_selection">
                     <button class="outline-button add-action">Add</button>
                     <button class="outline-button delete-action">Delete</button>
-                    <button class="outline-button bulk-update-trigger">Update</button>
+                    <!-- <button class="outline-button bulk-update-trigger">Update</button> -->
                 </div>
             </div>
 
@@ -124,8 +126,7 @@
 
             </div>
 
-
-            </div>
+            <!-- </div> -->
 
             <!-- Delete Confirmation Pop-up (Initially Hidden) -->
             <div id="delete-popup" class="popup-overlay">
@@ -150,71 +151,74 @@
 
 
             <!-- Delete Confirmation Pop-up for Category (Initially Hidden) -->
-<div id="delete-category-popup" class="popup-overlay">
-    <div class="popup-content">
-        <h3>Delete Category</h3>
-        <p>You are about to delete this <strong>category</strong> and all associated prepaid plans. This action cannot be undone.</p>
+            <div id="delete-category-popup" class="popup-overlay">
+                <div class="popup-content">
+                    <h3>Delete Category</h3>
+                    <p>You are about to delete this <strong>category</strong> and all associated prepaid plans. This
+                        action cannot be undone.</p>
 
-        <div class="details">
-            <div class="detail"><strong>Category Name:</strong> <span id="category-name"></span></div>
-            <div class="detail"><strong>Number of Plans:</strong> <span id="category-plan-count"></span></div>
-        </div>
+                    <div class="details">
+                        <div class="detail"><strong>Category Name:</strong> <span id="category-name"></span></div>
+                        <div class="detail"><strong>Number of Plans:</strong> <span id="category-plan-count"></span>
+                        </div>
+                    </div>
 
-        <div class="popup-buttons">
-            <button id="confirm-category-delete" data-category-id="">Yes, Delete</button>
-            <button id="cancel-category-delete">Cancel</button>
-        </div>
-    </div>
-</div>
+                    <div class="popup-buttons">
+                        <button id="confirm-category-delete" data-category-id="">Yes, Delete</button>
+                        <button id="cancel-category-delete">Cancel</button>
+                    </div>
+                </div>
+            </div>
 
 
 
 
             <!-- Update Category Pop-up -->
-<div id="update-category-popup" class="popup-overlay" style="display: none;">
-    <div class="prepaid-popup-content">
-        <h3>Update Category</h3>
-        <p>Edit the category name for this prepaid plan.</p>
+            <div id="update-category-popup" class="popup-overlay" style="display: none;">
+                <div class="prepaid-popup-content">
+                    <h3>Update Category</h3>
+                    <p>Edit the category name for this prepaid plan.</p>
 
-        <div class="prepaid-details">
-            <!-- Category Name -->
-            <label for="update-category-name"><strong>Category Name:</strong></label>
-            <input type="text" id="update-category-name" class="prepaid-detail-input"
-                placeholder="Enter New Category Name">
-            <span class="error-msg" id="update-error-category"></span>
-        </div>
+                    <div class="prepaid-details">
+                        <!-- Category Name -->
+                        <label for="update-category-name"><strong>Category Name:</strong></label>
+                        <input type="text" id="update-category-name" class="prepaid-detail-input"
+                            placeholder="Enter New Category Name">
+                        <span class="error-msg" id="update-error-category"></span>
+                    </div>
 
-        <!-- Pop-up Buttons -->
-        <div class="prepaid-popup-buttons">
-            <button id="update-category-btn">Update</button>
-            <button id="cancel-update-category-btn">Cancel</button>
-        </div>
-    </div>
-</div>
+                    <!-- Pop-up Buttons -->
+                    <div class="prepaid-popup-buttons">
+                        <button id="update-category-btn">Update</button>
+                        <button id="cancel-update-category-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
 
 
 
-<!-- Add Category Pop-up -->
-<!-- Add Category Pop-up -->
-<div id="add-category-popup" class="popup-overlay" style="display: none;">
-    <div class="prepaid-popup-content">
-        <h3>Add Category</h3>
-        <p>Enter a new category name for this prepaid plan.</p>
+            <!-- Add Category Pop-up -->
+            <!-- Add Category Pop-up -->
+            <div id="add-category-popup" class="popup-overlay" style="display: none;">
+                <div class="prepaid-popup-content">
+                    <h3>Add Category</h3>
+                    <p>Enter a new category name for this prepaid plan.</p>
 
-        <div class="prepaid-details">
-            <!-- Category Name -->
-            <label for="add-category-name"><strong>Category Name:</strong></label>
-            <input type="text" id="add-category-name" class="prepaid-detail-input" placeholder="Enter Category Name">
-            <span class="error-msg" id="add-error-category"></span>
-        </div>
+                    <div class="prepaid-details">
+                        <!-- Category Name -->
+                        <label for="add-category-name"><strong>Category Name:</strong></label>
+                        <input type="text" id="add-category-name" class="prepaid-detail-input"
+                            placeholder="Enter Category Name">
+                        <span class="error-msg" id="add-error-category"></span>
+                    </div>
 
-        <!-- Pop-up Buttons -->
-        <div class="prepaid-popup-buttons">
-            <button id="add-category-btn">Add</button>
-            <button id="cancel-add-category-btn">Cancel</button>
-        </div>
-    </div>
-</div>
+                    <!-- Pop-up Buttons -->
+                    <div class="prepaid-popup-buttons">
+                        <button id="add-category-btn">Add</button>
+                        <button id="cancel-add-category-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
 
 
             <!-- Update Plan Pop-up (Initially Hidden) -->
@@ -384,7 +388,6 @@
             </div>
 
 
-
             <!-- Bulk Delete Action Panel -->
             <div class="bulk-delete-panel">
                 <button class="bulk-delete-button delete-selected">Delete Selected</button>
@@ -393,10 +396,10 @@
 
 
             <!-- Bulk Update Action Panel -->
-            <div class="bulk-update-panel">
+            <!-- <div class="bulk-update-panel">
                 <button class="bulk-update-button update-selected">Update Selected</button>
                 <button class="bulk-cancel-button cancel-update-action">Cancel</button>
-            </div>
+            </div> -->
 
 
 
@@ -471,8 +474,8 @@
 
                     <!-- Popup Footer -->
                     <div class="popup-footer-custom">
-                        <input type="text" class="custom-phone-input" placeholder="Enter your mobile number">
-                        <button class="purchase-button-custom">Recharge</button>
+                        <!-- <input type="text" class="custom-phone-input" placeholder="Enter your mobile number">
+                        <button class="purchase-button-custom">Recharge</button> -->
                     </div>
                 </div>
             </div>

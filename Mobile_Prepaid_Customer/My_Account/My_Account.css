@@ -415,17 +415,21 @@ ul.list-unstyled li a:hover {
 
 /* Adjusting content margin */
 .content {
-  border: 1px solid purple;
   padding: 20px;
   width: 100%;
 }
 
-/* Container */
-.container {
-  border: 1px solid red;
-  width: 100%;
-  max-width: 1200px;
-  margin: auto;
+
+  /* Dark Theme for Container */
+  .container {
+    background-color: #1e1e1e; /* Dark background */
+    border: 1px solid #333; /* Subtle border */
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px; /* Adds spacing inside */
+    border-radius: 10px; /* Soft rounded edges */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Sleek shadow effect */
 }
 
 /* Account Card */
@@ -493,7 +497,6 @@ ul.list-unstyled li a:hover {
   gap: 20px;
   width: 100%;
   flex-wrap: nowrap;
-  border: 1px solid mediumblue;
 }
 
 /* Profile Container */
@@ -570,11 +573,15 @@ ul.list-unstyled li a:hover {
 
 /* Details Container - Right Side */
 .details-container {
-  border: 1px solid red;
   flex-grow: 1;
-  color: white;
   min-width: 50%;
   max-width: calc(100% - 160px); /* Ensuring it stays inside the card */
+  padding: 10px; /* Added padding for better spacing */
+  background: linear-gradient(145deg, #1e1e1e, #2a2a2a); /* Sleek dark theme */
+  border-radius: 12px; /* Smooth edges */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow */
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 }
 
 /* Name & Mobile */
@@ -710,7 +717,6 @@ button:hover {
 
 /* Updated Layout Container */
 .plan-container {
-  border: 1px solid rebeccapurple;
   display: flex;
   justify-content: center;
   align-items: flex-start;
