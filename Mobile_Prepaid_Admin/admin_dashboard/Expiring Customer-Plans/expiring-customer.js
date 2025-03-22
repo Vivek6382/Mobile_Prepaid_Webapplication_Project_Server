@@ -87,6 +87,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // Register the Data Labels Plugin
+
+
+// Register the Data Labels Plugin
 Chart.register(ChartDataLabels);
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -104,30 +107,43 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
+    // Using the same status determination logic as the customer cards
+    function getStatusClass(transactions) {
+        if (transactions.length === 0) return "expired"; // No transactions
+        
+        const today = new Date();
+        transactions.sort((a, b) => new Date(a.planStart) - new Date(b.planStart));
+        
+        let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
+        if (validPlans.length > 0) {
+            let activePlan = validPlans[0]; // Choose the earliest valid plan
+            let daysDifference = Math.ceil((new Date(activePlan.planEnd) - today) / (1000 * 60 * 60 * 24));
+            return daysDifference <= 3 ? "expires-soon" : "active";
+        }
+        
+        // If no valid plans, return the most recent expired plan
+        return "expired";
+    }
+
     function categorizeTransactions(users, transactions) {
         let active = 0, expired = 0, expiresSoon = 0;
-        const today = new Date();
 
-        users.forEach(user => {
+        // Filter users to exclude ROLE_ADMIN before processing
+        const filteredUsers = users.filter(user => 
+            user.role.roleName === "ROLE_GUEST" || user.role.roleName === "ROLE_USER"
+        );
+
+        filteredUsers.forEach(user => {
             const userTransactions = transactions.filter(t => t.user.userId === user.userId);
-
-            // If the user has no transactions, consider them expired
-            if (userTransactions.length === 0) {
-                expired++;
-                return;
-            }
-
-            userTransactions.sort((a, b) => new Date(b.planEnd) - new Date(a.planEnd)); // Latest first
-            const latestTransaction = userTransactions[0];
-            const planEnd = new Date(latestTransaction.planEnd);
-            const daysRemaining = Math.ceil((planEnd - today) / (1000 * 60 * 60 * 24));
-
-            if (planEnd < today) {
-                expired++;
-            } else if (daysRemaining <= 3) {
-                expiresSoon++;
-            } else {
+            const status = getStatusClass(userTransactions);
+            
+            // Count based on the status determined by the same logic as customer cards
+            if (status === "active") {
                 active++;
+            } else if (status === "expires-soon") {
+                expiresSoon++;
+            } else { // "expired"
+                expired++;
             }
         });
 
@@ -682,9 +698,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-
-
-
 // Bulk-Update-Delete-Js
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -832,11 +845,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
 // Customer-Filtering-Navigation [Expires-soon , Expired, Active]
 
 // Customer-Filtering-Navigation [Expires-soon, Expired, Active]
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+    const custManageCardsContainer = document.getElementById("cust_manage_cards_container");
+    if (!custManageCardsContainer) {
+        console.error("Error: Element with ID 'cust_manage_cards_container' not found.");
+        return;
+    }
+
     // Get navigation items
     const allNav = document.querySelector(".all_list a");
     const expiresSoonNav = document.querySelector(".expires_soon_list a");
@@ -844,80 +864,88 @@ document.addEventListener("DOMContentLoaded", function () {
     const activeNav = document.querySelector(".active_list a");
     const navLinks = document.querySelectorAll(".expires_list a");
 
-    // Get all customer cards container
-    const cardsContainer = document.querySelector(".cust_manage_cards_container");
+    // Base API endpoints
+    const baseApiUrl = "http://localhost:8083/api";
+    // Updated endpoints to use the new filter API
+    const customersEndpoint = `${baseApiUrl}/customers`;
 
-    // Function to categorize customers based on status
-    function categorizeCustomers(categoryClass, event) {
-        const customerCards = document.querySelectorAll(".cust_manage_card"); // Get all cards dynamically
+    // Initialize with all customers
+    let currentFilter = "all";
+    
+    // Add active class to the "All" tab by default
+    allNav.classList.add("active-nav");
 
-        customerCards.forEach((card) => {
-            if (categoryClass === "all-category") {
-                card.style.display = "flex"; // Show all cards
-            } else if (card.classList.contains(categoryClass)) {
-                card.style.display = "flex"; // Show matching category cards
-            } else {
-                card.style.display = "none"; // Hide others
-            }
-        });
-
-        // Remove active class from all nav links
-        navLinks.forEach((link) => link.classList.remove("active-nav"));
-
-        // Ensure the clicked <a> element gets the active class
-        const target = event?.target.closest("a");
-        if (target) {
-            target.classList.add("active-nav");
+    async function fetchData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Failed to fetch data");
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return [];
         }
     }
 
-    // Event Listeners for Categorizing Customers
-    allNav.addEventListener("click", function (e) {
-        e.preventDefault();
-        categorizeCustomers("all-category", e);
-    });
+    function createCustomerCard(customerData) {
+        const user = customerData.user;
+        const transaction = customerData.transaction;
+        const statusClass = customerData.status;
 
-    expiresSoonNav.addEventListener("click", function (e) {
-        e.preventDefault();
-        categorizeCustomers("expires-soon", e);
-    });
+        const planName = transaction ? transaction.plan.planName : "N/A";
+        const startDate = transaction ? new Date(transaction.planStart).toLocaleDateString() : "N/A";
+        const endDate = transaction ? new Date(transaction.planEnd).toLocaleDateString() : "N/A";
+        const amount = transaction ? `₹${transaction.amount}` : "N/A";
+        const lastPayment = transaction ? new Date(transaction.purchasedOn).toLocaleDateString() : "N/A";
 
-    expiredNav.addEventListener("click", function (e) {
-        e.preventDefault();
-        categorizeCustomers("expired", e);
-    });
+        const card = document.createElement("div");
+        card.classList.add("cust_manage_card", statusClass);
+        card.dataset.userId = user.userId;
 
-    activeNav.addEventListener("click", function (e) {
-        e.preventDefault();
-        categorizeCustomers("active", e);
-    });
+        card.innerHTML = `
+            <input type="checkbox" class="bulk-delete-checkbox">
+            <input type="checkbox" class="bulk-update-checkbox">
+            <!-- <i class="fa-solid fa-xmark delete-icon"></i> --> <!-- Commented Out -->
+              <!-- Right Chevron Icon -->
+                <div class="chevron-icon">
+                    <i class="fa fa-chevron-right"></i>
+                </div>
+            <div class="dot_div">
+                <span class="status-dot" data-tooltip="${statusClass.replace('-', ' ')}"></span>
+            </div>
+            <div class="customer_info">
+                <div class="customer_mobile_div">
+                    <span class="customer_mobile">${user.mobile}</span>
+                </div>
+                <div class="customer_name_div">
+                    <span class="customer_name">${user.name}</span>
+                </div>
+                <div class="customer_plan_div">
+                    <span class="customer_plan">${planName}</span>
+                </div>
+                <div class="customer_email_div hidden-details">
+                    <span class="customer_email">${user.email}</span>
+                </div>
+                <div class="subscription_start_div hidden-details">
+                    <span class="subscription_start">Start: ${startDate}</span>
+                </div>
+                <div class="subscription_end_div hidden-details">
+                    <span class="subscription_end">End: ${endDate}</span>
+                </div>
+                <div class="billing_amount_div hidden-details">
+                    <span class="billing_amount">${amount}</span>
+                </div>
+                <div class="last_payment_div hidden-details">
+                    <span class="last_payment">Last Payment: ${lastPayment}</span>
+                </div>
+            </div>
+            <div class="cust_card_footer">
+                <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+                <i class="fa-solid fa-pen-to-square edit-icon"></i>
+            </div>
+        `;
 
-    // Add Customer Functionality
-    const addPopup = document.getElementById("add-popup");
-    const addCustomerBtn = document.getElementById("add-customer-btn");
-    const cancelAddBtn = document.getElementById("cancel-add");
-    const addButton = document.querySelector(".outline-button:nth-child(1)");
-
-    // Get input fields
-    const statusSelect = document.getElementById("add-status-dot");
-    const customerMobileInput = document.getElementById("add-customer-mobile");
-    const customerNameInput = document.getElementById("add-customer-name");
-    const customerPlanInput = document.getElementById("add-customer-plan");
-    const customerEmailInput = document.getElementById("add-customer-email");
-    const subscriptionStartInput = document.getElementById("add-subscription-start");
-    const subscriptionEndInput = document.getElementById("add-subscription-end");
-    const billingAmountInput = document.getElementById("add-billing-amount");
-    const lastPaymentInput = document.getElementById("add-last-payment");
-
-    // Open Add Pop-up
-    addButton.addEventListener("click", function () {
-        addPopup.style.display = "flex";
-    });
-
-    // Close Add Pop-up
-    cancelAddBtn.addEventListener("click", function () {
-        addPopup.style.display = "none";
-    });
+        custManageCardsContainer.appendChild(card);
+    }
 
     // Function to attach tooltip events
     function attachTooltipEvents() {
@@ -942,115 +970,138 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Add Customer Card
-    addCustomerBtn.addEventListener("click", function () {
-        const mobileNumber = customerMobileInput.value.trim();
-        const customerName = customerNameInput.value.trim();
-        const customerPlan = customerPlanInput.value.trim();
-        const customerEmail = customerEmailInput.value.trim();
-        const subscriptionStart = subscriptionStartInput.value.trim();
-        const subscriptionEnd = subscriptionEndInput.value.trim();
-        const billingAmount = billingAmountInput.value.trim();
-        const lastPayment = lastPaymentInput.value.trim();
-        const status = statusSelect.value;
-
-        if (!mobileNumber || !customerName || !customerPlan || !customerEmail || !subscriptionStart || !subscriptionEnd || !billingAmount || !lastPayment) {
-            alert("Please fill in all fields.");
-            return;
+    // Clear all cards from the container
+    function clearCards() {
+        while (custManageCardsContainer.firstChild) {
+            custManageCardsContainer.removeChild(custManageCardsContainer.firstChild);
         }
+    }
 
-        // Determine tooltip text based on selected status
-        let tooltipText = status === "red" ? "Expired" : status === "yellow" ? "Expires Soon" : "Active";
-
-        // Create a new customer card
-        const newCard = document.createElement("div");
-        newCard.classList.add("cust_manage_card"); // No "all-category"
-
-        let categoryClass = "";
-        if (status === "red") {
-            categoryClass = "expired";
-        } else if (status === "yellow") {
-            categoryClass = "expires-soon";
-        } else {
-            categoryClass = "active";
-        }
-        newCard.classList.add(categoryClass); // Assign the correct category
-
-        newCard.innerHTML = `
-            <input type="checkbox" class="bulk-delete-checkbox">
-            <input type="checkbox" class="bulk-update-checkbox">
-
-            <i class="fa-solid fa-xmark delete-icon"></i>
-
-            <div class="dot_div">
-                <span class="status-dot" style="background-color: ${status};" data-tooltip="${tooltipText}"></span>
-            </div>
-
-            <div class="customer_info">
-                <div class="customer_mobile_div">
-                    <span class="customer_mobile">${mobileNumber}</span>
-                </div>
-                <div class="customer_name_div">
-                    <span class="customer_name">${customerName}</span>
-                </div>
-                <div class="customer_plan_div">
-                    <span class="customer_plan">${customerPlan}</span>
-                </div>
-
-                <div class="customer_email_div hidden-details">
-                    <span class="customer_email">${customerEmail}</span>
-                </div>
-                <div class="subscription_start_div hidden-details">
-                    <span class="subscription_start">Start: ${subscriptionStart}</span>
-                </div>
-                <div class="subscription_end_div hidden-details">
-                    <span class="subscription_end">End: ${subscriptionEnd}</span>
-                </div>
-                <div class="billing_amount_div hidden-details">
-                    <span class="billing_amount">₹${billingAmount}</span>
-                </div>
-                <div class="last_payment_div hidden-details">
-                    <span class="last_payment">Last Payment: ${lastPayment}</span>
-                </div>
-            </div>
-
-            <div class="cust_card_footer">
-                <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
-                <i class="fa-solid fa-pen-to-square edit-icon"></i>
-            </div>
-        `;
-
-        // Append to container
-        cardsContainer.appendChild(newCard);
-
-        // Re-apply event listeners to all status dots
+    // Load customers based on filter
+    async function loadCustomers(filter = "all") {
+        clearCards();
+        
+        // Get the appropriate endpoint for the filter
+        let filterEndpoint = `${customersEndpoint}/${filter}`;
+        
+        // Fetch the filtered customer data
+        const customerData = await fetchData(filterEndpoint);
+        
+        // Create cards for each customer
+        customerData.forEach(customer => {
+            createCustomerCard(customer);
+        });
+        
+        // Re-attach tooltip events after creating new cards
         attachTooltipEvents();
+    }
 
-        // Clear input fields
-        customerMobileInput.value = "";
-        customerNameInput.value = "";
-        customerPlanInput.value = "";
-        customerEmailInput.value = "";
-        subscriptionStartInput.value = "";
-        subscriptionEndInput.value = "";
-        billingAmountInput.value = "";
-        lastPaymentInput.value = "";
-
-        // Close pop-up
-        addPopup.style.display = "none";
-
-        // Immediately filter to match the current active category
-        const activeCategory = document.querySelector(".active-nav");
-        if (activeCategory) {
-            categorizeCustomers(activeCategory.dataset.category);
-        }
+    // Navigation event listeners
+    allNav.addEventListener("click", function (e) {
+        e.preventDefault();
+        navLinks.forEach(link => link.classList.remove("active-nav"));
+        this.classList.add("active-nav");
+        currentFilter = "all";
+        loadCustomers("all");
     });
 
-    // Attach event listeners on page load
-    attachTooltipEvents();
+    expiresSoonNav.addEventListener("click", function (e) {
+        e.preventDefault();
+        navLinks.forEach(link => link.classList.remove("active-nav"));
+        this.classList.add("active-nav");
+        currentFilter = "expires-soon";
+        loadCustomers("expires-soon");
+    });
+
+    expiredNav.addEventListener("click", function (e) {
+        e.preventDefault();
+        navLinks.forEach(link => link.classList.remove("active-nav"));
+        this.classList.add("active-nav");
+        currentFilter = "expired";
+        loadCustomers("expired");
+    });
+
+    activeNav.addEventListener("click", function (e) {
+        e.preventDefault();
+        navLinks.forEach(link => link.classList.remove("active-nav"));
+        this.classList.add("active-nav");
+        currentFilter = "active";
+        loadCustomers("active");
+    });
+
+    // Add Customer Functionality
+    const addPopup = document.getElementById("add-popup");
+    const addCustomerBtn = document.getElementById("add-customer-btn");
+    const cancelAddBtn = document.getElementById("cancel-add");
+    const addButton = document.querySelector(".outline-button:nth-child(1)");
+
+    // Get input fields
+    const statusSelect = document.getElementById("add-status-dot");
+    const customerMobileInput = document.getElementById("add-customer-mobile");
+    const customerNameInput = document.getElementById("add-customer-name");
+    const customerPlanInput = document.getElementById("add-customer-plan");
+    const customerEmailInput = document.getElementById("add-customer-email");
+    const subscriptionStartInput = document.getElementById("add-subscription-start");
+    const subscriptionEndInput = document.getElementById("add-subscription-end");
+    const billingAmountInput = document.getElementById("add-billing-amount");
+    const lastPaymentInput = document.getElementById("add-last-payment");
+
+    // Open Add Pop-up
+    if (addButton) {
+        addButton.addEventListener("click", function () {
+            addPopup.style.display = "flex";
+        });
+    }
+
+    // Close Add Pop-up
+    if (cancelAddBtn) {
+        cancelAddBtn.addEventListener("click", function () {
+            addPopup.style.display = "none";
+        });
+    }
+
+    // Add Customer - You would add API calls here to save the customer
+    if (addCustomerBtn) {
+        addCustomerBtn.addEventListener("click", function () {
+            const mobileNumber = customerMobileInput.value.trim();
+            const customerName = customerNameInput.value.trim();
+            const customerPlan = customerPlanInput.value.trim();
+            const customerEmail = customerEmailInput.value.trim();
+            const subscriptionStart = subscriptionStartInput.value.trim();
+            const subscriptionEnd = subscriptionEndInput.value.trim();
+            const billingAmount = billingAmountInput.value.trim();
+            const lastPayment = lastPaymentInput.value.trim();
+            const status = statusSelect.value;
+
+            if (!mobileNumber || !customerName || !customerPlan || !customerEmail || !subscriptionStart || !subscriptionEnd || !billingAmount || !lastPayment) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // Here you would call your backend API to create a new customer and transaction
+            // For now, we'll just close the popup and reload the current filter
+            
+            // Clear input fields
+            customerMobileInput.value = "";
+            customerNameInput.value = "";
+            customerPlanInput.value = "";
+            customerEmailInput.value = "";
+            subscriptionStartInput.value = "";
+            subscriptionEndInput.value = "";
+            billingAmountInput.value = "";
+            lastPaymentInput.value = "";
+
+            // Close pop-up
+            addPopup.style.display = "none";
+            
+            // Reload the current filtered view
+            loadCustomers(currentFilter);
+        });
+    }
+
+    // Initial load of all customers
+    await loadCustomers("all");
 });
-
-
 
 
 
@@ -1290,119 +1341,123 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Dynamically generating customer cards with updated rules
 
-document.addEventListener("DOMContentLoaded", async function () {
-    const custManageCardsContainer = document.getElementById("cust_manage_cards_container");
-    if (!custManageCardsContainer) {
-        console.error("Error: Element with ID 'cust_manage_cards_container' not found.");
-        return;
-    }
+// Dynamically generating customer cards with updated rules
 
-    const usersEndpoint = "http://localhost:8083/api/users";
-    const transactionsEndpoint = "http://localhost:8083/api/transactions";
+// document.addEventListener("DOMContentLoaded", async function () {
+//     const custManageCardsContainer = document.getElementById("cust_manage_cards_container");
+//     if (!custManageCardsContainer) {
+//         console.error("Error: Element with ID 'cust_manage_cards_container' not found.");
+//         return;
+//     }
 
-    async function fetchData(url) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("Failed to fetch data");
-            return await response.json();
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            return [];
-        }
-    }
+//     const usersEndpoint = "http://localhost:8083/api/users";
+//     const transactionsEndpoint = "http://localhost:8083/api/transactions";
 
-    function getStatusClass(transactions) {
-        if (transactions.length === 0) return "expired"; // No transactions
+//     async function fetchData(url) {
+//         try {
+//             const response = await fetch(url);
+//             if (!response.ok) throw new Error("Failed to fetch data");
+//             return await response.json();
+//         } catch (error) {
+//             console.error("Error fetching data:", error);
+//             return [];
+//         }
+//     }
+
+//     function getStatusClass(transactions) {
+//         if (transactions.length === 0) return "expired"; // No transactions
         
-        const today = new Date();
-        transactions.sort((a, b) => new Date(a.planStart) - new Date(b.planStart));
+//         const today = new Date();
+//         transactions.sort((a, b) => new Date(a.planStart) - new Date(b.planStart));
         
-        let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
-        if (validPlans.length > 0) {
-            let activePlan = validPlans[0]; // Choose the earliest valid plan
-            let daysDifference = Math.ceil((new Date(activePlan.planEnd) - today) / (1000 * 60 * 60 * 24));
-            return daysDifference <= 3 ? "expires-soon" : "active";
-        }
+//         let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
+//         if (validPlans.length > 0) {
+//             let activePlan = validPlans[0]; // Choose the earliest valid plan
+//             let daysDifference = Math.ceil((new Date(activePlan.planEnd) - today) / (1000 * 60 * 60 * 24));
+//             return daysDifference <= 3 ? "expires-soon" : "active";
+//         }
         
-        // If no valid plans, return the most recent expired plan
-        return "expired";
-    }
+//         // If no valid plans, return the most recent expired plan
+//         return "expired";
+//     }
 
-    function getRelevantTransaction(transactions) {
-        const today = new Date();
-        transactions.sort((a, b) => new Date(b.planEnd) - new Date(a.planEnd)); // Sort by latest end date
+//     function getRelevantTransaction(transactions) {
+//         const today = new Date();
+//         transactions.sort((a, b) => new Date(b.planEnd) - new Date(a.planEnd)); // Sort by latest end date
         
-        let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
-        if (validPlans.length > 0) return validPlans[0]; // Return earliest valid plan
+//         let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
+//         if (validPlans.length > 0) return validPlans[0]; // Return earliest valid plan
         
-        return transactions.length > 0 ? transactions[0] : null; // Return latest expired plan if no valid plan
-    }
+//         return transactions.length > 0 ? transactions[0] : null; // Return latest expired plan if no valid plan
+//     }
 
-    function createCustomerCard(user, transaction, statusClass) {
-        const planName = transaction ? transaction.plan.planName : "N/A";
-        const startDate = transaction ? new Date(transaction.planStart).toLocaleDateString() : "N/A";
-        const endDate = transaction ? new Date(transaction.planEnd).toLocaleDateString() : "N/A";
-        const amount = transaction ? `₹${transaction.amount}` : "N/A";
-        const lastPayment = transaction ? new Date(transaction.purchasedOn).toLocaleDateString() : "N/A";
+//     function createCustomerCard(user, transaction, statusClass) {
+//         const planName = transaction ? transaction.plan.planName : "N/A";
+//         const startDate = transaction ? new Date(transaction.planStart).toLocaleDateString() : "N/A";
+//         const endDate = transaction ? new Date(transaction.planEnd).toLocaleDateString() : "N/A";
+//         const amount = transaction ? `₹${transaction.amount}` : "N/A";
+//         const lastPayment = transaction ? new Date(transaction.purchasedOn).toLocaleDateString() : "N/A";
 
-        const card = document.createElement("div");
-        card.classList.add("cust_manage_card", statusClass);
+//         const card = document.createElement("div");
+//         card.classList.add("cust_manage_card", statusClass);
 
-        card.innerHTML = `
-            <input type="checkbox" class="bulk-delete-checkbox">
-            <input type="checkbox" class="bulk-update-checkbox">
-            <!-- <i class="fa-solid fa-xmark delete-icon"></i> --> <!-- Commented Out -->
-              <!-- Right Chevron Icon -->
-                <div class="chevron-icon">
-                    <i class="fa fa-chevron-right"></i>
-                </div>
-            <div class="dot_div">
-                <span class="status-dot" data-tooltip="${statusClass.replace('-', ' ')}"></span>
-            </div>
-            <div class="customer_info">
-                <div class="customer_mobile_div">
-                    <span class="customer_mobile">${user.mobile}</span>
-                </div>
-                <div class="customer_name_div">
-                    <span class="customer_name">${user.name}</span>
-                </div>
-                <div class="customer_plan_div">
-                    <span class="customer_plan">${planName}</span>
-                </div>
-                <div class="customer_email_div hidden-details">
-                    <span class="customer_email">${user.email}</span>
-                </div>
-                <div class="subscription_start_div hidden-details">
-                    <span class="subscription_start">Start: ${startDate}</span>
-                </div>
-                <div class="subscription_end_div hidden-details">
-                    <span class="subscription_end">End: ${endDate}</span>
-                </div>
-                <div class="billing_amount_div hidden-details">
-                    <span class="billing_amount">${amount}</span>
-                </div>
-                <div class="last_payment_div hidden-details">
-                    <span class="last_payment">Last Payment: ${lastPayment}</span>
-                </div>
-            </div>
-            <div class="cust_card_footer">
-                <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
-                <i class="fa-solid fa-pen-to-square edit-icon"></i>
-            </div>
-        `;
+//         card.innerHTML = `
+//             <input type="checkbox" class="bulk-delete-checkbox">
+//             <input type="checkbox" class="bulk-update-checkbox">
+//             <!-- <i class="fa-solid fa-xmark delete-icon"></i> --> <!-- Commented Out -->
+//               <!-- Right Chevron Icon -->
+//                 <div class="chevron-icon">
+//                     <i class="fa fa-chevron-right"></i>
+//                 </div>
+//             <div class="dot_div">
+//                 <span class="status-dot" data-tooltip="${statusClass.replace('-', ' ')}"></span>
+//             </div>
+//             <div class="customer_info">
+//                 <div class="customer_mobile_div">
+//                     <span class="customer_mobile">${user.mobile}</span>
+//                 </div>
+//                 <div class="customer_name_div">
+//                     <span class="customer_name">${user.name}</span>
+//                 </div>
+//                 <div class="customer_plan_div">
+//                     <span class="customer_plan">${planName}</span>
+//                 </div>
+//                 <div class="customer_email_div hidden-details">
+//                     <span class="customer_email">${user.email}</span>
+//                 </div>
+//                 <div class="subscription_start_div hidden-details">
+//                     <span class="subscription_start">Start: ${startDate}</span>
+//                 </div>
+//                 <div class="subscription_end_div hidden-details">
+//                     <span class="subscription_end">End: ${endDate}</span>
+//                 </div>
+//                 <div class="billing_amount_div hidden-details">
+//                     <span class="billing_amount">${amount}</span>
+//                 </div>
+//                 <div class="last_payment_div hidden-details">
+//                     <span class="last_payment">Last Payment: ${lastPayment}</span>
+//                 </div>
+//             </div>
+//             <div class="cust_card_footer">
+//                 <a href="#"><i class="fa-solid fa-eye view-details"></i></a>
+//                 <i class="fa-solid fa-pen-to-square edit-icon"></i>
+//             </div>
+//         `;
 
-        custManageCardsContainer.appendChild(card);
-    }
+//         custManageCardsContainer.appendChild(card);
+//     }
 
-    const [users, transactions] = await Promise.all([fetchData(usersEndpoint), fetchData(transactionsEndpoint)]);
+//     const [users, transactions] = await Promise.all([fetchData(usersEndpoint), fetchData(transactionsEndpoint)]);
 
-    users.filter(user => user.role !== "Role_Admin").forEach(user => {
-        const userTransactions = transactions.filter(t => t.user.userId === user.userId);
-        const statusClass = getStatusClass(userTransactions);
-        const relevantTransaction = getRelevantTransaction(userTransactions);
-        createCustomerCard(user, relevantTransaction, statusClass);
-    });
-});
+//     // Updated filter to correctly check role.roleName property
+//     users.filter(user => user.role.roleName === "ROLE_GUEST" || user.role.roleName === "ROLE_USER").forEach(user => {
+//         const userTransactions = transactions.filter(t => t.user.userId === user.userId);
+//         const statusClass = getStatusClass(userTransactions);
+//         const relevantTransaction = getRelevantTransaction(userTransactions);
+//         createCustomerCard(user, relevantTransaction, statusClass);
+//     });
+// });
+
 
 
 

@@ -62,3 +62,100 @@
 </body>
 
 </html>
+
+
+
+
+
+
+// Single-delete
+
+document.addEventListener("DOMContentLoaded", function () {
+    const deletePopup = document.getElementById("delete-popup");
+    const confirmDeleteBtn = document.getElementById("confirm-delete");
+    const cancelDeleteBtn = document.getElementById("cancel-delete");
+
+    // Check if all required elements exist before proceeding
+    if (!deletePopup || !confirmDeleteBtn || !cancelDeleteBtn) {
+        console.error("Delete popup elements not found!");
+        return;
+    }
+
+    let currentCard = null;
+    let currentPlanId = null;
+
+    deletePopup.style.display = "none"; // Hide delete popup initially
+
+    function openDeletePopup(cardElement) {
+        currentCard = cardElement;
+        let planIdElement = cardElement.querySelector(".plan-id-hidden");
+        currentPlanId = planIdElement ? planIdElement.value : null;
+
+        if (!currentPlanId) {
+            alert("Error: Plan ID is missing.");
+            return;
+        }
+
+        const planName = cardElement.querySelector(".plan-name")?.textContent || "N/A";
+        const price = cardElement.querySelector(".price")?.textContent || "N/A";
+        const validity = cardElement.querySelector(".fa-calendar-alt")?.parentElement?.textContent.trim() || "N/A";
+
+        document.querySelector("#delete-popup .detail:nth-child(1)").innerHTML = `<strong>Plan Name:</strong> ${planName}`;
+        document.querySelector("#delete-popup .detail:nth-child(2)").innerHTML = `<strong>Price:</strong> ${price}`;
+        document.querySelector("#delete-popup .detail:nth-child(3)").innerHTML = `<strong>Validity:</strong> ${validity}`;
+
+        deletePopup.style.display = "flex";
+    }
+
+    // Event listener for opening delete popup
+    document.addEventListener("click", function (event) {
+        if (event.target.closest(".delete-icon")) {
+            const card = event.target.closest(".vi_card");
+            if (card) {
+                openDeletePopup(card);
+            }
+        }
+    });
+
+    // Confirm delete action
+    confirmDeleteBtn.addEventListener("click", async function () {
+        if (!currentPlanId) {
+            alert("Error: Plan ID is missing.");
+            return;
+        }
+
+        // Ask for confirmation before proceeding
+        if (!confirm("Are you sure you want to delete this plan?")) return;
+
+        console.log("Deleting Plan ID:", currentPlanId);
+
+        try {
+            let response = await fetch(`http://localhost:8083/api/prepaid-plans/${currentPlanId}`, { method: "DELETE" });
+
+            if (!response.ok) {
+                let errorMessage = "Failed to delete the plan.";
+                try {
+                    let data = await response.json();
+                    errorMessage += ` ${data.message || "Unknown error"}`;
+                } catch (err) {
+                    errorMessage += " Unable to parse error details.";
+                }
+                alert(errorMessage);
+                return;
+            }
+
+            // Remove the deleted plan from UI
+            currentCard.remove();
+            deletePopup.style.display = "none";
+
+        } catch (error) {
+            alert(`Network error while deleting: ${error.message}`);
+        }
+    });
+
+    // Cancel delete action
+    cancelDeleteBtn.addEventListener("click", function () {
+        deletePopup.style.display = "none";
+    });
+});
+

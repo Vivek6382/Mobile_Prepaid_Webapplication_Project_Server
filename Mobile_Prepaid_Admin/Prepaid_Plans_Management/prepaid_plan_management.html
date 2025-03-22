@@ -86,45 +86,97 @@
 
 
 
-
-
-
         <!-- Main Content -->
         <main class="content">
 
             <!-- Prepaid Plans Management Toolbar -->
             <div class="cust_manage_toolbar">
                 <div class="cust_manage_title">
-                    <h4>Prepaid Plans Management</h4> <!-- Title Updated -->
+                    <h4>Prepaid Plans Management</h4>
                 </div>
                 <div class="cust_manage_bulk_selection">
                     <button class="outline-button add-action">Add</button>
                     <button class="outline-button delete-action">Delete</button>
-                    <!-- <button class="outline-button bulk-update-trigger">Update</button> -->
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="plan-tabs">
+                <button class="plan-tab-button active" data-tab="active-plans">Active Plans</button>
+                <button class="plan-tab-button" data-tab="deleted-plans">Deleted Plans</button>
+            </div>
+
+            <!-- Active Plans Tab Content -->
+            <div class="plan-tab-content" id="active-plans">
+                <!-- Popular Plans Section -->
+                <div class="top_prepaid_main_section" id="active-plans-section">
+                    <div class="top_prepaid_main_title">
+                        <h4>Popular Plans</h4>
+                    </div>
+                    <div class="top_right_main_section">
+                        <div class="tool_search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" name="search" placeholder="Search plans">
+                        </div>
+                        <div class="filter_button">
+                            <button><i class="fa-solid fa-filter"></i> Filter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Plans Container -->
+                <div class="plan_card-container" id="active-plans-container">
+                    <!-- Active plans will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Deleted Plans Tab Content (initially hidden) -->
+            <div class="plan-tab-content" id="deleted-plans" style="display: none;">
+                <!-- Deleted Plans Section -->
+                <div class="top_prepaid_main_section deleted-plans-section" id="deleted-plans-section">
+                    <div class="top_prepaid_main_title">
+                        <h4>Deleted Plans</h4>
+                    </div>
+                    <div class="top_right_main_section">
+                        <div class="tool_search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" name="search" placeholder="Search deleted plans">
+                        </div>
+                        <div class="filter_button">
+                            <button><i class="fa-solid fa-filter"></i> Filter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deleted Plans Container -->
+                <div class="plan_card-container" id="deleted-plans-container">
+                    <!-- Deleted plans will be loaded here -->
                 </div>
             </div>
 
 
-            <div class="top_prepaid_main_section">
+            <!-- Deleted Plans Section (initially hidden) -->
+            <!-- <div class="top_prepaid_main_section deleted-plans-section" id="deleted-plans-section"
+                style="display: none; margin-top: 30px; border-color: #ff6b6b;">
                 <div class="top_prepaid_main_title">
-                    <h4>Popular Plans</h4>
+                    <h4 style="color: #ff6b6b;">Deleted Plans</h4>
                 </div>
                 <div class="top_right_main_section">
-
                     <div class="tool_search">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" name="search" placeholder="Search customers">
+                        <input type="text" name="search" placeholder="Search deleted plans">
                     </div>
                     <div class="filter_button">
-                        <button><i class="fa-solid fa-filter"></i> Filter</button>
+                        <button style="background-color: #ff6b6b; border-color: #ff6b6b;"><i
+                                class="fa-solid fa-filter"></i> Filter</button>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-
-            <div class="plan_card-container">
-
-            </div>
+            <!-- Deleted Plans Container -->
+            <!-- <div class="plan_card-container" id="deleted-plans-container" style="display: none;"> -->
+                <!-- Deleted plans will be loaded here -->
+            <!-- </div> -->
 
             <!-- </div> -->
 

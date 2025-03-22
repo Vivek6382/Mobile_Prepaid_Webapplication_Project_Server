@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 // Pie Chart for Expiring Customer-Plans
+// Pie Chart for Expiring Customer-Plans
 document.addEventListener("DOMContentLoaded", async function () {
     const usersEndpoint = "http://localhost:8083/api/users";
     const transactionsEndpoint = "http://localhost:8083/api/transactions";
@@ -104,29 +105,43 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
+    // Using the same status determination logic as the customer cards
+    function getStatusClass(transactions) {
+        if (transactions.length === 0) return "expired"; // No transactions
+        
+        const today = new Date();
+        transactions.sort((a, b) => new Date(a.planStart) - new Date(b.planStart));
+        
+        let validPlans = transactions.filter(t => new Date(t.planEnd) >= today);
+        if (validPlans.length > 0) {
+            let activePlan = validPlans[0]; // Choose the earliest valid plan
+            let daysDifference = Math.ceil((new Date(activePlan.planEnd) - today) / (1000 * 60 * 60 * 24));
+            return daysDifference <= 3 ? "expires-soon" : "active";
+        }
+        
+        // If no valid plans, return the most recent expired plan
+        return "expired";
+    }
+
     function categorizeTransactions(users, transactions) {
         let active = 0, expired = 0, expiresSoon = 0;
-        const today = new Date();
 
-        users.forEach(user => {
+        // Filter users to exclude ROLE_ADMIN before processing
+        const filteredUsers = users.filter(user => 
+            user.role.roleName === "ROLE_GUEST" || user.role.roleName === "ROLE_USER"
+        );
+
+        filteredUsers.forEach(user => {
             const userTransactions = transactions.filter(t => t.user.userId === user.userId);
-
-            if (userTransactions.length === 0) {
-                expired++;
-                return;
-            }
-
-            userTransactions.sort((a, b) => new Date(b.planEnd) - new Date(a.planEnd));
-            const latestTransaction = userTransactions[0];
-            const planEnd = new Date(latestTransaction.planEnd);
-            const daysRemaining = Math.ceil((planEnd - today) / (1000 * 60 * 60 * 24));
-
-            if (planEnd < today) {
-                expired++;
-            } else if (daysRemaining <= 3) {
-                expiresSoon++;
-            } else {
+            const status = getStatusClass(userTransactions);
+            
+            // Count based on the status determined by the same logic as customer cards
+            if (status === "active") {
                 active++;
+            } else if (status === "expires-soon") {
+                expiresSoon++;
+            } else { // "expired"
+                expired++;
             }
         });
 
@@ -171,7 +186,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     await updateChart();
 });
-
 
 
 
@@ -334,14 +348,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 });
 
-
-
-//KPI Cards: Revenue Summary
-
-document.querySelector('.kpi-container .kpi-card:nth-child(1) .kpi-value').textContent = "₹" + updatedRevenueThisMonth;
-document.querySelector('.kpi-container .kpi-card:nth-child(2) .kpi-value').textContent = "₹" + updatedTotalRevenue;
-document.querySelector('.kpi-container .kpi-card:nth-child(3) .kpi-value').textContent = "₹" + updatedRevenuePrepaid;
-document.querySelector('.kpi-container .kpi-card:nth-child(4) .kpi-value').textContent = updatedIncreaseDecreasePercentage + "%";
-
-// Similarly for performance signals
-document.querySelector('.kpi-container .kpi-card:nth-child(1) .kpi-performance').textContent = "+5%"; // Dynamic Signal Update

@@ -163,6 +163,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const resetFiltersBtn = document.getElementById("resetFilters");
     const confirmFiltersBtn = document.getElementById("confirmFilters");
     const closeFilterBtn = document.getElementById("closeFilter");
+    const filterCount = document.getElementById("filterCount") || document.createElement("span");
+    
+    // Add filter count badge if it doesn't exist
+    if (!document.getElementById("filterCount")) {
+        filterCount.id = "filterCount";
+        filterCount.className = "filter-count";
+        filterCount.style.display = "none";
+        openFilterBtn.appendChild(filterCount);
+    }
 
     let filters = {
         ott: new Set(),
@@ -187,6 +196,17 @@ document.addEventListener("DOMContentLoaded", function () {
     openFilterBtn.addEventListener("click", function (event) {
         event.stopPropagation();
         filterModal.style.display = "flex";
+        
+        // Highlight first category if none active
+        if (!document.querySelector(".filter-category.active")) {
+            const firstCategory = document.querySelector(".filter-category");
+            if (firstCategory) {
+                firstCategory.classList.add("active");
+                filterHeader.textContent = firstCategory.textContent;
+                filterOptionsDiv.innerHTML = generateFilterOptions(firstCategory.getAttribute("data-filter"));
+                addCheckboxEventListeners();
+            }
+        }
     });
 
     // Close filter modal when clicking outside or clicking X button
@@ -215,26 +235,54 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         document.querySelectorAll(".vi_card").forEach(card => {
-            const extractText = (selector) => {
-                const element = card.querySelector(selector);
-                return element ? element.parentElement.innerText.trim() : null;
-            };
-
-            const totalData = extractText(".benefit i.fa-wifi");
-            if (totalData) filters.totalData.add(totalData);
-
-            const validity = extractText(".benefit i.fa-calendar-alt");
-            if (validity) filters.validity.add(validity);
-
-            const dataSpeed = extractText(".benefit i.fa-tachometer-alt");
-            if (dataSpeed) filters.dataSpeed.add(dataSpeed);
-
-            const priceMatch = card.querySelector(".price")?.innerText.match(/₹(\d+)/);
-            if (priceMatch) filters.price.add(`₹${priceMatch[1]}`);
-
+            // Extract OTT plans
             const ottElement = card.querySelector(".ott-text-data");
             if (ottElement) {
                 ottElement.innerText.split(", ").forEach(ott => filters.ott.add(ott.trim()));
+            }
+
+            // Extract data with improved regex
+            const extractBenefitValue = (iconClass) => {
+                const element = card.querySelector(`.benefit i.${iconClass}`);
+                return element ? element.parentElement.innerText.trim() : null;
+            };
+
+            // Extract total data
+            const totalData = extractBenefitValue("fa-wifi");
+            if (totalData) filters.totalData.add(totalData);
+
+            // Extract validity and standardize format
+            const validity = extractBenefitValue("fa-calendar-alt");
+            if (validity) {
+                const validityMatch = validity.match(/(\d+)\s*Days?/i);
+                if (validityMatch) {
+                    const days = parseInt(validityMatch[1]);
+                    // Group validities into ranges
+                    if (days <= 28) filters.validity.add("Up to 28 Days");
+                    else if (days <= 84) filters.validity.add("29-84 Days");
+                    else if (days <= 180) filters.validity.add("85-180 Days");
+                    else filters.validity.add("180+ Days");
+                } else {
+                    filters.validity.add(validity);
+                }
+            }
+
+            // Extract data speed
+            const dataSpeed = extractBenefitValue("fa-tachometer-alt");
+            if (dataSpeed) filters.dataSpeed.add(dataSpeed);
+
+            // Extract price and group into ranges
+            const priceElement = card.querySelector(".price");
+            if (priceElement) {
+                const priceMatch = priceElement.innerText.match(/₹(\d+)/);
+                if (priceMatch) {
+                    const price = parseInt(priceMatch[1]);
+                    // Group prices into ranges
+                    if (price <= 199) filters.price.add("₹0-₹199");
+                    else if (price <= 499) filters.price.add("₹200-₹499");
+                    else if (price <= 999) filters.price.add("₹500-₹999");
+                    else filters.price.add("₹1000+");
+                }
             }
         });
 
@@ -252,17 +300,59 @@ document.addEventListener("DOMContentLoaded", function () {
             const key = category.getAttribute("data-filter");
             category.style.display = filters[key]?.size ? "block" : "none";
         });
+
+        // Update filter count badge
+        updateFilterCountBadge();
     }
 
     // Generate checkboxes dynamically, keeping previous selections
     function generateFilterOptions(filterKey) {
         if (!filters[filterKey] || filters[filterKey].size === 0) return "<p>No options available</p>";
 
-        return Array.from(filters[filterKey])
+        // Sort options
+        let sortedOptions = Array.from(filters[filterKey]);
+        
+        // Special sorting for price ranges
+        if (filterKey === "price") {
+            const priceOrder = {
+                "₹0-₹199": 0,
+                "₹200-₹499": 1,
+                "₹500-₹999": 2,
+                "₹1000+": 3
+            };
+            sortedOptions.sort((a, b) => {
+                if (priceOrder[a] !== undefined && priceOrder[b] !== undefined) {
+                    return priceOrder[a] - priceOrder[b];
+                }
+                return a.localeCompare(b);
+            });
+        }
+        // Special sorting for validity ranges
+        else if (filterKey === "validity") {
+            const validityOrder = {
+                "Up to 28 Days": 0,
+                "29-84 Days": 1,
+                "85-180 Days": 2,
+                "180+ Days": 3
+            };
+            sortedOptions.sort((a, b) => {
+                if (validityOrder[a] !== undefined && validityOrder[b] !== undefined) {
+                    return validityOrder[a] - validityOrder[b];
+                }
+                return a.localeCompare(b);
+            });
+        }
+        // Sort alphabetically for other filters
+        else {
+            sortedOptions.sort();
+        }
+
+        return sortedOptions
             .map(value => `
-                <label>
+                <label class="filter-option">
                     <input type="checkbox" class="filter-checkbox" value="${value}" ${selectedFilters[filterKey].has(value) ? "checked" : ""}>
-                    <span class="checkmark"></span> ${value}
+                    <span class="checkmark"></span>
+                    <span class="filter-label">${value}</span>
                 </label>`)
             .join("");
     }
@@ -272,53 +362,134 @@ document.addEventListener("DOMContentLoaded", function () {
         category.addEventListener("click", function () {
             filterHeader.textContent = this.textContent;
             filterOptionsDiv.innerHTML = generateFilterOptions(this.getAttribute("data-filter"));
-            filterOptionsDiv.style.display = "block";
-
+            
             filterCategories.forEach(cat => cat.classList.remove("active"));
             this.classList.add("active");
 
             addCheckboxEventListeners();
+            
+            // Add animation to indicate category change
+            filterOptionsDiv.classList.add("filter-options-animate");
+            setTimeout(() => {
+                filterOptionsDiv.classList.remove("filter-options-animate");
+            }, 300);
         });
     });
 
-    // Filtering function with cross-filtering support
+    // Improved filtering function with better matching
     function filterCards() {
+        const hasActiveFilters = Object.values(selectedFilters).some(set => set.size > 0);
+        let visibleCount = 0;
+        
         document.querySelectorAll(".vi_card").forEach(card => {
             let matchesAll = true;
 
             Object.keys(selectedFilters).forEach(category => {
                 if (selectedFilters[category].size > 0) {
-                    let cardFilters = new Set();
-
-                    const extractText = (selector) => {
-                        const element = card.querySelector(selector);
+                    let matches = false;
+                    const extractBenefitValue = (iconClass) => {
+                        const element = card.querySelector(`.benefit i.${iconClass}`);
                         return element ? element.parentElement.innerText.trim() : null;
                     };
-
-                    if (category === "totalData") cardFilters.add(extractText(".benefit i.fa-wifi"));
-                    if (category === "validity") cardFilters.add(extractText(".benefit i.fa-calendar-alt"));
-                    if (category === "dataSpeed") cardFilters.add(extractText(".benefit i.fa-tachometer-alt"));
-
-                    if (category === "price") {
-                        const priceMatch = card.querySelector(".price")?.innerText.match(/₹(\d+)/);
-                        if (priceMatch) cardFilters.add(`₹${priceMatch[1]}`);
-                    }
 
                     if (category === "ott") {
                         const ottElement = card.querySelector(".ott-text-data");
                         if (ottElement) {
-                            ottElement.innerText.split(", ").forEach(ott => cardFilters.add(ott.trim()));
+                            const ottValues = ottElement.innerText.split(", ").map(ott => ott.trim());
+                            matches = [...selectedFilters[category]].some(filter => ottValues.includes(filter));
+                        }
+                    } else if (category === "totalData") {
+                        const totalData = extractBenefitValue("fa-wifi");
+                        matches = totalData && selectedFilters[category].has(totalData);
+                    } else if (category === "validity") {
+                        const validity = extractBenefitValue("fa-calendar-alt");
+                        if (validity) {
+                            const validityMatch = validity.match(/(\d+)\s*Days?/i);
+                            if (validityMatch) {
+                                const days = parseInt(validityMatch[1]);
+                                
+                                // Check if any selected validity range matches
+                                for (const range of selectedFilters[category]) {
+                                    if ((range === "Up to 28 Days" && days <= 28) ||
+                                        (range === "29-84 Days" && days > 28 && days <= 84) ||
+                                        (range === "85-180 Days" && days > 84 && days <= 180) ||
+                                        (range === "180+ Days" && days > 180)) {
+                                        matches = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else if (category === "dataSpeed") {
+                        const dataSpeed = extractBenefitValue("fa-tachometer-alt");
+                        matches = dataSpeed && selectedFilters[category].has(dataSpeed);
+                    } else if (category === "price") {
+                        const priceElement = card.querySelector(".price");
+                        if (priceElement) {
+                            const priceMatch = priceElement.innerText.match(/₹(\d+)/);
+                            if (priceMatch) {
+                                const price = parseInt(priceMatch[1]);
+                                
+                                // Check if any selected price range matches
+                                for (const range of selectedFilters[category]) {
+                                    if ((range === "₹0-₹199" && price <= 199) ||
+                                        (range === "₹200-₹499" && price > 199 && price <= 499) ||
+                                        (range === "₹500-₹999" && price > 499 && price <= 999) ||
+                                        (range === "₹1000+" && price > 999)) {
+                                        matches = true;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
 
-                    if (![...selectedFilters[category]].some(filter => cardFilters.has(filter))) {
+                    if (!matches) {
                         matchesAll = false;
                     }
                 }
             });
 
-            card.style.display = matchesAll ? "block" : "none";
+            // Apply result with animation
+            if (matchesAll) {
+                card.style.display = "block";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
         });
+
+        // Show message if no results
+        const noResultsMsg = document.getElementById("noResultsMessage") || document.createElement("div");
+        if (!document.getElementById("noResultsMessage")) {
+            noResultsMsg.id = "noResultsMessage";
+            noResultsMsg.className = "no-results-message";
+            noResultsMsg.innerHTML = "No plans match your selected filters. <br>Try adjusting your filters.";
+            document.querySelector(".plan_card-container").appendChild(noResultsMsg);
+        }
+
+        if (hasActiveFilters && visibleCount === 0) {
+            noResultsMsg.style.display = "block";
+        } else {
+            noResultsMsg.style.display = "none";
+        }
+        
+        // Update filter count badge
+        updateFilterCountBadge();
+    }
+
+    // Update filter count badge
+    function updateFilterCountBadge() {
+        const totalFiltersSelected = Object.values(selectedFilters).reduce((sum, set) => sum + set.size, 0);
+        
+        if (totalFiltersSelected > 0) {
+            filterCount.textContent = totalFiltersSelected;
+            filterCount.style.display = "inline-flex";
+            openFilterBtn.classList.add("has-filters");
+        } else {
+            filterCount.style.display = "none";
+            openFilterBtn.classList.remove("has-filters");
+        }
     }
 
     // Add event listeners for checkboxes
@@ -330,8 +501,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (this.checked) {
                     selectedFilters[category].add(this.value);
+                    this.closest(".filter-option").classList.add("selected");
                 } else {
                     selectedFilters[category].delete(this.value);
+                    this.closest(".filter-option").classList.remove("selected");
                 }
 
                 filterCards();
@@ -342,13 +515,28 @@ document.addEventListener("DOMContentLoaded", function () {
     // Reset filters
     resetFiltersBtn.addEventListener("click", function () {
         Object.keys(selectedFilters).forEach(category => selectedFilters[category].clear());
-        document.querySelectorAll(".filter-checkbox:checked").forEach(cb => cb.checked = false);
+        document.querySelectorAll(".filter-checkbox:checked").forEach(cb => {
+            cb.checked = false;
+            cb.closest(".filter-option")?.classList.remove("selected");
+        });
         filterCards();
+        
+        // Add animation to indicate reset
+        resetFiltersBtn.classList.add("reset-animation");
+        setTimeout(() => {
+            resetFiltersBtn.classList.remove("reset-animation");
+        }, 300);
     });
 
     // Apply filters and close modal
     confirmFiltersBtn.addEventListener("click", function () {
         filterModal.style.display = "none";
+        
+        // Add animation to indicate application
+        confirmFiltersBtn.classList.add("confirm-animation");
+        setTimeout(() => {
+            confirmFiltersBtn.classList.remove("confirm-animation");
+        }, 300);
     });
 
     // Update filters when new cards are added
@@ -357,8 +545,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initial filter extraction
     extractFilters();
 });
-
-
 
 
 
@@ -765,9 +951,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const planCategories = document.querySelectorAll(".sidebar nav a");
     const container = document.querySelector(".plan_card-container");
 
-    // Function to Load JSON Data from Backend API
+    // Function to Load JSON Data from Backend API - Updated to fetch only active plans
     function loadPlans(categoryName) {
-        fetch("http://localhost:8083/api/prepaid-plans")
+        // Updated endpoint to fetch only active plans
+        fetch("http://localhost:8083/api/prepaid-plans/active")
             .then(response => response.json())
             .then(plans => {
                 // Filter plans based on selected category
@@ -776,7 +963,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
                 generatePlans(filteredPlans); // Generate cards dynamically
             })
-            .catch(error => console.error(`Error fetching plans:`, error));
+            .catch(error => console.error(`Error fetching active plans:`, error));
     }
 
     // Function to Generate Plan Cards
@@ -880,8 +1067,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // Load "Popular Plans" by default
     loadPlans("Popular Plans");
-
 
     async function fetchCategories() {
         try {
@@ -890,7 +1077,23 @@ document.addEventListener("DOMContentLoaded", function () {
             const categoryNav = document.getElementById("categoryNav");
             categoryNav.innerHTML = ""; // Clear existing categories
     
-            categories.forEach(category => {
+            // Find the "Popular Plans" category (default/active category)
+            const popularPlansCategory = categories.find(cat => 
+                cat.categoryName.toLowerCase() === "popular plans"
+            );
+            
+            // Sort the remaining categories by categoryId
+            const otherCategories = categories
+                .filter(cat => cat.categoryName.toLowerCase() !== "popular plans")
+                .sort((a, b) => a.categoryId - b.categoryId);
+            
+            // Create a new array with Popular Plans first, followed by other categories sorted by ID
+            const sortedCategories = popularPlansCategory 
+                ? [popularPlansCategory, ...otherCategories] 
+                : otherCategories;
+    
+            // Create category links
+            sortedCategories.forEach((category, index) => {
                 const categoryName = category.categoryName;
     
                 const categoryLink = document.createElement("a");
@@ -923,11 +1126,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     
-
-fetchCategories(); // Load categories on page load
-
+    fetchCategories(); // Load categories on page load
 });
-
 
 
 

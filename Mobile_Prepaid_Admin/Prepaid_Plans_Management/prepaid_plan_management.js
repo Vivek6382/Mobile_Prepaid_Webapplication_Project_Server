@@ -87,12 +87,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-// Single-delete
+
+// Plan Deletion Functionality (Soft Delete & Hard Delete)
 
 document.addEventListener("DOMContentLoaded", function () {
     const deletePopup = document.getElementById("delete-popup");
     const confirmDeleteBtn = document.getElementById("confirm-delete");
     const cancelDeleteBtn = document.getElementById("cancel-delete");
+    const popupTitle = deletePopup.querySelector("h3");
+    const popupMessage = deletePopup.querySelector("p");
 
     // Check if all required elements exist before proceeding
     if (!deletePopup || !confirmDeleteBtn || !cancelDeleteBtn) {
@@ -102,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let currentCard = null;
     let currentPlanId = null;
+    let isHardDelete = false;
 
     deletePopup.style.display = "none"; // Hide delete popup initially
 
@@ -123,6 +127,19 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector("#delete-popup .detail:nth-child(2)").innerHTML = `<strong>Price:</strong> ${price}`;
         document.querySelector("#delete-popup .detail:nth-child(3)").innerHTML = `<strong>Validity:</strong> ${validity}`;
 
+        // Determine if this is a hard delete or soft delete based on which tab is active
+        const activeTab = document.querySelector(".plan-tab-button.active").getAttribute("data-tab");
+        isHardDelete = (activeTab === "deleted-plans");
+
+        // Update popup title and message based on deletion type
+        if (isHardDelete) {
+            popupTitle.textContent = "Permanently Delete Plan";
+            popupMessage.innerHTML = "You are about to <strong>permanently delete</strong> this prepaid recharge plan. This action <strong>cannot be undone</strong>.";
+        } else {
+            popupTitle.textContent = "Deactivate Prepaid Plan";
+            popupMessage.innerHTML = "You are about to <strong>deactivate</strong> this prepaid recharge plan. The plan will be moved to the deleted plans tab and can be restored later.";
+        }
+
         deletePopup.style.display = "flex";
     }
 
@@ -143,16 +160,34 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Ask for confirmation before proceeding
-        if (!confirm("Are you sure you want to delete this plan?")) return;
-
-        console.log("Deleting Plan ID:", currentPlanId);
-
         try {
-            let response = await fetch(`http://localhost:8083/api/prepaid-plans/${currentPlanId}`, { method: "DELETE" });
+            let response;
+            let confirmMessage = isHardDelete ? 
+                "Are you sure you want to permanently delete this plan? This cannot be undone." : 
+                "Are you sure you want to deactivate this plan? It will be moved to the deleted plans tab.";
+            
+            // Ask for confirmation before proceeding
+            if (!confirm(confirmMessage)) return;
+
+            if (isHardDelete) {
+                // Hard delete (complete removal)
+                console.log("Hard Deleting Plan ID:", currentPlanId);
+                response = await fetch(`http://localhost:8083/api/prepaid-plans/${currentPlanId}`, { 
+                    method: "DELETE" 
+                });
+            } else {
+                // Soft delete (deactivate)
+                console.log("Soft Deleting Plan ID:", currentPlanId);
+                response = await fetch(`http://localhost:8083/api/prepaid-plans/soft-delete/${currentPlanId}`, { 
+                    method: "PATCH" 
+                });
+            }
 
             if (!response.ok) {
-                let errorMessage = "Failed to delete the plan.";
+                let errorMessage = isHardDelete ? 
+                    "Failed to permanently delete the plan." : 
+                    "Failed to deactivate the plan.";
+                
                 try {
                     let data = await response.json();
                     errorMessage += ` ${data.message || "Unknown error"}`;
@@ -167,8 +202,18 @@ document.addEventListener("DOMContentLoaded", function () {
             currentCard.remove();
             deletePopup.style.display = "none";
 
+            // Reload the plans to reflect changes
+            const activeTab = document.querySelector(".plan-tab-button.active").getAttribute("data-tab");
+            const currentCategory = document.querySelector(".sidebar nav a.active")?.textContent.trim() || "Popular Plans";
+            
+            if (activeTab === "active-plans") {
+                loadActivePlans(currentCategory);
+            } else if (activeTab === "deleted-plans") {
+                loadInactivePlans(currentCategory);
+            }
+
         } catch (error) {
-            alert(`Network error while deleting: ${error.message}`);
+            alert(`Network error while ${isHardDelete ? 'permanently deleting' : 'deactivating'}: ${error.message}`);
         }
     });
 
@@ -181,7 +226,81 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+// Reactivating 
 
+
+// Plan Reactivation Functionality
+document.addEventListener("DOMContentLoaded", function () {
+    // Event delegation for reactivate button clicks
+    document.addEventListener("click", async function (event) {
+        const reactivateIcon = event.target.closest(".reactivate-icon");
+        if (!reactivateIcon) return;
+
+        const card = reactivateIcon.closest(".vi_card");
+        if (!card) return;
+
+        const planIdElement = card.querySelector(".plan-id-hidden");
+        if (!planIdElement) {
+            alert("Error: Plan ID is missing.");
+            return;
+        }
+
+        const planId = planIdElement.value;
+        const planName = card.querySelector(".plan-name")?.textContent || "Unknown Plan";
+
+        // Ask for confirmation
+        if (!confirm(`Are you sure you want to reactivate "${planName}"? It will be moved back to active plans.`)) {
+            return;
+        }
+
+        try {
+            // Call the reactivation endpoint
+            const response = await fetch(`http://localhost:8083/api/prepaid-plans/reactivate/${planId}`, {
+                method: "PATCH"
+            });
+
+            if (!response.ok) {
+                // Handle error response
+                let errorMessage = "Failed to reactivate the plan.";
+                try {
+                    const data = await response.json();
+                    errorMessage += ` ${data.message || "Unknown error"}`;
+                } catch (err) {
+                    errorMessage += " Unable to parse error details.";
+                }
+                alert(errorMessage);
+                return;
+            }
+
+            // On success, remove the card from deleted plans
+            card.remove();
+
+            // Refresh the plans to reflect changes
+            const currentCategory = document.querySelector(".sidebar nav a.active")?.textContent.trim() || "Popular Plans";
+            
+            // Reload the active and deleted plans with the current category
+            if (typeof loadActivePlans === "function") {
+                loadActivePlans(currentCategory);
+            }
+            
+            if (typeof loadInactivePlans === "function") {
+                loadInactivePlans(currentCategory);
+            }
+
+            // Show success message
+            alert(`Plan "${planName}" has been successfully reactivated.`);
+
+        } catch (error) {
+            alert(`Network error while reactivating: ${error.message}`);
+        }
+    });
+
+    // Listen for cardsUpdated event to ensure reactivate icons are properly initialized
+    document.addEventListener("cardsUpdated", function() {
+        // Any additional initialization for reactivate icons can be done here
+        console.log("Cards updated, reactivation handlers ready");
+    });
+});
 
 
 
@@ -280,29 +399,27 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("No plan selected for update.");
             return;
         }
-
+    
         const selectedCategoryId = inputs.category.value;
-        const selectedCategory = selectedCategoryId ? [{ categoryId: selectedCategoryId }] : [];
-
-        // 🛠 **Fixing OTTs Selection Properly**
-        let updatedOTT = Array.from(
-            new Set(
-                Array.from(inputs.ottCheckboxes)
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value)
-            )
-        );
-
-        // 🚨 **Ensure ott: [] if none selected**
-        if (updatedOTT.length === 0) {
-            updatedOTT = [];
-        }
-
+        const selectedCategory = selectedCategoryId ? [{ categoryId: parseInt(selectedCategoryId) }] : [];
+    
+        // Clear approach to handle OTT selection
+        const updatedOTT = [];
+        inputs.ottCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                updatedOTT.push(checkbox.value);
+            }
+        });
+    
+        // Ensure other fields are properly formatted
+        const validityValue = parseInt(inputs.validity.value.trim());
+        const priceValue = parseFloat(inputs.price.value.trim());
+    
         const updatedPlan = {
-            planId: currentPlanId,
+            planId: parseInt(currentPlanId),
             planName: inputs.planName.value.trim(),
-            price: parseFloat(inputs.price.value.trim()),
-            validity: inputs.validity.value.trim(),
+            price: priceValue,
+            validity: validityValue,
             voice: inputs.voice.value.trim(),
             dailyData: inputs.dailyData.value.trim() || null,
             totalData: inputs.totalData.value.trim(),
@@ -311,31 +428,34 @@ document.addEventListener("DOMContentLoaded", function () {
             categories: selectedCategory,
             ott: updatedOTT
         };
-
-        console.log("🚀 Sending updated plan:", JSON.stringify(updatedPlan, null, 2)); // ✅ DEBUGGING
-
+    
+        console.log("🚀 Sending updated plan:", JSON.stringify(updatedPlan, null, 2));
+    
         if (!updatedPlan.planName || isNaN(updatedPlan.price) || updatedPlan.price <= 0) {
             alert("Please enter a valid plan name and price.");
             return;
         }
-
+    
         try {
             const response = await fetch(`http://localhost:8083/api/prepaid-plans/${currentPlanId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedPlan)
             });
-
-            if (!response.ok) throw new Error(`Update failed. Status: ${response.status}`);
-
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Update failed. Status: ${response.status}. Details: ${errorText}`);
+            }
+    
             alert("Plan updated successfully!");
             updatePopup.style.display = "none";
-
+    
             console.log("✅ Update successful. Refreshing the page...");
-            location.reload(); // ✅ Ensures front-end updates properly
+            location.reload();
         } catch (error) {
             console.error("Error updating plan:", error);
-            alert("Failed to update plan. Please try again.");
+            alert("Failed to update plan. Please try again. Error: " + error.message);
         }
     });
 });
@@ -535,12 +655,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
     let activeMode = null; // Tracks if delete mode is active
+    let currentTab = "active-plans"; // Track the current tab
 
     /* ---------------- BULK DELETE ---------------- */
     const deleteButton = document.querySelector(".delete-action");
     const bulkDeletePanel = document.querySelector(".bulk-delete-panel");
     const deleteSelectedButton = document.querySelector(".delete-selected");
     const cancelDeleteButton = document.querySelector(".cancel-action");
+
+    // Track tab changes
+    document.querySelectorAll(".plan-tab-button").forEach(button => {
+        button.addEventListener("click", function() {
+            currentTab = this.getAttribute("data-tab");
+            
+            // If delete mode is active, show checkboxes in the newly selected tab
+            if (activeMode === "delete") {
+                showDeleteCheckboxes();
+            }
+        });
+    });
+
+    // Track category changes
+    document.querySelector(".sidebar nav").addEventListener("click", function(event) {
+        if (event.target.tagName === "A") {
+            // If delete mode is active, ensure checkboxes remain visible after category change
+            if (activeMode === "delete") {
+                // Wait for DOM to update with new cards
+                setTimeout(showDeleteCheckboxes, 100);
+            }
+        }
+    });
 
     deleteButton.addEventListener("click", function () {
         if (activeMode !== null) return; // Prevent multiple activations
@@ -554,6 +698,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // Watch for card updates and reapply checkboxes if needed
+    document.addEventListener("cardsUpdated", function() {
+        if (activeMode === "delete") {
+            showDeleteCheckboxes();
+        }
+    });
+
     deleteSelectedButton.addEventListener("click", function () {
         const selectedPlanIds = getSelectedPlanIds();
         if (selectedPlanIds.length === 0) {
@@ -561,23 +712,61 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        fetch("http://localhost:8083/api/prepaid-plans/bulk-delete", {
-            method: "DELETE",
+        // Determine which endpoint to use based on current tab
+        const endpoint = currentTab === "active-plans" 
+            ? "http://localhost:8083/api/prepaid-plans/bulk-soft-delete" // Soft delete for active plans
+            : "http://localhost:8083/api/prepaid-plans/bulk-delete"; // Hard delete for already deleted plans
+        
+        const method = currentTab === "active-plans" ? "PATCH" : "DELETE";
+
+        fetch(endpoint, {
+            method: method,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ planIds: selectedPlanIds })
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error("Failed to delete plans");
+                // Parse the error response to get more details
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message || `Failed to ${currentTab === "active-plans" ? "soft delete" : "hard delete"} plans`);
+                });
             }
             return response.text(); // Read response as text instead of JSON
         })
         .then(() => {
             removeDeletedCards(selectedPlanIds);
             resetBulkActions();
-            alert("Plans deleted successfully."); // Show success alert
+            
+            // Show appropriate success message
+            if (currentTab === "active-plans") {
+                alert("Plans moved to deleted plans successfully.");
+                
+                // Optionally refresh the deleted plans tab to show newly soft-deleted items
+                const categoryName = document.querySelector(".sidebar nav a.active")?.textContent.trim() || "Popular Plans";
+                
+                // If we're on the active tab, refresh the active plans list
+                loadActivePlans(categoryName);
+            } else {
+                alert("Plans permanently deleted successfully.");
+            }
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => {
+            console.error("Error:", error);
+            
+            // Check if the error message indicates transaction association
+            if (error.message && (
+                error.message.includes("transaction") || 
+                error.message.includes("associated") || 
+                error.message.includes("in use")
+            )) {
+                alert("Some plans cannot be deleted as they are associated with active transactions. Please remove the transaction associations before deleting.");
+            } else {
+                alert(`Error: ${error.message || "Failed to process the delete operation."}`);
+            }
+            
+            // Even if there's an error, reset the UI
+            resetBulkActions();
+        });
     });
 
     cancelDeleteButton.addEventListener("click", function () {
@@ -585,23 +774,33 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function showDeleteCheckboxes() {
-        document.querySelectorAll(".bulk-delete-checkbox").forEach(checkbox => {
-            checkbox.style.display = "inline-block";
-        });
+        // Only show checkboxes in the currently visible tab
+        const visibleContainer = document.querySelector(`#${currentTab}`);
+        if (visibleContainer) {
+            visibleContainer.querySelectorAll(".bulk-delete-checkbox").forEach(checkbox => {
+                checkbox.style.display = "inline-block";
+            });
+        }
     }
 
     function toggleActionPanel() {
-        const anyChecked = document.querySelector(".bulk-delete-checkbox:checked");
+        // Only check boxes in the currently visible tab
+        const visibleContainer = document.querySelector(`#${currentTab}`);
+        const anyChecked = visibleContainer?.querySelector(".bulk-delete-checkbox:checked");
         bulkDeletePanel.style.bottom = anyChecked ? "0" : "-60px";
     }
 
     function getSelectedPlanIds() {
-        return Array.from(document.querySelectorAll(".bulk-delete-checkbox:checked"))
+        // Only get selected plans from the currently visible tab
+        const visibleContainer = document.querySelector(`#${currentTab}`);
+        return Array.from(visibleContainer?.querySelectorAll(".bulk-delete-checkbox:checked") || [])
             .map(checkbox => parseInt(checkbox.closest(".vi_card").querySelector(".plan-id-hidden").value));
     }
 
     function removeDeletedCards(planIds) {
-        document.querySelectorAll(".vi_card").forEach(card => {
+        // Only remove cards from the currently visible tab
+        const visibleContainer = document.querySelector(`#${currentTab}`);
+        visibleContainer?.querySelectorAll(".vi_card").forEach(card => {
             const planId = parseInt(card.querySelector(".plan-id-hidden").value);
             if (planIds.includes(planId)) {
                 card.remove();
@@ -611,15 +810,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function resetBulkActions() {
         activeMode = null; // Reset active mode
+        
+        // Hide checkboxes in both tabs to ensure clean state
         document.querySelectorAll(".bulk-delete-checkbox").forEach(checkbox => {
             checkbox.style.display = "none";
             checkbox.checked = false;
         });
-        bulkDeletePanel.style.bottom = "-60px"; // Hide the action panel after deletion
+        
+        bulkDeletePanel.style.bottom = "-60px"; // Hide the action panel
     }
 });
-
-
 
 
 
@@ -1240,127 +1440,178 @@ function openPopup(card) {
 
 document.addEventListener("DOMContentLoaded", function () {
     const categoryNav = document.querySelector(".sidebar nav");
-    const container = document.querySelector(".plan_card-container");
+    const activeContainer = document.querySelector("#active-plans-container");
+    const deletedContainer = document.querySelector("#deleted-plans-container");
+    let currentCategory = "Popular Plans"; // Track the current category
 
-    // Function to Load JSON Data from Backend API
-    function loadPlans(categoryName) {
-        fetch("http://localhost:8083/api/prepaid-plans")
+    // Tab switching functionality
+    const tabButtons = document.querySelectorAll(".plan-tab-button");
+    const tabContents = document.querySelectorAll(".plan-tab-content");
+
+    tabButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            // Remove active class from all buttons and hide all content
+            tabButtons.forEach(btn => btn.classList.remove("active"));
+            tabContents.forEach(content => content.style.display = "none");
+
+            // Add active class to clicked button and show corresponding content
+            button.classList.add("active");
+            const tabId = button.getAttribute("data-tab");
+            document.getElementById(tabId).style.display = "block";
+
+            // Load appropriate data based on the active tab
+            if (tabId === "active-plans") {
+                loadActivePlans(currentCategory);
+            } else if (tabId === "deleted-plans") {
+                loadInactivePlans(currentCategory);
+            }
+        });
+    });
+
+    // Function to Load Active Plans
+    function loadActivePlans(categoryName) {
+        fetch("http://localhost:8083/api/prepaid-plans/active")
             .then(response => response.json())
             .then(plans => {
                 // Filter plans based on selected category
                 const filteredPlans = plans.filter(plan => 
                     plan.categories.some(category => category.categoryName === categoryName)
                 );
-                generatePlans(filteredPlans); // Generate cards dynamically
+                generatePlans(filteredPlans, activeContainer); // Generate cards dynamically
             })
-            .catch(error => console.error(`Error fetching plans:`, error));
+            .catch(error => console.error(`Error fetching active plans:`, error));
+    }
+
+    // Function to Load Inactive (Deleted) Plans
+    function loadInactivePlans(categoryName) {
+        fetch("http://localhost:8083/api/prepaid-plans/inactive")
+            .then(response => response.json())
+            .then(plans => {
+                // Filter plans based on selected category
+                const filteredPlans = plans.filter(plan => 
+                    plan.categories.some(category => category.categoryName === categoryName)
+                );
+                generatePlans(filteredPlans, deletedContainer); // Generate cards dynamically
+            })
+            .catch(error => console.error(`Error fetching inactive plans:`, error));
     }
 
     // Function to Generate Plan Cards
-    function generatePlans(plans) {
-        container.innerHTML = ""; // Clear previous content
+    // Function to Generate Plan Cards
+function generatePlans(plans, container) {
+    container.innerHTML = ""; // Clear previous content
+    
+    // Check if this is the deleted plans container
+    const isDeletedPlansContainer = container.id === "deleted-plans-container";
 
-        plans.forEach(plan => {
-            const card = document.createElement("div");
-            card.classList.add("vi_card");
+    plans.forEach(plan => {
+        const card = document.createElement("div");
+        card.classList.add("vi_card");
 
-            let benefitsHTML = "";
-            if (plan.validity) {
-                benefitsHTML += `<div class="benefit"><i class="fas fa-calendar-alt"></i> ${plan.validity} Days</div>`;
-            }
-            if (plan.dailyData) {
-                benefitsHTML += `<div class="benefit"><i class="fas fa-tachometer-alt"></i> ${plan.dailyData}</div>`;
-            }
-            if (plan.voice) {
-                benefitsHTML += `<div class="benefit"><i class="fas fa-phone-alt"></i> ${plan.voice}</div>`;
-            }
-            if (plan.totalData) {
-                benefitsHTML += `<div class="benefit"><i class="fas fa-wifi"></i> ${plan.totalData}</div>`;
-            }
-            if (plan.sms) {
-                benefitsHTML += `<div class="benefit"><i class="fas fa-envelope"></i> ${plan.sms}</div>`;
-            }
+        let benefitsHTML = "";
+        if (plan.validity) {
+            benefitsHTML += `<div class="benefit"><i class="fas fa-calendar-alt"></i> ${plan.validity} Days</div>`;
+        }
+        if (plan.dailyData) {
+            benefitsHTML += `<div class="benefit"><i class="fas fa-tachometer-alt"></i> ${plan.dailyData}</div>`;
+        }
+        if (plan.voice) {
+            benefitsHTML += `<div class="benefit"><i class="fas fa-phone-alt"></i> ${plan.voice}</div>`;
+        }
+        if (plan.totalData) {
+            benefitsHTML += `<div class="benefit"><i class="fas fa-wifi"></i> ${plan.totalData}</div>`;
+        }
+        if (plan.sms) {
+            benefitsHTML += `<div class="benefit"><i class="fas fa-envelope"></i> ${plan.sms}</div>`;
+        }
 
-            let ottHTML = "";
-            if (plan.ott && plan.ott.length > 0) {
-                ottHTML = `
-                    <div class="ott-text-data" style="display: none;">
-                        ${plan.ott.join(", ")}
-                    </div>
-                    <div class="ott-description-data" style="display: none;">
-                        ${plan.ott.map(ott => ` 
-                            <div data-ott="${ott}">Enjoy ${ott}'s premium content.</div>
-                        `).join("")}
-                    </div>
-                    <div class="ott-icons"></div>
-                    <div class="more-ott"></div>
-                `;
-            }
-
-            let termsHTML = "";
-            if (plan.terms && plan.terms.length > 0) {
-                termsHTML = `
-                    <div class="terms-conditions" style="display: none;">
-                        ${plan.terms.map(term => `<p>${term}</p>`).join("")}
-                    </div>
-                `;
-            }
-
-            card.innerHTML = `
-                <!-- Hidden Plan ID -->
-                <input type="hidden" class="plan-id-hidden" value="${plan.planId}">
-
-                <!-- Checkbox for Bulk Delete -->
-                <input type="checkbox" class="bulk-delete-checkbox">
-                
-                <!-- Checkbox for Bulk Update -->
-                <input type="checkbox" class="bulk-update-checkbox">
-
-                <!-- DELETE ICON (Top-Right Corner) -->
-                <div class="delete-icon">
-                    <i class="fas fa-times"></i>
+        let ottHTML = "";
+        if (plan.ott && plan.ott.length > 0) {
+            ottHTML = `
+                <div class="ott-text-data" style="display: none;">
+                    ${plan.ott.join(", ")}
                 </div>
-
-                <div class="card-header">
-                    <div class="card-title-price">
-                        <div class="plan-name">${plan.planName}</div>
-                        <div class="price">₹${plan.price}/month</div>
-                    </div>
+                <div class="ott-description-data" style="display: none;">
+                    ${plan.ott.map(ott => ` 
+                        <div data-ott="${ott}">Enjoy ${ott}'s premium content.</div>
+                    `).join("")}
                 </div>
-                <div class="card-content">
-                    ${benefitsHTML}
-                    ${ottHTML}
-                    ${termsHTML}
-                </div>
-                <div class="card-footer">
-                    <!-- Eye Icon (Bottom Right, Before Edit Icon) -->
-                    <div class="view-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
+                <div class="ott-icons"></div>
+                <div class="more-ott"></div>
+            `;
+        }
 
-                    <!-- EDIT ICON (Bottom Right Corner) -->
-                    <div class="edit-icon">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </div>
-
-                    <!-- Buy Button (Shifted Up) -->
-                    <a class="buy-link">
-                        <button class="buy-button">Buy Now</button>
-                    </a>
+        let termsHTML = "";
+        if (plan.terms && plan.terms.length > 0) {
+            termsHTML = `
+                <div class="terms-conditions" style="display: none;">
+                    ${plan.terms.map(term => `<p>${term}</p>`).join("")}
                 </div>
             `;
+        }
 
-            container.appendChild(card);
+        // Add reactivate icon if this is in the deleted plans container
+        let reactivateIconHTML = "";
+        if (isDeletedPlansContainer) {
+            reactivateIconHTML = `
+                <!-- REACTIVATE ICON -->
+                <div class="reactivate-icon">
+                    <i class="fas fa-undo-alt"></i>
+                </div>
+            `;
+        }
 
-            // Store plan in sessionStorage when clicking Buy Now
-            // const buyButton = card.querySelector(".buy-button");
-            // buyButton.addEventListener("click", function () {
-            //     sessionStorage.setItem("currentPlan", JSON.stringify(plan));
-            // });
-        });
+        card.innerHTML = `
+            <!-- Hidden Plan ID -->
+            <input type="hidden" class="plan-id-hidden" value="${plan.planId}">
 
-        document.dispatchEvent(new Event("cardsUpdated"));
-    }
+            <!-- Checkbox for Bulk Delete -->
+            <input type="checkbox" class="bulk-delete-checkbox">
+            
+            <!-- Checkbox for Bulk Update -->
+            <input type="checkbox" class="bulk-update-checkbox">
+
+            <!-- DELETE ICON (Top-Right Corner) -->
+            <div class="delete-icon">
+                <i class="fas fa-times"></i>
+            </div>
+
+            ${reactivateIconHTML}
+
+            <div class="card-header">
+                <div class="card-title-price">
+                    <div class="plan-name">${plan.planName}</div>
+                    <div class="price">₹${plan.price}/month</div>
+                </div>
+            </div>
+            <div class="card-content">
+                ${benefitsHTML}
+                ${ottHTML}
+                ${termsHTML}
+            </div>
+            <div class="card-footer">
+                <!-- Eye Icon (Bottom Right, Before Edit Icon) -->
+                <div class="view-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+
+                <!-- EDIT ICON (Bottom Right Corner) -->
+                <div class="edit-icon">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </div>
+
+                <!-- Buy Button (Shifted Up) -->
+                <a class="buy-link">
+                    <button class="buy-button">Buy Now</button>
+                </a>
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+
+    document.dispatchEvent(new Event("cardsUpdated"));
+}
 
     // Handle category click using event delegation
     categoryNav.addEventListener("click", function (event) {
@@ -1371,12 +1622,45 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".sidebar nav a").forEach(cat => cat.classList.remove("active"));
             event.target.classList.add("active");
 
-            // Get selected category name and fetch plans
-            const selectedCategory = event.target.innerText.trim();
-            loadPlans(selectedCategory);
+            // Get selected category name and update current category
+            currentCategory = event.target.innerText.trim();
+            
+            // Load plans based on active tab
+            const activeTab = document.querySelector(".plan-tab-button.active").getAttribute("data-tab");
+            if (activeTab === "active-plans") {
+                loadActivePlans(currentCategory);
+            } else if (activeTab === "deleted-plans") {
+                loadInactivePlans(currentCategory);
+            }
         }
     });
 
+    // Search functionality for active plans
+    const activeSearchInput = document.querySelector("#active-plans .tool_search input");
+    activeSearchInput.addEventListener("input", function() {
+        const searchTerm = this.value.toLowerCase();
+        filterPlans(activeContainer, searchTerm);
+    });
+
+    // Search functionality for deleted plans
+    const deletedSearchInput = document.querySelector("#deleted-plans .tool_search input");
+    deletedSearchInput.addEventListener("input", function() {
+        const searchTerm = this.value.toLowerCase();
+        filterPlans(deletedContainer, searchTerm);
+    });
+
+    // Filter plans by search term
+    function filterPlans(container, searchTerm) {
+        const cards = container.querySelectorAll(".vi_card");
+        cards.forEach(card => {
+            const planName = card.querySelector(".plan-name").textContent.toLowerCase();
+            if (planName.includes(searchTerm)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
 
     // Fetch categories dynamically
     async function fetchCategories() {
@@ -1473,7 +1757,10 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     
             // Load default category after categories are inserted
-            loadPlans("Popular Plans");
+            // Set first tab as active by default
+            document.querySelector(".plan-tab-button[data-tab='active-plans']").classList.add("active");
+            document.getElementById("active-plans").style.display = "block";
+            loadActivePlans("Popular Plans");
     
         } catch (error) {
             console.error("Error fetching categories:", error);
@@ -1605,7 +1892,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     fetchCategories(); // Load categories on page load
-    
 });
 
 

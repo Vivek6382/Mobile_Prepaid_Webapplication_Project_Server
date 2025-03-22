@@ -109,45 +109,6 @@ function filterResults() {
 
 //Filter-navigation
 
-//Filter-navigation
-
-document.addEventListener("DOMContentLoaded", function () {
-    // Selecting navigation elements
-    const navLinks = document.querySelectorAll(".expires_list");
-  
-    // Function to filter transactions dynamically
-    function filterTransaction(status) {
-        const transactionCards = document.querySelectorAll(".cust_manage_card");
-  
-        transactionCards.forEach(card => {
-            if (status === "all" || card.classList.contains(status)) {
-                card.style.display = "flex"; // Show matching cards
-            } else {
-                card.style.display = "none"; // Hide non-matching cards
-            }
-        });
-  
-        // Update active navigation
-        navLinks.forEach(link => link.classList.remove("active-nav"));
-        document.querySelector(`.${status}_list`)?.classList.add("active-nav");
-    }
-  
-    // Adding event listeners for filter navigation
-    navLinks.forEach(link => {
-        link.addEventListener("click", function (e) {
-            e.preventDefault();
-            const status = this.classList.contains("all_list") ? "all" :
-                this.classList.contains("successful_list") ? "successful" :
-                this.classList.contains("unsuccessful_list") ? "failed" : "";
-  
-            if (status) filterTransaction(status);
-        });
-    });
-  
-    // Initialize with 'All' filter after dynamic content load
-    setTimeout(() => filterTransaction("all"), 500);
-  });
-  
 
 
 
@@ -155,6 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //Dynamic tool-tip 
 
+//Dynamic tool-tip 
 document.addEventListener("DOMContentLoaded", function () {
     const tooltip = document.createElement("div");
     tooltip.className = "dynamic-tooltip";
@@ -188,7 +150,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
 
 
 
@@ -586,12 +547,6 @@ function generateRechargeInvoice(iconElement) {
 
 
 
-
-
-
-
-
-
 document.addEventListener("DOMContentLoaded", function () {
     // Function to get URL query parameters
     function getQueryParam(param) {
@@ -613,84 +568,102 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
 //Pagination Logic :
 
-// Pagination Logic:
+//Filter-navigation with backend integration
+
 document.addEventListener("DOMContentLoaded", function () {
+    // Selecting navigation elements
+    const navLinks = document.querySelectorAll(".expires_list");
     const container = document.querySelector(".cust_manage_cards_container");
     const paginationContainer = document.querySelector(".pagination");
+    const entriesInfo = document.querySelector(".entries-info");
     const title = document.getElementById("recharge-title");
     const mobileInput = document.getElementById("mobile-input");
-
+    
+    // Set these values based on your needs
     const itemsPerPage = 3;
-    let currentPage = 1;
-    let allCards = [];
+    let currentPage = 0; // Backend pagination is 0-based
+    let totalPages = 0;
+    let totalElements = 0;
+    let currentStatus = "all"; // Track current filter status
+    let currentMobile = ""; // Track current mobile filter
 
-    function initializePagination() {
-        if (allCards.length === 0) return;
-
-        let totalPages = Math.ceil(allCards.length / itemsPerPage);
+    function updatePagination() {
         paginationContainer.innerHTML = "";
 
         let prevLi = document.createElement("li");
-        prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`;
+        prevLi.className = `page-item ${currentPage === 0 ? "disabled" : ""}`;
         prevLi.innerHTML = `<a class="page-link" href="#">Previous</a>`;
         prevLi.addEventListener("click", function () {
-            if (currentPage > 1) showPage(currentPage - 1);
+            if (currentPage > 0) fetchTransactionsPage(currentPage - 1, currentMobile, currentStatus);
         });
         paginationContainer.appendChild(prevLi);
 
-        for (let i = 1; i <= totalPages; i++) {
+        for (let i = 0; i < totalPages; i++) {
             let li = document.createElement("li");
             li.className = `page-item ${i === currentPage ? "active" : ""}`;
-            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.innerHTML = `<a class="page-link" href="#">${i + 1}</a>`;
             li.addEventListener("click", function () {
-                showPage(i);
+                fetchTransactionsPage(i, currentMobile, currentStatus);
             });
             paginationContainer.appendChild(li);
         }
 
         let nextLi = document.createElement("li");
-        nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`;
+        nextLi.className = `page-item ${currentPage === totalPages - 1 ? "disabled" : ""}`;
         nextLi.innerHTML = `<a class="page-link" href="#">Next</a>`;
         nextLi.addEventListener("click", function () {
-            if (currentPage < totalPages) showPage(currentPage + 1);
+            if (currentPage < totalPages - 1) fetchTransactionsPage(currentPage + 1, currentMobile, currentStatus);
         });
         paginationContainer.appendChild(nextLi);
 
-        showPage(currentPage);
+        // Update entries info
+        entriesInfo.textContent = `Showing ${itemsPerPage} out of ${totalElements} entries`;
     }
 
-    function showPage(page) {
-        let start = (page - 1) * itemsPerPage;
-        let end = start + itemsPerPage;
-        allCards.forEach((card, index) => {
-            card.style.display = index >= start && index < end ? "block" : "none";
-        });
-        currentPage = page;
-        initializePagination();
-    }
-
-    function fetchTransactions(mobile = "") {
+    function fetchTransactionsPage(page, mobile = "", status = "all") {
+        // Set the base URL for transactions based on whether a mobile number is provided
         let url = mobile && mobile.length === 10
-            ? `http://localhost:8083/api/transactions/user/${mobile}`
-            : "http://localhost:8083/api/transactions";
+            ? `http://localhost:8083/api/transactions/user/${mobile}/paginated`
+            : "http://localhost:8083/api/transactions/paginated";
+
+        // Add query parameters for pagination and filter
+        url += `?page=${page}&status=${status}`;
 
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 container.innerHTML = "";
-                allCards = [];
+                
+                // Extract pagination metadata from the response
+                totalPages = data.totalPages;
+                totalElements = data.totalElements;
+                currentPage = data.number; // Current page number
+
+                // Update current status and mobile for pagination tracking
+                currentStatus = status;
+                currentMobile = mobile;
 
                 // Update the title based on filter
-                title.innerText = mobile ? `Recharge History for ${mobile}` : "Recharge History";
+                let titleText = mobile ? `Recharge History for ${mobile}` : "Recharge History";
+                if (status !== "all") {
+                    titleText += ` (${status.charAt(0).toUpperCase() + status.slice(1)})`;
+                }
+                title.innerText = titleText;
 
-                data.forEach(transaction => {
+                // Update active navigation
+                navLinks.forEach(link => link.classList.remove("active-nav"));
+                document.querySelector(`.${status}_list`)?.classList.add("active-nav");
+
+                // Process the transactions from the 'content' array in the response
+                data.content.forEach(transaction => {
                     const card = document.createElement("div");
                     card.classList.add("cust_manage_card", transaction.transactionStatus.toLowerCase());
 
                     card.innerHTML = `
-                    <!-- ✅ Batch Label (Month & Year) -->
+                    <!-- Batch Label (Month & Year) -->
                     <span class="batch-label badge badge-secondary">${new Date(transaction.planStart).toLocaleString('en-US', { month: 'short', year: 'numeric' })}</span>
 
                     <div class="dot_div">
@@ -715,7 +688,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                         </div>
 
-                        <!-- ✅ Hidden Plan Details -->
+                        <!-- Hidden Plan Details -->
                         <div class="recharge_plan_details" style="display: none;">
                             <div class="card-title-price">
                                 <div class="plan-name">ACTIVE PLAN</div>
@@ -749,7 +722,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                         </div>
 
-                        <!-- ✅ Hidden Transaction Details -->
+                        <!-- Hidden Transaction Details -->
                         <div class="transaction-details" style="display: none;">
                             <h5>Transaction Details</h5>
                             <div class="transaction-content">
@@ -766,41 +739,55 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                     </div>
 
-                    <!-- ✅ Footer Icons -->
+                    <!-- Footer Icons -->
                     <div class="cust_card_footer">
                         <i class="fa-solid fa-download download-icon"></i>
                         <i class="fa-solid fa-eye view-icon"></i>
                     </div>
 
-                    <!-- ✅ Chevron Button -->
+                    <!-- Chevron Button -->
                     <div class="chevron-icon">
                         <i class="fa fa-chevron-right"></i>
                     </div>
                 `;
 
-                    allCards.push(card);
                     container.appendChild(card);
                 });
 
-                initializePagination();
+                updatePagination();
             })
             .catch(error => console.error("Error fetching transactions:", error));
     }
 
-    // Fetch all transactions initially
-    fetchTransactions();
+    // Adding event listeners for filter navigation with backend filtering
+    navLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
+            
+            const status = this.classList.contains("all_list") ? "all" :
+                this.classList.contains("successful_list") ? "successful" :
+                this.classList.contains("unsuccessful_list") ? "failed" : "";
+            
+            if (status) {
+                // Reset to first page when changing filters
+                fetchTransactionsPage(0, currentMobile, status);
+            }
+        });
+    });
 
     // Listen for mobile number input change
     mobileInput.addEventListener("input", function () {
         let mobile = mobileInput.value.replace(/\D/g, "").slice(0, 10);
         mobileInput.value = mobile; // Keep only digits
         if (mobile.length === 10 || mobile.length === 0) {
-            fetchTransactions(mobile);
+            // Reset to first page and maintain current filter status
+            fetchTransactionsPage(0, mobile, currentStatus);
         }
     });
+
+    // Initialize with 'All' filter
+    fetchTransactionsPage(0, "", "all");
 });
-
-
 
 
 

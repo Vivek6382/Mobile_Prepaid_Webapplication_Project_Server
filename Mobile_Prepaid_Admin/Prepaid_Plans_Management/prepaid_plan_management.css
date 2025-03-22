@@ -807,7 +807,108 @@
   
 
 
-  
+
+  /* Tab Navigation */
+.plan-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #333;
+}
+
+.plan-tab-button {
+    background-color: transparent;
+    border: none;
+    color: #aaa;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.plan-tab-button:hover {
+    color: orangered;
+}
+
+.plan-tab-button.active {
+    color: orangered;
+}
+
+.plan-tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: orangered;
+}
+
+/* Tab Content */
+.plan-tab-content {
+    display: none;
+}
+
+.plan-tab-content:first-of-type {
+    display: block;
+}
+
+/* Deleted Plans Section */
+.deleted-plans-section {
+    border-color: #ff6b6b;
+}
+
+.deleted-plans-section .top_prepaid_main_title h4 {
+    color: #ff6b6b;
+}
+
+.deleted-plans-section .tool_search {
+    border-color: #ff6b6b;
+}
+
+.deleted-plans-section .tool_search i {
+    color: #ff6b6b;
+}
+
+.deleted-plans-section .filter_button button {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+/* Deleted Card Styles */
+.vi_card.deleted {
+    border-color: #ff6b6b;
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.5);
+    opacity: 0.85;
+}
+
+.vi_card.deleted .card-header {
+    border-bottom: 2px solid #ff6b6b;
+}
+
+.vi_card.deleted .card-footer {
+    background-color: #ff6b6b;
+    border-top: 2px solid #ff6b6b;
+}
+
+/* Restore Button */
+/* Style for reactivate icon */
+.reactivate-icon {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #4CAF50;
+    transition: all 0.3s ease;
+    z-index: 5;
+}
+
+.reactivate-icon:hover {
+    transform: scale(1.2);
+    color: #2E7D32;
+}  
 
 
 

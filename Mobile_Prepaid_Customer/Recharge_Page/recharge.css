@@ -385,62 +385,101 @@ input::placeholder {
 
 /* //Footer - Section */
 
+/* Footer Section */
 .footer {
-    background-color: #1a1a1a;
-    padding: 40px 10%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  .footer-section {
-    flex: 1 1 250px;
-    margin-bottom: 20px;
-  }
-  .footer h3 {
-    color: orangered;
-    margin-bottom: 15px;
-    font-size: 18px;
-  }
-  .footer ul {
-    list-style: none;
-    padding: 0;
-  }
-  .footer ul li {
-    margin: 8px 0;
-  }
-  .footer ul li a {
-    color: white;
-    text-decoration: none;
-    transition: 0.3s;
-  }
-  .footer ul li a:hover {
-    color: orangered;
-  }
-  .footer-logo {
-    font-size: 28px;
-    font-weight: bold;
-    color: orangered;
-  }
-  .social-icons {
-    display: flex;
-    gap: 15px;
-  }
-  .social-icons a {
-    color: white;
-    font-size: 20px;
-    transition: 0.3s;
-  }
-  .social-icons a:hover {
-    color: orangered;
-  }
-  .footer-bottom {
-    text-align: center;
-    padding: 15px;
-    background-color: #0f0f0f;
-    font-size: 14px;
-    border-top: 1px solid #333;
-  }
+  background-color: var(--primary-color);
+  padding: 40px 10%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: start;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
 
+/* Footer Sections */
+.footer-section {
+  flex: 1 1 250px;
+  margin-bottom: 20px;
+}
+
+/* Footer Logo */
+.footer-logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--orangered);
+}
+
+/* Footer Tagline */
+.footer-tagline {
+  color: white;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+/* Footer Headings */
+.footer h3 {
+  color: var(--orangered);
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+/* Footer List */
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer ul li {
+  margin: 8px 0;
+}
+
+.footer ul li a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.2s;
+}
+
+.footer ul li a:hover {
+  color: var(--orangered);
+  transform: translateX(5px);
+}
+
+/* Social Icons */
+.social-icons {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.social-icons a {
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-icons a:hover {
+  background-color: var(--orangered);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  text-align: center;
+  padding: 15px;
+  background-color: var(--footer-bg, #0f0f0f);
+  font-size: 14px;
+  color: white;
+  border-top: 1px solid var(--border-color);
+}
 
 
 
@@ -457,9 +496,10 @@ input::placeholder {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); /* Subtle dark overlay */
+  background-color: rgba(0, 0, 0, 0.75); /* Darker overlay for better focus */
   display: none; /* Initially hidden */
   z-index: 999;
+  backdrop-filter: blur(3px); /* Subtle blur effect */
 }
 
 /* ---------- OTP Pop-up ---------- */
@@ -469,11 +509,11 @@ input::placeholder {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px; /* Standardized width */
-  background-color: #1e1e1e; /* Dark theme background */
-  padding: 25px;
-  border-radius: 10px;
+  background-color: #1a1a1a; /* Slightly darker background */
+  padding: 30px;
+  border-radius: 12px;
   border: 2px solid orangered;
-  box-shadow: 0 6px 12px rgba(255, 69, 0, 0.3); /* Soft glow effect */
+  box-shadow: 0 8px 24px rgba(255, 69, 0, 0.4), 0 0 15px rgba(255, 69, 0, 0.2); /* Enhanced glow effect */
   display: none;
   z-index: 1000;
   text-align: center;
@@ -484,32 +524,55 @@ input::placeholder {
   position: absolute;
   top: 15px;
   right: 15px;
-  font-size: 22px;
+  font-size: 24px;
   color: #fff;
   cursor: pointer;
   transition: 0.3s ease;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
 
 .close-btn:hover {
   color: orangered;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* ---------- OTP Header ---------- */
 .otp-header {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 h3 {
-  font-size: 22px;
-  color: #fff; /* Made it visible */
+  font-size: 24px;
+  color: #fff;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+  position: relative;
+  display: inline-block;
+}
+
+h3:after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: orangered;
+  border-radius: 2px;
 }
 
 .otp-message {
-  font-size: 14px;
-  color: #bbb;
+  font-size: 15px;
+  color: #ccc;
+  margin-top: 15px;
 }
 
 /* ---------- OTP Input Fields ---------- */
@@ -523,27 +586,38 @@ h3 {
 .otp-inputs {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 25px;
 }
 
 .otp-input {
-  width: 45px;
-  height: 50px;
+  width: 48px;
+  height: 55px;
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
-  border: 2px solid orangered;
-  border-radius: 8px;
-  background-color: #2c2c2c;
+  border: 2px solid rgba(255, 69, 0, 0.7);
+  border-radius: 10px;
+  background-color: #252525;
   color: #fff;
   outline: none;
-  transition: 0.2s ease-in-out;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .otp-input:focus {
-  border-color: #ff5733;
-  box-shadow: 0 0 8px rgba(255, 87, 51, 0.7);
+  border-color: orangered;
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+#otpError {
+  color: #ff5757;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 15px;
+  font-weight: 500;
+  min-height: 20px;
 }
 
 /* ---------- Resend Timer & Link ---------- */
@@ -553,14 +627,24 @@ h3 {
   align-items: center;
   width: 100%;
   font-size: 14px;
-  color: #bbb;
-  margin-bottom: 20px;
+  color: #ccc;
+  margin-bottom: 25px;
+  padding: 10px 15px;
+  background-color: #252525;
+  border-radius: 8px;
 }
 
 .timer {
   font-size: 18px;
   font-weight: bold;
   color: orangered;
+  background-color: rgba(255, 69, 0, 0.1);
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.resend {
+  margin: 0;
 }
 
 .resend-link {
@@ -569,10 +653,14 @@ h3 {
   text-decoration: none;
   font-weight: bold;
   margin-left: 5px;
+  transition: all 0.2s ease;
+  padding: 2px 5px;
+  border-radius: 4px;
 }
 
 .resend-link:hover {
   text-decoration: underline;
+  background-color: rgba(255, 69, 0, 0.1);
 }
 
 /* ---------- Submit Button ---------- */
@@ -584,7 +672,7 @@ h3 {
 
 .validate-btn {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   font-size: 16px;
   font-weight: bold;
   background-color: orangered;
@@ -592,21 +680,106 @@ h3 {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .validate-btn:hover {
   background-color: #ff5733;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.validate-btn:active {
+  transform: translateY(-1px);
 }
 
 /* ---------- Show Pop-up on Activation ---------- */
 .otp-popup.active,
 .otp-overlay.active {
   display: block;
+  animation: fadeIn 0.3s ease forwards;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
+/* ---------- Notification Styling ---------- */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  background-color: #252525;
+  color: #fff;
+  border-left: 4px solid orangered;
+  border-radius: 6px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease forwards;
+  max-width: 350px;
+}
+
+.notification .icon {
+  color: orangered;
+  font-size: 18px;
+  margin-right: 10px;
+  background-color: rgba(255, 69, 0, 0.1);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notification-text {
+  flex: 1;
+  font-size: 14px;
+}
+
+.notification .close-btn {
+  position: relative;
+  top: auto;
+  right: auto;
+  font-size: 18px;
+  margin-left: 10px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Media queries for responsiveness */
+@media screen and (max-width: 500px) {
+  .otp-popup {
+    width: 90%;
+    padding: 20px;
+  }
+  
+  .otp-input {
+    width: 40px;
+    height: 50px;
+    font-size: 20px;
+  }
+}
 
 
 
