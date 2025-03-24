@@ -505,8 +505,8 @@ input::placeholder {
 /* ---------- OTP Pop-up ---------- */
 .otp-popup {
   position: fixed;
-  top: 50%;
-  left: 50%;
+  top: 20%;
+  left: 30%;
   transform: translate(-50%, -50%);
   width: 400px; /* Standardized width */
   background-color: #1a1a1a; /* Slightly darker background */

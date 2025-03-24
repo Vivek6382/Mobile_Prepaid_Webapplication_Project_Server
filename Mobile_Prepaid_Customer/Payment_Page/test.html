@@ -1,187 +1,373 @@
-<!-- // Payment-Section-Accordion
-document.addEventListener("DOMContentLoaded", function () {
-    const accordionHeaders = document.querySelectorAll(".accordion-header");
-    const upiOptions = document.querySelectorAll("input[name='upi']");
-    const closeButton = document.querySelector(".close-link");
-    const upiInput = document.getElementById("upi-id");
-    const upiButtons = document.querySelectorAll(".upi-option");
-    const upiError = document.getElementById("upiError");
-    const upiForm = document.getElementById("upiForm");
+<!DOCTYPE html>
+<html lang="en">
 
-    // ✅ UPI ID regex pattern
-    const upiPattern = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Summary</title>
 
-    // ✅ Accordion Toggle Function
-    function toggleAccordion(header) {
-        let content = header.nextElementSibling;
-        let icon = header.querySelector(".accordion-icon");
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        document.querySelectorAll(".accordion-content").forEach((acc) => {
-            if (acc !== content) {
-                acc.style.maxHeight = "0";
-                acc.classList.remove("active");
-            }
-        });
+    <link rel="stylesheet" href="./payment.css">
+</head>
 
-        document.querySelectorAll(".accordion-icon").forEach((ic) => {
-            if (ic !== icon) ic.textContent = "+";
-        });
+<body>
 
-        if (content.classList.toggle("active")) {
-            content.style.maxHeight = content.scrollHeight + "px";
-            icon.textContent = "-";
-        } else {
-            content.style.maxHeight = "0";
-            icon.textContent = "+";
-        }
-    }
+    <header class="header_main">
+        <!-- Back Button (Left Side) -->
+        <div class="back-button-container">
+            <button class="back-button" onclick="goBack()">← Back to Prepaid Plans</button>
+        </div>
 
-    // ✅ Attach accordion event listeners
-    accordionHeaders.forEach((header) => {
-        header.addEventListener("click", () => toggleAccordion(header));
-    });
 
-    // ✅ UPI Popup Functions
-    function showUpiPopup() {
-        let overlay = document.getElementById("upiOverlay");
-        if (overlay) overlay.classList.add("active");
+        <!-- Centered Logo -->
+        <div class="first_header_part">
+            <h4><a href="/Mobile_Prepaid_Customer/Discover_Page/index.html"><span>MOBI</span>-COMM.</a></h4>
+        </div>
+    </header>
 
-        if (upiInput) {
-            upiInput.value = "";
-            upiInput.placeholder = "Enter UPI ID";
-            upiError.innerHTML = "";
-        }
-    }
 
-    function closeUpiPopup() {
-        let overlay = document.getElementById("upiOverlay");
-        if (overlay) overlay.classList.remove("active");
+    <!-- Wrapping both sections in a flex container -->
+    <div class="payment-container">
 
-        if (upiInput) {
-            upiInput.value = "";
-            upiError.innerHTML = "";
-        }
+        <!-- Payment-Summary-Section -->
+        <!-- Payment-Summary-Section -->
+        <div class="container">
+            <div class="payment-summary">
+                <div class="payment-header">
+                    <h2>Payment Summary</h2>
+                    <button class="toggle-btn" id="toggleBtn" onclick="toggleDetails()">
+                        <span id="buttonText">View Details</span>
+                        <i class="fa-solid fa-chevron-down" id="toggleIcon"></i>
+                    </button>
+                </div>
 
-        document.querySelectorAll("input[name='upi']").forEach((radio) => {
-            radio.checked = false;
-        });
-    }
+                <p class="summary-desc">Your selected plan details and total amount</p>
 
-    // ✅ Append UPI suffix to input field
-    function appendUpi(upiSuffix) {
-        let currentValue = upiInput.value.trim();
+                <!-- Dynamically updated values -->
+                <div class="payment-item">
+                    <span>Plan Name</span>
+                    <span id="planName" class="amount">-</span>
+                </div>
+                <div class="payment-item">
+                    <span>Price</span>
+                    <span id="planPrice" class="amount">-</span>
+                </div>
+                <div class="payment-item">
+                    <span>Validity</span>
+                    <span id="planValidity" class="amount">-</span>
+                </div>
+                <div class="payment-item total">
+                    <span>Total Amount</span>
+                    <span id="totalAmount" class="amount">-</span>
+                </div>
 
-        if (currentValue.length === 0) return;
+                <!-- Toggleable details section -->
+                <div class="plan-details" id="planDetails"></div>
+            </div>
+        </div>
 
-        currentValue = currentValue.replace(/@\w+$/, "");
-        upiInput.value = currentValue + upiSuffix;
-        upiInput.focus();
+        <!-- 
+<a href="./assets/Ott_Logos/Netflix_Logo.svg"></a>
+<a href="./assets/Ott_Logos/Prime_Logo.svg"></a>
+<a href="./assets/Ott_Logos/Sony_Logo.svg"></a>
+<a href="./assets/Ott_Logos/Sun_nxt_Logo.svg"></a>
+<a href="./assets/Ott_Logos/Zee5_Logo.svg"></a>
+         -->
+        <!-- Payment-Options-Section -->
+        <section class="payment-section">
+            <div class="payment-heading">
+                <h2>Payment Options</h2>
+                <p>Select your preferred payment method.</p>
+            </div>
 
-        validateUpiForm(upiInput.value.trim());
-    }
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="icon-text">
+                            <i class="fa-solid fa-qrcode"></i> <span>UPI</span>
+                        </div>
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <label class="upi-option" for="googlepay">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/upi_logos/G-pay_Logo.svg" alt="Google Pay">
+                                <span>Google Pay</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="upi" value="googlepay" id="googlepay">
+                            </div>
+                        </label>
+                        <label class="upi-option" for="phonepe">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/upi_logos/Phone_Pe_Logo.svg" alt="PhonePe">
+                                <span>PhonePe</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="upi" value="phonepe" id="phonepe">
+                            </div>
+                        </label>
+                        <label class="upi-option" for="paytm">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/upi_logos/Paytm_Logo.svg" alt="Paytm">
+                                <span>Paytm</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="upi" value="paytm" id="paytm">
+                            </div>
+                        </label>
+                        <div class="upi-option see-all">
+                            <span>See all</span>
+                        </div>
+                    </div>
+                </div>
 
-    upiOptions.forEach((option) => {
-        option.addEventListener("click", function () {
-            if (this.checked) showUpiPopup(this.value);
-        });
-    });
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="icon-text">
+                            <i class="fa-regular fa-credit-card"></i> <span>Credit/Debit/ATM Card</span>
+                        </div>
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <label class="upi-option" for="card_payment">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/Card_Payment_Logos/Card_Payment_Logo.svg" alt="Card Payment">
+                                <span>Google Pay</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="upi" value="card payment" id="card_payment">
+                            </div>
+                        </label>
+                    </div>
+                </div>
 
-    if (closeButton) {
-        closeButton.addEventListener("click", closeUpiPopup);
-    }
 
-    upiButtons.forEach((button) => {
-        button.addEventListener("click", function () {
-            appendUpi(this.textContent.trim());
-        });
-    });
 
-    // ✅ UPI ID Validation on Form Submission
-    upiForm.addEventListener("submit", function (event) {
-        let upiValue = upiInput.value.trim();
+                <!-- Updated Net Banking Section -->
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="icon-text">
+                            <i class="fa-solid fa-university"></i> <span>Net Banking</span>
+                        </div>
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <label class="upi-option" for="sbi">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/Net_Banking_logos/SBI_Logo.svg" alt="SBI">
+                                <span>SBI</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="netbanking" value="sbi" id="sbi">
+                                <span class="ripple-effect"></span>
+                            </div>
+                        </label>
+                        <label class="upi-option" for="icici">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/Net_Banking_logos/ICICI_Logo.svg" alt="ICICI">
+                                <span>ICICI</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="netbanking" value="icici" id="icici">
+                                <span class="ripple-effect"></span>
+                            </div>
+                        </label>
+                        <label class="upi-option" for="axis">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/Net_Banking_logos/Axis_Logo.svg" alt="AXIS">
+                                <span>AXIS</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="netbanking" value="axis" id="axis">
+                                <span class="ripple-effect"></span>
+                            </div>
+                        </label>
+                        <label class="upi-option" for="kotak">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/Net_Banking_logos/Kotak_Logo.png" alt="KOTAK">
+                                <span>KOTAK</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="netbanking" value="kotak" id="kotak">
+                                <span class="ripple-effect"></span>
+                            </div>
+                        </label>
+                        <label class="upi-option" for="indusind">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/Net_Banking_logos/Indusind_Logo.png" alt="INDUSIND">
+                                <span>INDUSIND</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="netbanking" value="indusind" id="indusind">
+                                <span class="ripple-effect"></span>
+                            </div>
+                        </label>
+                        <label class="upi-option" for="hdfc">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/Net_Banking_logos/HDFC_Logo.svg" alt="HDFC">
+                                <span>HDFC</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="netbanking" value="hdfc" id="hdfc">
+                                <span class="ripple-effect"></span>
+                            </div>
+                        </label>
+                        <div class="upi-option see-all">
+                            <span>See all</span>
+                        </div>
+                    </div>
+                </div>
 
-        if (!validateUpiForm(upiValue)) {
-            event.preventDefault();
-            return;
-        }
 
-        // ✅ Proceed with storing transaction details if form is valid
-        storeTransactionDetails("UPI");
-    });
 
-    // ✅ Validation on Input (Error Appears as User Types)
-    upiInput.addEventListener("input", function () {
-        validateUpiForm(upiInput.value.trim());
-    });
+                <!-- Updated Wallets Section -->
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="icon-text">
+                            <i class="fa-solid fa-wallet"></i> <span>Wallets</span>
+                        </div>
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <label class="upi-option" for="mobikwik">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/wallets_logo/Mobikwik.svg" alt="Mobikwik">
+                                <span>Mobikwik</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="wallets" value="mobikwik" id="mobikwik">
+                                <span class="ripple-effect"></span>
+                            </div>
+                        </label>
+                        <label class="upi-option" for="amazonpay">
+                            <div class="upi_image_text_div">
+                                <img src="./assets/wallets_logo/Amazon-Pay_Logo.svg" alt="Amazon Pay">
+                                <span>Amazon Pay</span>
+                            </div>
+                            <div class="upi_radio">
+                                <input type="radio" name="wallets" value="amazonpay" id="amazonpay">
+                                <span class="ripple-effect"></span>
+                            </div>
+                        </label>
+                        <div class="upi-option see-all">
+                            <span>See all</span>
+                        </div>
+                    </div>
+                </div>
 
-    function validateUpiForm(upiValue) {
-        let isValid = true;
 
-        if (upiValue === "") {
-            upiError.innerHTML = "<strong>⚠️ UPI ID is required.</strong>";
-            upiError.style.color = "red";
-            isValid = false;
-        } else if (!upiPattern.test(upiValue)) {
-            upiError.innerHTML = "<strong>❌ Enter a valid UPI ID (example: name@upi).</strong>";
-            upiError.style.color = "red";
-            isValid = false;
-        } else {
-            upiError.innerHTML = "<strong>✅ Looks good!</strong>";
-            upiError.style.color = "green";
-        }
+            </div>
+        </section>
 
-        return isValid;
-    }
+    </div> <!-- End of .payment-container -->
 
-    // ✅ Store Transaction Details (UPI or Card) in localStorage per user
-    function storeTransactionDetails(paymentMode) {
-        let currentPlan = JSON.parse(sessionStorage.getItem("currentPlan"));
-        let currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer"));
 
-        if (!currentCustomer || !currentCustomer.mobile) {
-            console.error("No current customer found.");
-            return;
-        }
 
-        let userMobile = currentCustomer.mobile;
+    <!-- UPI Overlay (Initially Hidden) -->
+    <div id="upiOverlay" class="payment-overlay">
+        <div class="popup-container">
+            <!-- Close Button -->
+            <a href="javascript:void(0);" class="close-link">
+                <i class="fa-solid fa-x close-btn"></i>
+            </a>
 
-        let now = new Date();
-        let purchaseDate = now.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) +
-            " - " + now.toLocaleString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: true });
+            <div class="pop-up-main">
+                <form id="upiForm"
+                    action="/Mobile_Prepaid_Customer/Payment-Status_Page/Payment-Success_Page/payment_success.html"
+                    method="GET">
+                    <!-- Title Section -->
+                    <div class="popup-header">
+                        <h1>Complete Your Payment via UPI</h1>
+                        <p>Enter your UPI ID to confirm and proceed with the payment.</p>
+                    </div>
 
-        let startDate = now.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                    <div class="pop-up-contents">
+                        <!-- UPI ID Input Section -->
+                        <div class="input-section">
+                            <label for="upi-id">Enter UPI ID</label>
+                            <input type="text" id="upi-id" placeholder="Enter your UPI ID here">
+                            <span id="upiError" class="error-message"></span>
+                        </div>
 
-        let endDate = new Date();
-        endDate.setDate(now.getDate() + currentPlan.validity);
-        let planEndDate = endDate.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+                        <!-- Predefined UPI ID Options -->
+                        <div class="predefined-upi">
+                            <button type="button" class="upi-option">@ybl</button>
+                            <button type="button" class="upi-option">@ibl</button>
+                            <button type="button" class="upi-option">@axl</button>
+                        </div>
+                    </div>
 
-        let transactionId = Math.floor(100000000000 + Math.random() * 900000000000).toString();
+                    <div>
+                        <!-- Verify and Pay Button -->
+                        <button type="submit" class="verify-pay-btn">Confirm and Pay ₹<span
+                                id="upiPayAmount">0</span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-        let transactionDetails = {
-            amount: currentPlan.price,
-            status: "Successful",
-            purchased_on: purchaseDate,
-            payment_mode: paymentMode,
-            ref_number: transactionId,
-            plan_start: startDate,
-            plan_end: planEndDate,
-            plan_details: currentPlan
-        };
+    <!-- Card Payment Overlay (Initially Hidden) -->
+    <div id="cardPaymentOverlay" class="payment-overlay">
+        <div class="popup-container">
+            <!-- Close Button -->
+            <a href="javascript:void(0);" class="close-link">
+                <i class="fa-solid fa-x close-btn"></i>
+            </a>
 
-        // ✅ Store the latest transaction in sessionStorage for pop-up display
-        sessionStorage.setItem("currentTransaction", JSON.stringify(transactionDetails));
+            <div class="pop-up-main">
+                <form id="cardPaymentForm"
+                    action="/Mobile_Prepaid_Customer/Payment-Status_Page/Payment-Success_Page/payment_success.html"
+                    method="GET">
+                    <!-- Title Section -->
+                    <div class="popup-header">
+                        <h1>Complete Your Payment via Card</h1>
+                        <p>Enter your card details to proceed with the payment.</p>
+                    </div>
 
-        // ✅ Fetch existing transactions from localStorage
-        let transactionsData = JSON.parse(localStorage.getItem("transaction_details")) || {};
+                    <div class="pop-up-contents">
+                        <!-- Card Details Input Section -->
+                        <div class="input-section">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" id="card-number" placeholder="Enter your card number here"
+                                maxlength="19">
+                            <span id="cardNumberError" class="error-message"></span>
 
-        // ✅ If user already has transactions, append, else create new array
-        if (!transactionsData[userMobile]) {
-            transactionsData[userMobile] = [];
-        }
+                            <div class="card-details-row">
+                                <div class="card-expiry">
+                                    <label for="expiry-date">Expiry Date</label>
+                                    <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5">
+                                    <span id="expiryDateError" class="error-message"></span>
+                                </div>
+                                <div class="card-cvv">
+                                    <label for="cvv">CVV</label>
+                                    <input type="password" id="cvv" placeholder="CVV" maxlength="3">
+                                    <span id="cvvError" class="error-message"></span>
+                                </div>
+                            </div>
 
-        transactionsData[userMobile].push(transactionDetails);
+                            <label for="cardholder-name">Cardholder Name</label>
+                            <input type="text" id="cardholder-name" placeholder="Enter name as on card">
+                            <span id="cardholderNameError" class="error-message"></span>
+                        </div>
+                    </div>
 
-        // ✅ Update localStorage
-        localStorage.setItem("transaction_details", JSON.stringify(transactionsData));
-    }
-}); -->
+                    <div>
+                        <!-- Pay Button -->
+                        <button type="submit" class="verify-pay-btn">Pay ₹<span id="cardPayAmount">0</span>
+                            Securely</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- <a href="./transaction_details_json/transcation.json"></a> -->
+
+</body>
+<script src="./payment.js"></script>
+
+</html>

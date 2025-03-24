@@ -89,12 +89,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Mobile Validation & OTP Pop-up Integration with JSON-based Quick Recharge Validation
 
-// Mobile Validation & OTP Pop-up Integration with Backend Authentication (using access token)
 
+// OTP Functionality with Twilio Integration
 document.addEventListener("DOMContentLoaded", function () {
     const LOGIN_URL = "http://localhost:8083/auth/login";
     const PROFILE_URL = "http://localhost:8083/auth/profile";
-
+    const GENERATE_OTP_URL = "http://localhost:8083/api/otp/generate";
+    const VERIFY_OTP_URL = "http://localhost:8083/api/otp/verify";
+    
     var phonePattern = /^\d{10}$/;
     var mobileError = document.getElementById("mobileError");
     var mobileInput = document.getElementById("mobile");
@@ -105,13 +107,18 @@ document.addEventListener("DOMContentLoaded", function () {
     var closePopup = document.getElementById("closePopup");
     var otpMessage = document.querySelector(".otp-message strong");
     var otpError = document.getElementById("otpError");
+    var timerElement = document.getElementById("timer");
+    var resendLink = document.getElementById("resendLink");
+    
+    // Create notification container
     var notificationContainer = document.createElement("div");
     notificationContainer.classList.add("notification-container");
     document.body.appendChild(notificationContainer);
-
-    var generatedOTP = "";
+    
     var customerData = {};
-
+    var otpTimerInterval;
+    
+    // Function to fetch customer data
     async function fetchCustomerData(phoneNumberValue) {
         try {
             let loginResponse = await fetch(LOGIN_URL, {
@@ -119,10 +126,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ mobile: phoneNumberValue })
             });
-    
+            
             let loginData = await loginResponse.json();
             if (!loginResponse.ok) throw new Error("Login failed");
-    
+            
             let profileResponse = await fetch(PROFILE_URL, {
                 method: "GET",
                 headers: {
@@ -130,46 +137,63 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Content-Type": "application/json"
                 }
             });
-    
+            
             let profileData = await profileResponse.json();
-            customerData[phoneNumberValue] = { profileData, accessToken: loginData.accessToken };  // Store the token in `customerData` temporarily
-    
+            customerData[phoneNumberValue] = { profileData, accessToken: loginData.accessToken };
+            return true;
         } catch (error) {
             mobileError.innerHTML = "🚫 Unable to fetch customer details. Please try again.";
             console.error("Error fetching customer data:", error);
+            return false;
         }
     }
     
-
+    // Validate mobile number input
     mobileInput.addEventListener("input", function () {
         var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, "");
         validateRechargeForm(phoneNumberValue);
     });
-
+    
+    // Generate OTP button click handler
     generateOtpButton.addEventListener("click", async function (event) {
         event.preventDefault();
         var phoneNumberValue = mobileInput.value.trim().replace(/\s+/g, "");
-    
+        
         if (!validateRechargeForm(phoneNumberValue)) {
             return; // Stop execution if validation fails
         }
-    
-        await fetchCustomerData(phoneNumberValue);
         
-        if (customerData[phoneNumberValue]) { // Only proceed if customer data is fetched successfully
-            generatedOTP = generateRandomOTP();
-            showNotification(`OTP ${generatedOTP} sent successfully`);
-            openOtpPopup(phoneNumberValue);
-        } else {
-            mobileError.innerHTML = "🚫 Unable to fetch customer details. Please try again.";
+        const customerDataFetched = await fetchCustomerData(phoneNumberValue);
+        
+        if (customerDataFetched) {
+            try {
+                // Send request to generate and send OTP via Twilio
+                const response = await fetch(GENERATE_OTP_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ mobile: phoneNumberValue })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification("OTP sent successfully to your mobile number");
+                    openOtpPopup(phoneNumberValue);
+                } else {
+                    mobileError.innerHTML = `🚫 ${data.message}`;
+                }
+            } catch (error) {
+                console.error("Error sending OTP:", error);
+                mobileError.innerHTML = "🚫 Unable to send OTP. Please try again.";
+            }
         }
     });
     
-
+    // Validate the recharge form
     function validateRechargeForm(phoneNumberValue) {
         var isValid = true;
         mobileError.innerHTML = "";
-
+        
         if (phoneNumberValue === "") {
             mobileError.innerHTML = "📢 Phone Number is required.";
             isValid = false;
@@ -180,50 +204,60 @@ document.addEventListener("DOMContentLoaded", function () {
             mobileError.innerHTML = "⚠️ Enter a valid 10-digit phone number.";
             isValid = false;
         }
+        
         return isValid;
     }
-
+    
+    // Open OTP popup
     function openOtpPopup(phoneNumber) {
         otpPopup.classList.add("active");
         otpOverlay.classList.add("active");
         otpMessage.textContent = `******${phoneNumber.slice(-4)}`;
         otpError.textContent = "";
+        
+        // Clear OTP inputs
         otpInputs.forEach(input => input.value = "");
         otpInputs[0].focus();
+        
+        // Start timer
         startOtpTimer(30);
     }
-
+    
+    // Close popup handler
     closePopup.addEventListener("click", function () {
         otpPopup.classList.remove("active");
         otpOverlay.classList.remove("active");
+        clearInterval(otpTimerInterval);
     });
-
-    function generateRandomOTP() {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-    }
-
+    
+    // OTP input handling
     var otpInputs = document.querySelectorAll(".otp-input");
-
+    
     otpInputs.forEach((input, index) => {
+        // Handle input
         input.addEventListener("input", function (event) {
             if (!/^\d$/.test(this.value)) {
                 this.value = "";
                 return;
             }
+            
             if (this.value.length === 1 && index < otpInputs.length - 1) {
                 otpInputs[index + 1].focus();
             }
         });
-
+        
+        // Handle backspace
         input.addEventListener("keydown", function (event) {
             if (event.key === "Backspace" && index > 0 && this.value === "") {
                 otpInputs[index - 1].focus();
             }
         });
-
+        
+        // Handle paste
         input.addEventListener("paste", function (event) {
             event.preventDefault();
             let pasteData = event.clipboardData.getData("text").trim();
+            
             if (/^\d{6}$/.test(pasteData)) {
                 let digits = pasteData.split("");
                 otpInputs.forEach((input, i) => {
@@ -233,18 +267,23 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
-
-    var timerElement = document.getElementById("timer");
-    var resendLink = document.getElementById("resendLink");
-
+    
+    // Start OTP timer
     function startOtpTimer(durationInSeconds) {
         var timeLeft = durationInSeconds;
         resendLink.style.display = "none";
         timerElement.style.display = "block";
-        var countdown = setInterval(() => {
+        
+        // Clear existing interval if any
+        if (otpTimerInterval) {
+            clearInterval(otpTimerInterval);
+        }
+        
+        otpTimerInterval = setInterval(() => {
             timerElement.textContent = `00:${timeLeft.toString().padStart(2, "0")}`;
+            
             if (timeLeft <= 0) {
-                clearInterval(countdown);
+                clearInterval(otpTimerInterval);
                 resendLink.style.display = "inline";
                 timerElement.style.display = "none";
             } else {
@@ -252,54 +291,89 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }, 1000);
     }
-
-    resendLink.addEventListener("click", function () {
-        generatedOTP = generateRandomOTP();
-        showNotification(`OTP ${generatedOTP} sent successfully`);
-        startOtpTimer(30);
-    });
-
-    verifyOtpButton.addEventListener("click", function (event) {
-        event.preventDefault();
-        var enteredOtp = Array.from(otpInputs).map(input => input.value).join("");
-        otpError.innerHTML = "";
     
+    // Resend OTP link handler
+    resendLink.addEventListener("click", async function () {
+        var phoneNumberValue = mobileInput.value.trim();
+        
+        try {
+            const response = await fetch(GENERATE_OTP_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mobile: phoneNumberValue })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showNotification("OTP sent successfully to your mobile number");
+                startOtpTimer(30);
+            } else {
+                otpError.innerHTML = `🚫 ${data.message}`;
+            }
+        } catch (error) {
+            console.error("Error resending OTP:", error);
+            otpError.innerHTML = "🚫 Unable to resend OTP. Please try again.";
+        }
+    });
+    
+    // Verify OTP button click handler
+    verifyOtpButton.addEventListener("click", async function (event) {
+        event.preventDefault();
+        var phoneNumberValue = mobileInput.value.trim();
+        var enteredOtp = Array.from(otpInputs).map(input => input.value).join("");
+        
+        otpError.innerHTML = "";
+        
         if (enteredOtp.length < 6) {
             otpError.innerHTML = "⚠️ Please enter all 6 digits.";
             return;
         }
-        if (enteredOtp !== generatedOTP) {
-            otpError.innerHTML = "🚫 The OTP entered is incorrect. Please try again.";
-            return;
+        
+        try {
+            // Send request to verify OTP
+            const response = await fetch(VERIFY_OTP_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    mobile: phoneNumberValue,
+                    otp: enteredOtp
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                if (customerData[phoneNumberValue]) {
+                    sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumberValue].profileData));
+                    sessionStorage.setItem("accessToken", customerData[phoneNumberValue].accessToken);
+                }
+                
+                window.location.href = "/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html";
+            } else {
+                otpError.innerHTML = "🚫 The OTP entered is incorrect. Please try again.";
+            }
+        } catch (error) {
+            console.error("Error verifying OTP:", error);
+            otpError.innerHTML = "🚫 Unable to verify OTP. Please try again.";
         }
-    
-        let phoneNumberValue = mobileInput.value.trim();
-        if (customerData[phoneNumberValue]) {
-            sessionStorage.setItem("currentCustomer", JSON.stringify(customerData[phoneNumberValue].profileData));
-            sessionStorage.setItem("accessToken", customerData[phoneNumberValue].accessToken); // Store token only after verification
-        }
-    
-        window.location.href = "/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html";
     });
     
-
+    // Show notification
     function showNotification(message) {
         var notification = document.createElement("div");
         notification.classList.add("notification");
-        notification.innerHTML = `<div class="icon">✔</div>
-                                  <div class="notification-text">${message}</div>
-                                  <button class="close-btn">&times;</button>`;
+        notification.innerHTML = `
+            <div class="icon">✔</div>
+            <div class="notification-text">${message}</div>
+            <button class="close-btn">&times;</button>
+        `;
+        
         notification.querySelector(".close-btn").addEventListener("click", function () {
             notification.remove();
         });
+        
         notificationContainer.appendChild(notification);
         setTimeout(() => notification.remove(), 10000);
     }
 });
-
-
-
-
-
-
-

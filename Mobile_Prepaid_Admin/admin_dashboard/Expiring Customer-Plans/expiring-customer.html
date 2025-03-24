@@ -52,7 +52,7 @@
                     <a href="#" id="adminSignOutBtn">Sign-out</a>
                 </div>
             </div>
-    
+
         </div>
     </header>
 
@@ -64,7 +64,8 @@
                         Management</a></li>
                 <li><a href="/Mobile_Prepaid_Admin/Customer_Management/customer_management.html">Customer Management</a>
                 </li>
-                <li><a href="/Mobile_Prepaid_Admin/Transcation_History_Page/transcation_history.html">Transcation Management</a></li>
+                <li><a href="/Mobile_Prepaid_Admin/Transcation_History_Page/transcation_history.html">Transcation
+                        Management</a></li>
                 <!-- <li><a href="#">Support Management</a></li> -->
             </ul>
         </nav>
@@ -176,6 +177,14 @@
                         <div id="cust_manage_cards_container" class="cust_manage_cards_container">
 
                         </div>
+
+                        <!-- Pagination and entries info -->
+                        <div class="pagination-container">
+                            <div class="entries-info">Showing 0 out of 0 entries</div>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination"></ul>
+                            </nav>
+                        </div>
                     </div>
 
                 </div>
@@ -206,8 +215,8 @@
                     <h3>Delete Customer</h3>
                     <p>You are about to delete this <strong>customer record</strong>. This action cannot be undone.</p> -->
 
-                    <!-- Customer Details -->
-                    <!-- <div class="details">
+            <!-- Customer Details -->
+            <!-- <div class="details">
                         <div class="detail"><strong>Name:</strong> <span id="customer-name"></span></div>
                         <div class="detail"><strong>Mobile:</strong> <span id="customer-mobile"></span></div>
                         <div class="detail"><strong>Plan:</strong> <span id="customer-plan"></span></div>
@@ -219,8 +228,8 @@
                         <div class="detail"><strong>Last Payment:</strong> <span id="last-payment"></span></div>
                     </div> -->
 
-                    <!-- Buttons -->
-                    <!-- <div class="popup-buttons">
+            <!-- Buttons -->
+            <!-- <div class="popup-buttons">
                         <button id="confirm-delete">Yes, Delete</button>
                         <button id="cancel-delete">Cancel</button>
                     </div>
@@ -233,48 +242,48 @@
 
             <!-- Update Customer Pop-up -->
             <!-- Update Customer Pop-up -->
-    <div id="update-popup" class="popup-overlay">
-        <div class="popup-content">
-            <h3>Update Customer Details</h3>
-            <p>Edit the details of this <strong>customer</strong> below.</p>
+            <div id="update-popup" class="popup-overlay">
+                <div class="popup-content">
+                    <h3>Update Customer Details</h3>
+                    <p>Edit the details of this <strong>customer</strong> below.</p>
 
-            <div class="details">
-                <label for="status-dot"><strong>Status:</strong></label>
-                <select id="status-dot" class="detail-input">
-                    <option value="green">Active</option>
-                    <option value="yellow">Pending</option>
-                    <option value="red">Expired</option>
-                </select>
+                    <div class="details">
+                        <label for="status-dot"><strong>Status:</strong></label>
+                        <select id="status-dot" class="detail-input">
+                            <option value="green">Active</option>
+                            <option value="yellow">Pending</option>
+                            <option value="red">Expired</option>
+                        </select>
 
-                <label for="update-customer-mobile"><strong>Mobile Number:</strong></label>
-                <input type="text" id="update-customer-mobile" class="detail-input" readonly>
+                        <label for="update-customer-mobile"><strong>Mobile Number:</strong></label>
+                        <input type="text" id="update-customer-mobile" class="detail-input" readonly>
 
-                <label for="update-customer-name"><strong>Customer Name:</strong></label>
-                <input type="text" id="update-customer-name" class="detail-input" readonly>
+                        <label for="update-customer-name"><strong>Customer Name:</strong></label>
+                        <input type="text" id="update-customer-name" class="detail-input" readonly>
 
-                <label for="update-customer-email"><strong>Email:</strong></label>
-                <input type="text" id="update-customer-email" class="detail-input">
-                <span id="email-error" class="error-message"></span> <!-- Error message span -->
+                        <label for="update-customer-email"><strong>Email:</strong></label>
+                        <input type="text" id="update-customer-email" class="detail-input">
+                        <span id="email-error" class="error-message"></span> <!-- Error message span -->
 
-                <label for="update-subscription-start"><strong>Subscription Start:</strong></label>
-                <input type="text" id="update-subscription-start" class="detail-input" readonly>
+                        <label for="update-subscription-start"><strong>Subscription Start:</strong></label>
+                        <input type="text" id="update-subscription-start" class="detail-input" readonly>
 
-                <label for="update-subscription-end"><strong>Subscription End:</strong></label>
-                <input type="text" id="update-subscription-end" class="detail-input" readonly>
+                        <label for="update-subscription-end"><strong>Subscription End:</strong></label>
+                        <input type="text" id="update-subscription-end" class="detail-input" readonly>
 
-                <label for="update-billing-amount"><strong>Billing Amount:</strong></label>
-                <input type="text" id="update-billing-amount" class="detail-input" readonly>
+                        <label for="update-billing-amount"><strong>Billing Amount:</strong></label>
+                        <input type="text" id="update-billing-amount" class="detail-input" readonly>
 
-                <label for="update-last-payment"><strong>Last Payment:</strong></label>
-                <input type="text" id="update-last-payment" class="detail-input" readonly>
+                        <label for="update-last-payment"><strong>Last Payment:</strong></label>
+                        <input type="text" id="update-last-payment" class="detail-input" readonly>
+                    </div>
+
+                    <div class="popup-buttons">
+                        <button id="update-customer">Update</button>
+                        <button id="cancel-update">Cancel</button>
+                    </div>
+                </div>
             </div>
-
-            <div class="popup-buttons">
-                <button id="update-customer">Update</button>
-                <button id="cancel-update">Cancel</button>
-            </div>
-        </div>
-    </div>
 
 
 
@@ -371,43 +380,47 @@
             <!-- Customer Details Pop-up -->
 
             <!-- Customer Details Pop-up -->
-             <!-- Customer Details Pop-up -->
-    <div id="customer-details-popup" class="popup-overlay">
-        <div class="popup-content">
-            <span id="close-customer-popup" class="close-btn">&times;</span>
-            <h3>Customer Details</h3>
-    
-            <div class="details">
-                <!-- Customer Details -->
-                <div class="details-section">
-                    <h4>Customer Info</h4>
-                    <div class="detail"><strong>Name:</strong> <span id="detail-customer-name"></span></div>
-                    <div class="detail"><strong>Mobile:</strong> <span id="detail-customer-mobile"></span></div>
-                    <div class="detail"><strong>Email:</strong> <span id="detail-customer-email"></span></div>
-                </div>
-    
-                <!-- Plan Details -->
-                <div class="details-section">
-                    <h4>Plan Details</h4>
-                    <div class="detail"><strong>Status:</strong> <span id="detail-customer-status"></span></div>
-                    <div class="detail"><strong>Plan:</strong> <span id="detail-customer-plan"></span></div>
-                    <div class="detail"><strong>Subscription Start:</strong> <span id="detail-subscription-start"></span></div>
-                    <div class="detail"><strong>Subscription End:</strong> <span id="detail-subscription-end"></span></div>
-                </div>
-    
-                <!-- Transaction Details -->
-                <div class="details-section">
-                    <h4>Transaction Details</h4>
-                    <div class="detail"><strong>Billing Amount:</strong> <span id="detail-billing-amount"></span></div>
-                    <div class="detail"><strong>Last Payment:</strong> <span id="detail-last-payment"></span></div>
+            <!-- Customer Details Pop-up -->
+            <div id="customer-details-popup" class="popup-overlay">
+                <div class="popup-content">
+                    <span id="close-customer-popup" class="close-btn">&times;</span>
+                    <h3>Customer Details</h3>
+
+                    <div class="details">
+                        <!-- Customer Details -->
+                        <div class="details-section">
+                            <h4>Customer Info</h4>
+                            <div class="detail"><strong>Name:</strong> <span id="detail-customer-name"></span></div>
+                            <div class="detail"><strong>Mobile:</strong> <span id="detail-customer-mobile"></span></div>
+                            <div class="detail"><strong>Email:</strong> <span id="detail-customer-email"></span></div>
+                        </div>
+
+                        <!-- Plan Details -->
+                        <div class="details-section">
+                            <h4>Plan Details</h4>
+                            <div class="detail"><strong>Status:</strong> <span id="detail-customer-status"></span></div>
+                            <div class="detail"><strong>Plan:</strong> <span id="detail-customer-plan"></span></div>
+                            <div class="detail"><strong>Subscription Start:</strong> <span
+                                    id="detail-subscription-start"></span></div>
+                            <div class="detail"><strong>Subscription End:</strong> <span
+                                    id="detail-subscription-end"></span></div>
+                        </div>
+
+                        <!-- Transaction Details -->
+                        <div class="details-section">
+                            <h4>Transaction Details</h4>
+                            <div class="detail"><strong>Billing Amount:</strong> <span
+                                    id="detail-billing-amount"></span></div>
+                            <div class="detail"><strong>Last Payment:</strong> <span id="detail-last-payment"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="popup-buttons">
+                        <button id="close-details-popup">Close</button>
+                    </div>
                 </div>
             </div>
-    
-            <div class="popup-buttons">
-                <button id="close-details-popup">Close</button>
-            </div>
-        </div>
-    </div>
 
 
 

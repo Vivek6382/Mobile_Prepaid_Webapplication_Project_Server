@@ -726,7 +726,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Customer-Filtering-Navigation [Expires-soon , Expired, Active]
 
 
-// Customer-Filtering-Navigation [Expires-soon, Expired, Active]
+// Customer-Filtering-Navigation [Expires-soon, Expired, Active] with Pagination
 
 document.addEventListener("DOMContentLoaded", async function () {
     const custManageCardsContainer = document.getElementById("cust_manage_cards_container");
@@ -744,14 +744,23 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Base API endpoints
     const baseApiUrl = "http://localhost:8083/api";
-    // Updated endpoints to use the new filter API
     const customersEndpoint = `${baseApiUrl}/customers`;
+
+    // Pagination variables
+    let currentPage = 0;
+    let pageSize = 3; // Changed from 5 to 3 to match backend default
+    let totalPages = 0;
+    let totalElements = 0;
 
     // Initialize with all customers
     let currentFilter = "all";
     
     // Add active class to the "All" tab by default
     allNav.classList.add("active-nav");
+
+    // Get pagination elements
+    const paginationList = document.querySelector(".pagination");
+    const entriesInfo = document.querySelector(".entries-info");
 
     async function fetchData(url) {
         try {
@@ -760,7 +769,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             return await response.json();
         } catch (error) {
             console.error("Error fetching data:", error);
-            return [];
+            return { content: [], totalElements: 0, totalPages: 0, number: 0 };
         }
     }
 
@@ -855,32 +864,127 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // Load customers based on filter
-    async function loadCustomers(filter = "all") {
-        clearCards();
+    // Update pagination UI
+    function updatePagination() {
+        paginationList.innerHTML = '';
         
-        // Get the appropriate endpoint for the filter
-        let filterEndpoint = `${customersEndpoint}/${filter}`;
-        
-        // Fetch the filtered customer data
-        const customerData = await fetchData(filterEndpoint);
-        
-        // Create cards for each customer
-        customerData.forEach(customer => {
-            createCustomerCard(customer);
+        // Create previous button
+        const prevLi = document.createElement("li");
+        prevLi.classList.add("page-item");
+        if (currentPage === 0) prevLi.classList.add("disabled");
+        prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>`;
+        prevLi.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (currentPage > 0) {
+                currentPage--;
+                loadCustomersPaginated(currentFilter, currentPage, pageSize);
+            }
         });
+        paginationList.appendChild(prevLi);
+
+        // Create page number buttons
+        const maxVisiblePages = 5;
+        let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
         
-        // Re-attach tooltip events after creating new cards
-        attachTooltipEvents();
+        // Adjust start page if we're at the end of the range
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(0, endPage - maxVisiblePages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const pageLi = document.createElement("li");
+            pageLi.classList.add("page-item");
+            if (i === currentPage) pageLi.classList.add("active");
+            pageLi.innerHTML = `<a class="page-link" href="#">${i + 1}</a>`;
+            pageLi.addEventListener("click", (e) => {
+                e.preventDefault();
+                currentPage = i;
+                loadCustomersPaginated(currentFilter, currentPage, pageSize);
+            });
+            paginationList.appendChild(pageLi);
+        }
+
+        // Create next button
+        const nextLi = document.createElement("li");
+        nextLi.classList.add("page-item");
+        if (currentPage >= totalPages - 1) nextLi.classList.add("disabled");
+        nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>`;
+        nextLi.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                loadCustomersPaginated(currentFilter, currentPage, pageSize);
+            }
+        });
+        paginationList.appendChild(nextLi);
+
+        // Update entries info
+        const start = totalElements === 0 ? 0 : currentPage * pageSize + 1;
+        const end = Math.min((currentPage + 1) * pageSize, totalElements);
+        entriesInfo.textContent = `Showing ${start} to ${end} of ${totalElements} entries`;
     }
 
-    // Navigation event listeners
+    // Load customers based on filter with pagination
+    async function loadCustomersPaginated(filter = "all", page = 0, size = pageSize) {
+        clearCards();
+        
+        // Get the appropriate endpoint for the filter with pagination
+        let filterEndpoint = `${customersEndpoint}/${filter}/paginated?page=${page}&size=${size}`;
+        
+        // Fetch the filtered customer data with pagination
+        const response = await fetchData(filterEndpoint);
+        
+        if (response && response.content) {
+            // Update pagination variables
+            totalPages = response.totalPages;
+            totalElements = response.totalElements;
+            currentPage = response.number;
+            
+            // Create cards for each customer
+            response.content.forEach(customer => {
+                createCustomerCard(customer);
+            });
+            
+            // Update pagination UI
+            updatePagination();
+            
+            // Re-attach tooltip events after creating new cards
+            attachTooltipEvents();
+        } else {
+            // If response doesn't have the expected format, fallback to the non-paginated endpoint
+            console.warn("Paginated endpoint not returning expected format, falling back to non-paginated endpoint");
+            const customerData = await fetchData(`${customersEndpoint}/${filter}`);
+            
+            if (Array.isArray(customerData)) {
+                totalElements = customerData.length;
+                totalPages = Math.ceil(totalElements / pageSize);
+                
+                // For the fallback, just display the first page
+                const paginatedData = customerData.slice(page * size, (page + 1) * size);
+                
+                paginatedData.forEach(customer => {
+                    createCustomerCard(customer);
+                });
+                
+                updatePagination();
+                attachTooltipEvents();
+            }
+        }
+    }
+
+    // Navigation event listeners with pagination
     allNav.addEventListener("click", function (e) {
         e.preventDefault();
         navLinks.forEach(link => link.classList.remove("active-nav"));
         this.classList.add("active-nav");
         currentFilter = "all";
-        loadCustomers("all");
+        currentPage = 0; // Reset to first page when changing filters
+        loadCustomersPaginated("all", currentPage, pageSize);
     });
 
     expiresSoonNav.addEventListener("click", function (e) {
@@ -888,7 +992,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         navLinks.forEach(link => link.classList.remove("active-nav"));
         this.classList.add("active-nav");
         currentFilter = "expires-soon";
-        loadCustomers("expires-soon");
+        currentPage = 0; // Reset to first page when changing filters
+        loadCustomersPaginated("expires-soon", currentPage, pageSize);
     });
 
     expiredNav.addEventListener("click", function (e) {
@@ -896,7 +1001,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         navLinks.forEach(link => link.classList.remove("active-nav"));
         this.classList.add("active-nav");
         currentFilter = "expired";
-        loadCustomers("expired");
+        currentPage = 0; // Reset to first page when changing filters
+        loadCustomersPaginated("expired", currentPage, pageSize);
     });
 
     activeNav.addEventListener("click", function (e) {
@@ -904,84 +1010,43 @@ document.addEventListener("DOMContentLoaded", async function () {
         navLinks.forEach(link => link.classList.remove("active-nav"));
         this.classList.add("active-nav");
         currentFilter = "active";
-        loadCustomers("active");
+        currentPage = 0; // Reset to first page when changing filters
+        loadCustomersPaginated("active", currentPage, pageSize);
     });
 
-    // Add Customer Functionality
-    const addPopup = document.getElementById("add-popup");
-    const addCustomerBtn = document.getElementById("add-customer-btn");
-    const cancelAddBtn = document.getElementById("cancel-add");
-    const addButton = document.querySelector(".outline-button:nth-child(1)");
+    // Add page size selector (enabled to allow users to change page size)
+    function addPageSizeSelector() {
+        const pageSizeContainer = document.createElement("div");
+        pageSizeContainer.className = "page-size-container";
+        pageSizeContainer.innerHTML = `
+            <label for="page-size-select">Show</label>
+            <select id="page-size-select">
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <label>entries</label>
+        `;
 
-    // Get input fields
-    const statusSelect = document.getElementById("add-status-dot");
-    const customerMobileInput = document.getElementById("add-customer-mobile");
-    const customerNameInput = document.getElementById("add-customer-name");
-    const customerPlanInput = document.getElementById("add-customer-plan");
-    const customerEmailInput = document.getElementById("add-customer-email");
-    const subscriptionStartInput = document.getElementById("add-subscription-start");
-    const subscriptionEndInput = document.getElementById("add-subscription-end");
-    const billingAmountInput = document.getElementById("add-billing-amount");
-    const lastPaymentInput = document.getElementById("add-last-payment");
-
-    // Open Add Pop-up
-    if (addButton) {
-        addButton.addEventListener("click", function () {
-            addPopup.style.display = "flex";
+        const pageSizeSelect = pageSizeContainer.querySelector("#page-size-select");
+        pageSizeSelect.addEventListener("change", function() {
+            pageSize = parseInt(this.value);
+            currentPage = 0; // Reset to first page
+            loadCustomersPaginated(currentFilter, currentPage, pageSize);
         });
+
+        const paginationContainer = document.querySelector(".pagination-container");
+        paginationContainer.insertBefore(pageSizeContainer, entriesInfo);
     }
 
-    // Close Add Pop-up
-    if (cancelAddBtn) {
-        cancelAddBtn.addEventListener("click", function () {
-            addPopup.style.display = "none";
-        });
-    }
+    // Uncommented this to add the page size selector
+    addPageSizeSelector();
 
-    // Add Customer - You would add API calls here to save the customer
-    if (addCustomerBtn) {
-        addCustomerBtn.addEventListener("click", function () {
-            const mobileNumber = customerMobileInput.value.trim();
-            const customerName = customerNameInput.value.trim();
-            const customerPlan = customerPlanInput.value.trim();
-            const customerEmail = customerEmailInput.value.trim();
-            const subscriptionStart = subscriptionStartInput.value.trim();
-            const subscriptionEnd = subscriptionEndInput.value.trim();
-            const billingAmount = billingAmountInput.value.trim();
-            const lastPayment = lastPaymentInput.value.trim();
-            const status = statusSelect.value;
-
-            if (!mobileNumber || !customerName || !customerPlan || !customerEmail || !subscriptionStart || !subscriptionEnd || !billingAmount || !lastPayment) {
-                alert("Please fill in all fields.");
-                return;
-            }
-
-            // Here you would call your backend API to create a new customer and transaction
-            // For now, we'll just close the popup and reload the current filter
-            
-            // Clear input fields
-            customerMobileInput.value = "";
-            customerNameInput.value = "";
-            customerPlanInput.value = "";
-            customerEmailInput.value = "";
-            subscriptionStartInput.value = "";
-            subscriptionEndInput.value = "";
-            billingAmountInput.value = "";
-            lastPaymentInput.value = "";
-
-            // Close pop-up
-            addPopup.style.display = "none";
-            
-            // Reload the current filtered view
-            loadCustomers(currentFilter);
-        });
-    }
-
-    // Initial load of all customers
-    await loadCustomers("all");
+    // Initial load of all customers with pagination
+    await loadCustomersPaginated("all", currentPage, pageSize);
 });
-
-
 
 
 

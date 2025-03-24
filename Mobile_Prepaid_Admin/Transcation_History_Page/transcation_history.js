@@ -647,7 +647,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 currentMobile = mobile;
 
                 // Update the title based on filter
-                let titleText = mobile ? `Recharge History for ${mobile}` : "Recharge History";
+                let titleText = mobile ? `Transaction History for ${mobile}` : "Transaction History";
                 if (status !== "all") {
                     titleText += ` (${status.charAt(0).toUpperCase() + status.slice(1)})`;
                 }

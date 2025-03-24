@@ -1,577 +1,479 @@
-// Ensure script runs after DOM is loaded
-// Ensure script runs after DOM is loaded
+// payment.js - Enhanced with better data handling and UI improvements
 document.addEventListener("DOMContentLoaded", function () {
-  const currentPlan = JSON.parse(sessionStorage.getItem("currentPlan"));
-
-  if (!currentPlan) return; // Exit if no plan found in session storage
-
-  // Update payment summary section dynamically
-  document.getElementById("planName").textContent = currentPlan.planName || "-";
-  document.getElementById("planPrice").textContent =
-    `₹${currentPlan.price}/month` || "-";
-  document.getElementById("planValidity").textContent =
-    `${currentPlan.validity} Days` || "-";
-  document.getElementById("totalAmount").textContent =
-    `₹${currentPlan.price}` || "-";
-
-  const planDetails = document.getElementById("planDetails");
-
-  // Plan Benefits Section
-  let benefitsHTML = "";
-  let benefitsTable = "";
-
-  if (currentPlan.dailyData) {
-    benefitsTable += `<tr><td>Daily Data</td><td class="amount">${currentPlan.dailyData}</td></tr>`;
+  // Get data from session storage
+  const currentPlan = JSON.parse(sessionStorage.getItem("currentPlan") || "{}");
+  const currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer") || "{}");
+  
+  // Populate FAB amount if it exists
+  const fabAmountElement = document.getElementById("fabAmount");
+  if (fabAmountElement && currentPlan && currentPlan.price) {
+    fabAmountElement.textContent = parseFloat(currentPlan.price).toFixed(2);
   }
-  if (currentPlan.totalData) {
-    benefitsTable += `<tr><td>Total Data</td><td class="amount">${currentPlan.totalData}</td></tr>`;
-  }
-  if (currentPlan.voice) {
-    benefitsTable += `<tr><td>Voice</td><td class="amount">${currentPlan.voice}</td></tr>`;
-  }
-  if (currentPlan.sms) {
-    benefitsTable += `<tr><td>SMS</td><td class="amount">${currentPlan.sms}</td></tr>`;
-  }
-
-  if (benefitsTable) {
-    benefitsHTML = `
-            <h3>Plan Benefits</h3>
-            <table class="plan-table">${benefitsTable}</table>
-        `;
-  }
-
-  // OTT Benefits Section
-  let ottHTML = "";
-  if (currentPlan.ott && currentPlan.ott.length > 0) {
-    const ottLogos = {
-      Netflix: "./assets/Ott_Logos/Netflix_Logo.svg",
-      "Amazon Prime": "./assets/Ott_Logos/Prime_Logo.svg",
-      "Sony LIV": "./assets/Ott_Logos/Sony_Logo.svg",
-      "Sun NXT": "./assets/Ott_Logos/Sun_nxt_Logo.svg",
-      Zee5: "./assets/Ott_Logos/Zee5_Logo.svg",
-    };
-
-    let ottItems = currentPlan.ott
-      .map((ott) =>
-        ottLogos[ott]
-          ? `<div class="ott"><img src="${ottLogos[ott]}" alt="${ott}"></div>`
-          : ""
-      )
-      .join("");
-
-    if (ottItems) {
-      ottHTML = `<h3>OTT Benefits</h3><div class="ott-list">${ottItems}</div>`;
+  
+  // Load user details with enhanced information
+  function loadUserDetails() {
+    if (currentCustomer) {
+      // Basic user information
+      document.getElementById("userName").textContent = currentCustomer.name || "Not available";
+      document.getElementById("userMobile").textContent = currentCustomer.mobile || currentCustomer.mobileNumber || "Not available";
+      document.getElementById("userEmail").textContent = currentCustomer.email || "Not available";
+      document.getElementById("userId").textContent = currentCustomer.userId || "Not available";
+      
+      // Additional information if available in currentCustomer
+      if (document.getElementById("userAddress") && currentCustomer.address) {
+        document.getElementById("userAddress").textContent = currentCustomer.address;
+      }
+      
+      if (document.getElementById("userCity") && currentCustomer.city) {
+        document.getElementById("userCity").textContent = currentCustomer.city;
+      }
+      
+      if (document.getElementById("userState") && currentCustomer.state) {
+        document.getElementById("userState").textContent = currentCustomer.state;
+      }
+      
+      if (document.getElementById("userPincode") && currentCustomer.pincode) {
+        document.getElementById("userPincode").textContent = currentCustomer.pincode;
+      }
+      
+      if (document.getElementById("userPlan") && currentCustomer.currentPlan) {
+        document.getElementById("userPlan").textContent = currentCustomer.currentPlan;
+      }
+      
+      if (document.getElementById("userBalance") && currentCustomer.balance) {
+        document.getElementById("userBalance").textContent = "₹" + currentCustomer.balance;
+      }
+      
+      if (document.getElementById("userJoinDate") && currentCustomer.joinDate) {
+        document.getElementById("userJoinDate").textContent = new Date(currentCustomer.joinDate).toLocaleDateString();
+      }
+    } else {
+      // Set defaults if no customer data is available
+      document.getElementById("userName").textContent = "Not available";
+      document.getElementById("userMobile").textContent = "Not available";
+      document.getElementById("userEmail").textContent = "Not available";
+      document.getElementById("userId").textContent = "Not available";
     }
   }
-
-  // Terms & Conditions Section
-  let termsHTML = "";
-  if (currentPlan.terms && currentPlan.terms.length > 0) {
-    let termsList = currentPlan.terms
-      .map((term) => `<li>${term}</li>`)
-      .join("");
-    termsHTML = `<h3 class="terms">Terms & Conditions</h3><ul>${termsList}</ul>`;
-  }
-
-  // Inject only into the expandable section
-  planDetails.innerHTML = benefitsHTML + ottHTML + termsHTML;
-});
-
-// Toggle Details Function
-function toggleDetails() {
-  document.getElementById("planDetails").classList.toggle("show");
-}
-
-
-
-
-
-
-
-// Payment-Section-Accordion
-
-// Payment-Section-Accordion
-
-// Card Payment Handling
-document.addEventListener("DOMContentLoaded", function () {
-  const accordionHeaders = document.querySelectorAll(".accordion-header");
-  const upiOptions = document.querySelectorAll("input[name='upi']");
-  const cardPaymentOption = document.getElementById("card_payment");
-  const upiCloseButton = document.querySelector(".close-link");
-  const cardCloseButton = document.querySelector("#cardPaymentOverlay .close-link");
   
-  // Form elements
-  const cardNumberInput = document.getElementById("card-number");
-  const expiryDateInput = document.getElementById("expiry-date");
-  const cvvInput = document.getElementById("cvv");
-  const cardholderNameInput = document.getElementById("cardholder-name");
-  
-  // Error elements
-  const cardNumberError = document.getElementById("cardNumberError");
-  const expiryDateError = document.getElementById("expiryDateError");
-  const cvvError = document.getElementById("cvvError");
-  const cardholderNameError = document.getElementById("cardholderNameError");
-  
-  // Form
-  const cardPaymentForm = document.getElementById("cardPaymentForm");
-  
-  // UPI Elements
-  const upiInput = document.getElementById("upi-id");
-  const upiError = document.getElementById("upiError");
-  const upiForm = document.getElementById("upiForm");
-  const upiButtons = document.querySelectorAll(".upi-option");
-  
-  // UPI ID regex pattern
-  const upiPattern = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
-
-  // ✅ Accordion Toggle Function
-  function toggleAccordion(header) {
-      let content = header.nextElementSibling;
-      let icon = header.querySelector(".accordion-icon");
-
-      document.querySelectorAll(".accordion-content").forEach((acc) => {
-          if (acc !== content) {
-              acc.style.maxHeight = "0";
-              acc.classList.remove("active");
+  // Load plan details
+  function loadPlanDetails() {
+    if (currentPlan) {
+      // Basic plan details
+      document.getElementById("planName").textContent = currentPlan.planName || "Standard Plan";
+      document.getElementById("planId").textContent = currentPlan.planId || "N/A";
+      document.getElementById("planValidity").textContent = currentPlan.validity || "0";
+      
+      // Data details
+      document.getElementById("planData").textContent = currentPlan.dailyData || "Not specified";
+      document.getElementById("totalData").textContent = currentPlan.totalData || "Not specified";
+      document.getElementById("planVoice").textContent = currentPlan.voice || "Not specified";
+      document.getElementById("planSMS").textContent = currentPlan.sms || "Not specified";
+      
+      // Category
+      document.getElementById("planCategory").textContent = 
+        currentPlan.category || 
+        (currentPlan.categories && currentPlan.categories.length > 0 ? 
+          currentPlan.categories[0].categoryName : "General Plan");
+      
+      // Display plan price without GST calculation
+      const planPrice = parseFloat(currentPlan.price) || 0;
+      
+      document.getElementById("planAmount").textContent = planPrice.toFixed(2);
+      document.getElementById("totalAmount").textContent = planPrice.toFixed(2);
+      document.getElementById("payButtonAmount").textContent = planPrice.toFixed(2);
+      
+      // Handle OTT benefits if available
+      if (currentPlan.ott && currentPlan.ott.length > 0) {
+        const ottBadgesContainer = document.getElementById("ottBadges");
+        ottBadgesContainer.innerHTML = ''; // Clear container
+        
+        // Filter out duplicate OTT services
+        const uniqueOttServices = [...new Set(currentPlan.ott)];
+        
+        uniqueOttServices.forEach(ottService => {
+          const badge = document.createElement("span");
+          badge.className = "ott-badge";
+          
+          // Select icon based on OTT service name
+          let iconClass = "fa-tv";
+          if (ottService.toLowerCase().includes("netflix")) {
+            iconClass = "fa-film";
+          } else if (ottService.toLowerCase().includes("prime")) {
+            iconClass = "fa-shipping-fast";
+          } else if (ottService.toLowerCase().includes("hotstar") || ottService.toLowerCase().includes("disney")) {
+            iconClass = "fa-star";
+          } else if (ottService.toLowerCase().includes("sony")) {
+            iconClass = "fa-play-circle";
+          } else if (ottService.toLowerCase().includes("zee")) {
+            iconClass = "fa-video";
           }
-      });
-
-      document.querySelectorAll(".accordion-icon").forEach((ic) => {
-          if (ic !== icon) ic.textContent = "+";
-      });
-
-      if (content.classList.toggle("active")) {
-          content.style.maxHeight = content.scrollHeight + "px";
-          icon.textContent = "-";
+          
+          badge.innerHTML = `<i class="fas ${iconClass}"></i> ${ottService}`;
+          ottBadgesContainer.appendChild(badge);
+        });
       } else {
-          content.style.maxHeight = "0";
-          icon.textContent = "+";
-      }
-  }
-
-  // ✅ Attach accordion event listeners
-  accordionHeaders.forEach((header) => {
-      header.addEventListener("click", () => toggleAccordion(header));
-  });
-
-  // ✅ UPI Popup Functions
-  function showUpiPopup() {
-      let overlay = document.getElementById("upiOverlay");
-      if (overlay) overlay.classList.add("active");
-      
-      // Reset form
-      if (upiInput) {
-          upiInput.value = "";
-          upiInput.placeholder = "Enter UPI ID";
-          upiError.innerHTML = "";
-      }
-  }
-
-  function closeUpiPopup() {
-      let overlay = document.getElementById("upiOverlay");
-      if (overlay) overlay.classList.remove("active");
-      
-      // Reset form
-      if (upiInput) {
-          upiInput.value = "";
-          upiError.innerHTML = "";
-      }
-  }
-
-  // ✅ Card Payment Popup Functions
-  function showCardPaymentPopup() {
-      let overlay = document.getElementById("cardPaymentOverlay");
-      if (overlay) overlay.classList.add("active");
-      
-      // Reset form
-      if (cardPaymentForm) {
-          cardPaymentForm.reset();
-          cardNumberError.innerHTML = "";
-          expiryDateError.innerHTML = "";
-          cvvError.innerHTML = "";
-          cardholderNameError.innerHTML = "";
-      }
-  }
-
-  function closeCardPaymentPopup() {
-      let overlay = document.getElementById("cardPaymentOverlay");
-      if (overlay) overlay.classList.remove("active");
-      
-      // Uncheck radio button
-      if (cardPaymentOption) {
-          cardPaymentOption.checked = false;
-      }
-  }
-
-  // ✅ Append UPI suffix to input field
-  function appendUpi(upiSuffix) {
-      let currentValue = upiInput.value.trim();
-      
-      if (currentValue.length === 0) return;
-      
-      currentValue = currentValue.replace(/@\w+$/, "");
-      upiInput.value = currentValue + upiSuffix;
-      upiInput.focus();
-      
-      validateUpiForm(upiInput.value.trim());
-  }
-
-  // ✅ UPI ID Validation Function
-  function validateUpiForm(upiValue) {
-      let isValid = true;
-      
-      if (upiValue === "") {
-          upiError.innerHTML = "<strong>⚠️ UPI ID is required.</strong>";
-          upiError.style.color = "red";
-          isValid = false;
-      } else if (!upiPattern.test(upiValue)) {
-          upiError.innerHTML = "<strong>❌ Enter a valid UPI ID (example: name@upi).</strong>";
-          upiError.style.color = "red";
-          isValid = false;
-      } else {
-          upiError.innerHTML = "<strong>✅ Looks good!</strong>";
-          upiError.style.color = "green";
+        // Hide OTT section if no OTT benefits
+        const ottContainer = document.getElementById("ottContainer");
+        if (ottContainer) {
+          ottContainer.style.display = "none";
+        }
       }
       
-      return isValid;
-  }
-
-  // ✅ Event listeners for radio buttons
-  upiOptions.forEach((option) => {
-      option.addEventListener("click", function () {
-          if (this.checked && this.id !== "card_payment") {
-              showUpiPopup();
-              // Close card payment popup if open
-              closeCardPaymentPopup();
-          }
-      });
-  });
-
-  // ✅ Event listener for card payment option
-  if (cardPaymentOption) {
-      cardPaymentOption.addEventListener("click", function() {
-          if (this.checked) {
-              showCardPaymentPopup();
-              // Close UPI popup if open
-              closeUpiPopup();
-          }
-      });
-  }
-
-  // ✅ Close button event listeners
-  if (upiCloseButton) {
-      upiCloseButton.addEventListener("click", function() {
-          closeUpiPopup();
-          // Uncheck all UPI options
-          document.querySelectorAll("input[name='upi']").forEach((radio) => {
-              radio.checked = false;
-          });
-      });
-  }
-
-  if (cardCloseButton) {
-      cardCloseButton.addEventListener("click", closeCardPaymentPopup);
+      // Load terms and conditions dynamically
+      loadTermsAndConditions();
+    } else {
+      // Set defaults if no plan data is available
+      document.getElementById("planName").textContent = "Plan Not Selected";
+      document.getElementById("planId").textContent = "N/A";
+      document.getElementById("planValidity").textContent = "0";
+      document.getElementById("planData").textContent = "Not specified";
+      document.getElementById("totalData").textContent = "Not specified";
+      document.getElementById("planVoice").textContent = "Not specified";
+      document.getElementById("planSMS").textContent = "Not specified";
+      document.getElementById("planCategory").textContent = "General Plan";
+      document.getElementById("planAmount").textContent = "0.00";
+      document.getElementById("totalAmount").textContent = "0.00";
+      document.getElementById("payButtonAmount").textContent = "0.00";
+    }
   }
   
-  // ✅ UPI button event listeners
-  if (upiButtons) {
-      upiButtons.forEach((button) => {
-          button.addEventListener("click", function() {
-              appendUpi(this.textContent.trim());
-          });
-      });
+  // Load terms and conditions dynamically
+  function loadTermsAndConditions() {
+    const termsContainer = document.getElementById("termsList");
+    const termsSection = document.getElementById("termsSection");
+    
+    if (termsContainer) {
+      termsContainer.innerHTML = ''; // Clear existing content
+      
+      // Check if we have terms in the current plan
+      if (currentPlan && currentPlan.terms && Array.isArray(currentPlan.terms) && currentPlan.terms.length > 0) {
+        // Add each term as a list item
+        currentPlan.terms.forEach(term => {
+          const li = document.createElement("li");
+          li.textContent = term;
+          termsContainer.appendChild(li);
+        });
+      } else if (currentPlan && typeof currentPlan.terms === 'string' && currentPlan.terms.trim() !== '') {
+        // If terms is a single string, split by line breaks or numbers
+        const termsText = currentPlan.terms;
+        const termsList = termsText.split(/\r?\n|\d+\.\s+/).filter(term => term.trim() !== '');
+        
+        termsList.forEach(term => {
+          const li = document.createElement("li");
+          li.textContent = term.trim();
+          termsContainer.appendChild(li);
+        });
+      } else {
+        // Default terms if none provided
+        const defaultTerms = [
+          "Post daily 100 SMS limit, charges will apply: ₹1 per Local SMS | ₹1.5 per STD SMS.",
+          "Data usage beyond daily limit will be charged at ₹0.50/MB or reduced to 64Kbps speed.",
+          "Unlimited voice calls are included with no additional charges.",
+          "Once purchased, this plan cannot be cancelled or refunded.",
+          "This plan will be active immediately after successful payment."
+        ];
+        
+        defaultTerms.forEach(term => {
+          const li = document.createElement("li");
+          li.textContent = term;
+          termsContainer.appendChild(li);
+        });
+      }
+    }
+    
+    // Hide the entire terms section if no terms are available
+    if (termsSection && (!currentPlan || !currentPlan.terms)) {
+      // Uncomment the next line if you want to completely hide the terms section when no terms exist
+      // termsSection.style.display = "none";
+    }
   }
   
-  // ✅ UPI input validation on change
-  if (upiInput) {
-      upiInput.addEventListener("input", function() {
-          validateUpiForm(this.value.trim());
-      });
-  }
-
-  // ✅ Card Number Formatting
-  if (cardNumberInput) {
-      cardNumberInput.addEventListener("input", function() {
-          // Remove any non-digit characters
-          let value = this.value.replace(/\D/g, '');
-          
-          // Add space after every 4 digits
-          let formattedValue = '';
-          for (let i = 0; i < value.length; i++) {
-              if (i > 0 && i % 4 === 0) {
-                  formattedValue += ' ';
-              }
-              formattedValue += value[i];
-          }
-          
-          // Limit to 16 digits + spaces
-          this.value = formattedValue.slice(0, 19);
-          
-          // Validate as user types
-          validateCardNumber(this.value);
-      });
-  }
-
-  // ✅ Expiry Date Formatting
-  if (expiryDateInput) {
-      expiryDateInput.addEventListener("input", function() {
-          let value = this.value.replace(/\D/g, '');
-          
-          // Format as MM/YY
-          if (value.length > 0) {
-              if (value.length <= 2) {
-                  this.value = value;
-              } else {
-                  this.value = value.slice(0, 2) + '/' + value.slice(2, 4);
-              }
-          }
-          
-          // Validate as user types
-          validateExpiryDate(this.value);
-      });
-  }
-
-  // ✅ CVV Validation
-  if (cvvInput) {
-      cvvInput.addEventListener("input", function() {
-          this.value = this.value.replace(/\D/g, '').slice(0, 3);
-          validateCVV(this.value);
-      });
-  }
-
-  // ✅ Cardholder Name Validation
-  if (cardholderNameInput) {
-      cardholderNameInput.addEventListener("input", function() {
-          validateCardholderName(this.value);
-      });
-  }
-
-  // ✅ Form Submission - UPI
-  if (upiForm) {
-      upiForm.addEventListener("submit", function(event) {
-          // Prevent default form submission behavior immediately
-          event.preventDefault();
-          
-          let upiValue = upiInput.value.trim();
-          
-          if (!validateUpiForm(upiValue)) {
-              return;
-          }
-          
-          // Store transaction details
-          storeTransactionDetails("UPI");
-          
-          // Then manually redirect to success page
-          window.location.href = "/Mobile_Prepaid_Customer/Payment-Status_Page/Payment-Success_Page/payment_success.html";
-      });
-  }
-
-  // ✅ Form Submission - Card
-  if (cardPaymentForm) {
-      cardPaymentForm.addEventListener("submit", function(event) {
-          // Prevent default form submission behavior immediately
-          event.preventDefault();
-          
-          const cardNumber = cardNumberInput.value.trim();
-          const expiryDate = expiryDateInput.value.trim();
-          const cvv = cvvInput.value.trim();
-          const cardholderName = cardholderNameInput.value.trim();
-          
-          let isValid = true;
-          
-          // Validate all fields
-          if (!validateCardNumber(cardNumber)) isValid = false;
-          if (!validateExpiryDate(expiryDate)) isValid = false;
-          if (!validateCVV(cvv)) isValid = false;
-          if (!validateCardholderName(cardholderName)) isValid = false;
-          
-          if (!isValid) {
-              return;
-          }
-          
-          // Store transaction details
-          storeTransactionDetails("CARD");
-          
-          // Then manually redirect to success page
-          window.location.href = "/Mobile_Prepaid_Customer/Payment-Status_Page/Payment-Success_Page/payment_success.html";
-      });
-  }
-
-  // ✅ Validation Functions
-  function validateCardNumber(cardNumber) {
-      const strippedNumber = cardNumber.replace(/\s/g, '');
-      const isValid = /^[0-9]{16}$/.test(strippedNumber);
+  // Calculate and display plan dates
+  function calculatePlanDates() {
+    if (currentPlan && currentPlan.validity) {
+      const now = new Date();
+      const endDate = new Date();
+      endDate.setDate(now.getDate() + parseInt(currentPlan.validity));
       
-      if (cardNumber === '') {
-          cardNumberError.innerHTML = "<strong>⚠️ Card number is required.</strong>";
-          cardNumberError.style.color = "red";
-          return false;
-      } else if (!isValid) {
-          cardNumberError.innerHTML = "<strong>❌ Enter a valid 16-digit card number.</strong>";
-          cardNumberError.style.color = "red";
-          return false;
-      } else {
-          cardNumberError.innerHTML = "<strong>✅ Looks good!</strong>";
-          cardNumberError.style.color = "green";
-          return true;
-      }
+      // Format dates in a more readable format
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      document.getElementById("planStartDate").textContent = now.toLocaleDateString('en-IN', options);
+      document.getElementById("planEndDate").textContent = endDate.toLocaleDateString('en-IN', options);
+    } else {
+      document.getElementById("planStartDate").textContent = "On payment completion";
+      document.getElementById("planEndDate").textContent = "On payment completion";
+    }
   }
-
-  function validateExpiryDate(expiryDate) {
-      const isFormatValid = /^(0[1-9]|1[0-2])\/([0-9]{2})$/.test(expiryDate);
+  
+  // Show notification
+  function showNotification(message, type = "info") {
+    const notificationEl = document.createElement("div");
+    notificationEl.className = `notification ${type}`;
+    notificationEl.style.position = "fixed";
+    notificationEl.style.top = "20px";
+    notificationEl.style.right = "20px";
+    notificationEl.style.padding = "15px 20px";
+    notificationEl.style.borderRadius = "5px";
+    notificationEl.style.backgroundColor = type === 'success' ? "#4CAF50" : 
+                                          type === 'error' ? "#F44336" : 
+                                          type === 'warning' ? "#FFC107" : "#2196F3";
+    notificationEl.style.color = "#fff";
+    notificationEl.style.boxShadow = "0 4px 8px rgba(0,0,0,0.2)";
+    notificationEl.style.zIndex = "1000";
+    notificationEl.style.transform = "translateY(-20px)";
+    notificationEl.style.opacity = "0";
+    notificationEl.style.transition = "all 0.3s ease";
+    
+    notificationEl.innerHTML = `
+      <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                    type === 'error' ? 'fa-exclamation-circle' : 
+                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}" 
+         style="margin-right: 10px;"></i>
+      <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notificationEl);
+    
+    // Animate in
+    setTimeout(() => {
+      notificationEl.style.transform = "translateY(0)";
+      notificationEl.style.opacity = "1";
+    }, 10);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+      notificationEl.style.transform = "translateY(-20px)";
+      notificationEl.style.opacity = "0";
+      setTimeout(() => {
+        document.body.removeChild(notificationEl);
+      }, 300);
+    }, 5000);
+  }
+  
+  // Show error notification
+  function showErrorNotification(message) {
+    showNotification(message, "error");
+  }
+  
+  // Initialize Razorpay Order
+  async function initializeRazorpayOrder() {
+    try {
+      if (!currentCustomer || !currentCustomer.userId || !currentPlan || !currentPlan.planId) {
+        console.error("Missing customer or plan details", { customer: currentCustomer, plan: currentPlan });
+        showErrorNotification("Unable to process payment. Missing customer or plan details.");
+        return;
+      }
       
-      if (expiryDate === '') {
-          expiryDateError.innerHTML = "<strong>⚠️ Expiry date is required.</strong>";
-          expiryDateError.style.color = "red";
-          return false;
-      } else if (!isFormatValid) {
-          expiryDateError.innerHTML = "<strong>❌ Enter a valid date (MM/YY).</strong>";
-          expiryDateError.style.color = "red";
-          return false;
-      } else {
-          // Check if card is expired
-          const [month, year] = expiryDate.split('/');
-          const currentDate = new Date();
-          const currentYear = currentDate.getFullYear() % 100; // Get last 2 digits
-          const currentMonth = currentDate.getMonth() + 1; // 1-12
-          
-          if (parseInt(year) < currentYear || 
-              (parseInt(year) === currentYear && parseInt(month) < currentMonth)) {
-              expiryDateError.innerHTML = "<strong>❌ Card has expired.</strong>";
-              expiryDateError.style.color = "red";
-              return false;
-          } else {
-              expiryDateError.innerHTML = "<strong>✅ Looks good!</strong>";
-              expiryDateError.style.color = "green";
-              return true;
-          }
-      }
-  }
-
-  function validateCVV(cvv) {
-      const isValid = /^[0-9]{3}$/.test(cvv);
+      // Show loading state on button
+      const payButton = document.getElementById("quickPayButton");
+      const originalButtonText = payButton.innerHTML;
+      payButton.innerHTML = '<div class="loading"></div> Processing...';
+      payButton.disabled = true;
       
-      if (cvv === '') {
-          cvvError.innerHTML = "<strong>⚠️ CVV is required.</strong>";
-          cvvError.style.color = "red";
-          return false;
-      } else if (!isValid) {
-          cvvError.innerHTML = "<strong>❌ Enter a valid 3-digit CVV.</strong>";
-          cvvError.style.color = "red";
-          return false;
-      } else {
-          cvvError.innerHTML = "<strong>✅ Looks good!</strong>";
-          cvvError.style.color = "green";
-          return true;
-      }
-  }
-
-  function validateCardholderName(name) {
-      // Allow letters, spaces, and hyphens only
-      const isValid = /^[A-Za-z\s-]+$/.test(name);
-      
-      if (name === '') {
-          cardholderNameError.innerHTML = "<strong>⚠️ Cardholder name is required.</strong>";
-          cardholderNameError.style.color = "red";
-          return false;
-      } else if (!isValid) {
-          cardholderNameError.innerHTML = "<strong>❌ Enter a valid name (letters only).</strong>";
-          cardholderNameError.style.color = "red";
-          return false;
-      } else if (name.length < 3) {
-          cardholderNameError.innerHTML = "<strong>❌ Name is too short.</strong>";
-          cardholderNameError.style.color = "red";
-          return false;
-      } else {
-          cardholderNameError.innerHTML = "<strong>✅ Looks good!</strong>";
-          cardholderNameError.style.color = "green";
-          return true;
-      }
-  }
-
-  // ✅ Store Transaction Details
-  function storeTransactionDetails(paymentMode) {
-      let currentPlan = JSON.parse(sessionStorage.getItem("currentPlan"));
-      let currentCustomer = JSON.parse(sessionStorage.getItem("currentCustomer"));
-
-      if (!currentCustomer || !currentCustomer.userId) {
-          console.error("No current customer found.");
-          return;
-      }
-
-      let userId = currentCustomer.userId;
-      let userMobile = currentCustomer.mobile;
-
-      let now = new Date();
-      let purchaseDate = now.toISOString();
-      let startDate = now.toISOString();
-
-      let endDate = new Date();
-      endDate.setDate(now.getDate() + currentPlan.validity);
-      let planEndDate = endDate.toISOString();
-
-      // Generate transaction ID
-      let transactionId = "TXN" + Math.floor(100000000000 + Math.random() * 900000000000).toString();
-
-      let transactionDetails = {
-          amount: currentPlan.price,
-          transactionStatus: "SUCCESSFUL",
-          planStatus: "ACTIVE",
-          purchasedOn: purchaseDate,
-          paymentMode: paymentMode,
-          refNumber: transactionId,
-          planStart: startDate,
-          planEnd: planEndDate,
-          user: {
-              userId: userId
-          },
-          plan: {
-              planId: currentPlan.planId
-          }
+      const paymentRequest = {
+        userId: currentCustomer.userId,
+        planId: currentPlan.planId,
+        currency: "INR",
+        mobile: currentCustomer.mobile || currentCustomer.mobileNumber,
+        paymentMode: "all" // Default to all payment methods
       };
-
-      // Send transaction details to backend
-      fetch("http://localhost:8083/api/transactions", {
+      
+      console.log("Sending payment request:", paymentRequest);
+      
+      // Create Razorpay order via backend
+      const response = await fetch("http://localhost:8083/api/payment/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(paymentRequest),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        throw new Error("Failed to create order: " + errorText);
+      }
+      
+      const responseData = await response.json();
+      console.log("Order created successfully:", responseData);
+      
+      openRazorpayCheckout(responseData);
+      
+    } catch (error) {
+      console.error("Error initializing payment:", error);
+      showErrorNotification("Payment initialization failed: " + error.message);
+      
+      // Reset button state
+      const payButton = document.getElementById("quickPayButton");
+      payButton.innerHTML = originalButtonText;
+      payButton.disabled = false;
+    }
+  }
+  
+  // Open Razorpay Checkout
+  function openRazorpayCheckout(orderData) {
+    const options = {
+      key: orderData.keyId || "rzp_test_yourkeyhere", // Fallback to test key
+      amount: orderData.amount,
+      currency: orderData.currency || "INR",
+      name: "Mobile Prepaid",
+      description: `${currentPlan.planName || 'Plan'} Recharge`,
+      order_id: orderData.razorpayOrderId,
+      prefill: {
+        name: currentCustomer.name || "",
+        email: currentCustomer.email || "",
+        contact: currentCustomer.mobile || currentCustomer.mobileNumber || ""
+      },
+      notes: {
+        planId: currentPlan.planId,
+        userId: currentCustomer.userId
+      },
+      theme: {
+        color: "#ff4500"
+      },
+      modal: {
+        ondismiss: function() {
+          console.log("Payment cancelled by user");
+          showNotification("Payment cancelled", "warning");
+          
+          // Reset button state
+          const payButton = document.getElementById("quickPayButton");
+          payButton.innerHTML = `<i class="fas fa-bolt"></i> Quick Pay ₹${currentPlan.price || "0"}`;
+          payButton.disabled = false;
+        }
+      },
+      handler: function(response) {
+        handlePaymentSuccess(response, orderData.razorpayOrderId);
+      }
+    };
+    
+    console.log("Opening Razorpay with options:", {
+      ...options,
+      key: "HIDDEN_FOR_SECURITY" // Don't log the key
+    });
+    
+    const razorpayCheckout = new Razorpay(options);
+    razorpayCheckout.open();
+  }
+  
+  // Handle Payment Success
+  // In payment.js, modify handlePaymentSuccess function
+async function handlePaymentSuccess(response, orderId) {
+  try {
+      console.log("Payment success response:", response);
+      
+      // Show loading state
+      const payButton = document.getElementById("quickPayButton");
+      payButton.innerHTML = '<div class="loading"></div> Verifying Payment...';
+      
+      // Verify payment with backend
+      const verificationData = {
+          razorpayOrderId: orderId,
+          razorpayPaymentId: response.razorpay_payment_id,
+          razorpaySignature: response.razorpay_signature,
+          userId: currentCustomer.userId,
+          planId: currentPlan.planId,
+          paymentMode: "all" // Use default payment mode
+      };
+      
+      console.log("Sending verification data:", verificationData);
+      
+      const verificationResponse = await fetch("http://localhost:8083/api/payment/verify-payment", {
           method: "POST",
           headers: {
               "Content-Type": "application/json",
           },
-          body: JSON.stringify(transactionDetails),
-      })
-      .then((response) => response.json())
-      .then((data) => {
-          console.log("Transaction stored successfully:", data);
-          // Store transaction in sessionStorage
-          sessionStorage.setItem("currentTransaction", JSON.stringify(transactionDetails));
-      })
-      .catch((error) => {
-          console.error("Error storing transaction:", error);
+          body: JSON.stringify(verificationData),
       });
-  }
-  
-  // ✅ Set payment amounts from current plan
-  function setPaymentAmounts() {
-      let currentPlan = JSON.parse(sessionStorage.getItem("currentPlan"));
-      if (currentPlan && currentPlan.price) {
-          let upiAmount = document.getElementById("upiPayAmount");
-          let cardAmount = document.getElementById("cardPayAmount");
-          
-          if (upiAmount) upiAmount.textContent = currentPlan.price;
-          if (cardAmount) cardAmount.textContent = currentPlan.price;
+      
+      if (!verificationResponse.ok) {
+          const errorText = await verificationResponse.text();
+          console.error("Payment verification failed:", errorText);
+          throw new Error("Payment verification failed: " + errorText);
       }
+      
+      const result = await verificationResponse.json();
+      console.log("Verification result:", result);
+      
+      if (result.status === "success") {
+          // Store transaction in sessionStorage for the success page
+          sessionStorage.setItem("currentTransaction", JSON.stringify(result.transaction));
+          
+          // Show success state on button before redirecting
+          payButton.innerHTML = '<i class="fas fa-check-circle"></i> Payment Successful!';
+          payButton.style.backgroundColor = "var(--green)";
+          
+          let successMessage = "Payment Successful! Redirecting to success page...";
+          
+          // Add email confirmation info if available
+          if (result.hasOwnProperty('emailSent')) {
+              if (result.emailSent) {
+                  successMessage += " A confirmation email has been sent to your email address.";
+              }
+          }
+          
+          showNotification(successMessage, "success");
+          
+          // Redirect to success page after a short delay
+          setTimeout(() => {
+              window.location.href = "/Mobile_Prepaid_Customer/Payment-Status_Page/Payment-Success_Page/payment_success.html";
+          }, 2000);
+      } else {
+          throw new Error(result.message || "Payment verification failed");
+      }
+  } catch (error) {
+      console.error("Error processing payment:", error);
+      showErrorNotification("Payment failed: " + error.message);
+      
+      // Reset button state
+      const payButton = document.getElementById("quickPayButton");
+      payButton.innerHTML = `<i class="fas fa-bolt"></i> Quick Pay ₹${currentPlan.price || "0"}`;
+      payButton.disabled = false;
+  }
+}
+  
+  // Handle FAB click for mobile
+  function setupOrderSummaryFab() {
+    const fab = document.getElementById("orderSummaryFab");
+    if (fab) {
+      fab.addEventListener("click", function() {
+        // Scroll to payment section
+        const paymentSection = document.querySelector('.payment-info');
+        if (paymentSection) {
+          paymentSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
   }
   
-  // Call to set payment amounts when page loads
-  setPaymentAmounts();
+  // Process terms from data
+  function processTermsFromText(termsText) {
+    if (!termsText) return [];
+    
+    // Split by newlines or numbered items (1., 2., etc.)
+    return termsText
+      .split(/\r?\n|\d+\.\s+/)
+      .map(term => term.trim())
+      .filter(term => term !== '');
+  }
+  
+  // Add event listener for the quick pay button
+  const quickPayButton = document.getElementById("quickPayButton");
+  if (quickPayButton) {
+    quickPayButton.addEventListener("click", function() {
+      initializeRazorpayOrder();
+    });
+  }
+  
+  // Initialize the page
+  loadUserDetails();
+  loadPlanDetails();
+  calculatePlanDates();
+  setupOrderSummaryFab();
+  
+  // Log initial state
+  console.log("Page initialized with plan:", currentPlan);
+  console.log("Page initialized with customer:", currentCustomer);
 });
-
-
-
-
-
-
-
-
-function goBack() {
-  window.location.href = "/Mobile_Prepaid_Customer/Prepaid_plans_Page/Popular_plans/prepaid.html";
-}

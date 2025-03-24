@@ -354,31 +354,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Profile Picture & User Details Handling
 // Dynamic Account Detail JSON Population
+
+// Profile Picture & User Details Handling
 document.addEventListener("DOMContentLoaded", function () {
     const currentCustomer = sessionStorage.getItem("currentCustomer");
-
     if (!currentCustomer) {
         // Redirect to recharge page if not logged in
         window.location.href = "/Mobile_Prepaid_Customer/Recharge_Page/recharge.html";
         return;
     }
-
+    
     // Parse the stored customer details
     const userData = JSON.parse(currentCustomer);
-
+    
     // Populate details dynamically
     document.querySelector(".user-name").textContent = userData.name;
     document.querySelector(".user-mobile").textContent = `+91 ${userData.mobile}`;
-
+    
     const infoItems = document.querySelectorAll(".info-grid .info-item span");
-
     infoItems[0].textContent = userData.dob; // DOB
     infoItems[1].textContent = userData.email; // Email
     infoItems[2].textContent = `+91 ${userData.alternateNumber}`; // Alternate Number
     infoItems[3].textContent = userData.contactMethod; // Ways to Contact
     infoItems[4].textContent = userData.communicationLanguage; // Communication Language (Hidden)
     infoItems[5].textContent = userData.address; // Permanent Address (Hidden)
-
+    
     // Additional Hidden Fields
     if (userData.role) {
         const roleItem = document.createElement("div");
@@ -386,79 +386,213 @@ document.addEventListener("DOMContentLoaded", function () {
         roleItem.innerHTML = `<i class="fas fa-user"></i> Role: <span class="text-white">${userData.role}</span>`;
         document.querySelector(".info-grid").appendChild(roleItem);
     }
-
+    
     if (userData.username) {
         const usernameItem = document.createElement("div");
         usernameItem.classList.add("info-item", "hidden");
         usernameItem.innerHTML = `<i class="fas fa-user-circle"></i> Username: <span class="text-white">${userData.username}</span>`;
         document.querySelector(".info-grid").appendChild(usernameItem);
     }
-
-    // Call Profile Picture Handling after user details are populated
-    handleProfilePicture(userData.mobile, userData.name);
+    
+    // Call Updated Profile Picture Handling after user details are populated
+    handleProfilePicture(userData.userId, userData.mobile, userData.name);
 });
 
-// ✅ Function to Handle Profile Picture Logic
-function handleProfilePicture(userMobile, userName) {
+// Updated Function to Handle Profile Picture Logic
+// Updated Function to Handle Profile Picture Logic with Better Error Handling
+function handleProfilePicture(userId, userMobile, userName) {
     const profilePic = document.getElementById("profile-pic");
     const profileUpload = document.getElementById("profile-upload");
     const profileImage = document.getElementById("profile-image");
     const profileInitial = document.getElementById("profile-initial");
     const sideProfilePic = document.getElementById("user-profile-pic");
-
+    
     if (!profilePic || !profileUpload || !profileImage || !profileInitial || !sideProfilePic) {
         console.error("Profile picture elements not found!");
         return;
     }
-
-    // Retrieve stored profile picture from sessionStorage
-    const storedProfilePic = sessionStorage.getItem(`profilePic_${userMobile}`);
-
-    if (storedProfilePic) {
-        profileImage.src = storedProfilePic;
-        profileImage.style.display = "block";
-        profileInitial.style.display = "none";
-        sideProfilePic.style.backgroundImage = `url(${storedProfilePic})`;
-        sideProfilePic.style.backgroundSize = "cover";
-        sideProfilePic.style.backgroundPosition = "center";
-        sideProfilePic.innerHTML = "";
-    } else {
-        setProfileInitials(userName);
-    }
-
+    
+    console.log(`Attempting to load profile picture for user ${userId}`);
+    
+    // First try to load profile picture from backend
+    fetch(`/api/users/${userId}/profile-picture`)
+        .then(response => {
+            console.log("Profile picture fetch response:", response.status);
+            if (response.ok) {
+                return response.blob();
+            } else {
+                console.log("No profile picture found on server, checking session storage");
+                // If no profile picture in backend, try localStorage
+                const storedProfilePic = sessionStorage.getItem(`profilePic_${userMobile}`);
+                if (storedProfilePic) {
+                    console.log("Found profile picture in session storage");
+                    displayProfilePicture(storedProfilePic);
+                    return null;
+                } else {
+                    console.log("No profile picture found in session storage, using initials");
+                    // If no profile picture anywhere, use initials
+                    setProfileInitials(userName);
+                    return null;
+                }
+            }
+        })
+        .then(blob => {
+            if (blob) {
+                console.log(`Received profile picture blob of size: ${blob.size} bytes`);
+                const imageURL = URL.createObjectURL(blob);
+                displayProfilePicture(imageURL);
+                // Also save to session storage for offline use
+                saveToSessionStorage(blob, userMobile);
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching profile picture:", error);
+            setProfileInitials(userName);
+        });
+    
+    // Handle profile picture upload
     profilePic.addEventListener("click", function () {
         profileUpload.click();
     });
-
+    
     profileUpload.addEventListener("change", function (event) {
         const file = event.target.files[0];
-
         if (file) {
+            console.log(`Selected file: ${file.name}, type: ${file.type}, size: ${file.size} bytes`);
+            
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file (JPEG, PNG, etc.)');
+                return;
+            }
+            
+            // Check file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('File size exceeds maximum limit (2MB)');
+                return;
+            }
+            
+            // Display image immediately for better UX
+            console.log("Loading file preview");
             const reader = new FileReader();
             reader.onload = function (e) {
                 const imageURL = e.target.result;
+                displayProfilePicture(imageURL);
+                // Save to session storage
                 sessionStorage.setItem(`profilePic_${userMobile}`, imageURL);
-                profileImage.src = imageURL;
-                profileImage.style.display = "block";
-                profileInitial.style.display = "none";
-                sideProfilePic.style.backgroundImage = `url(${imageURL})`;
-                sideProfilePic.style.backgroundSize = "cover";
-                sideProfilePic.style.backgroundPosition = "center";
-                sideProfilePic.innerHTML = "";
+                console.log("Saved image to session storage");
             };
             reader.readAsDataURL(file);
+            
+            // Upload to backend
+            uploadProfilePicture(userId, file);
         }
+    });
+    
+    // Helper function to display profile picture
+    function displayProfilePicture(imageURL) {
+        console.log("Displaying profile picture");
+        profileImage.src = imageURL;
+        profileImage.style.display = "block";
+        profileInitial.style.display = "none";
+        
+        sideProfilePic.style.backgroundImage = `url(${imageURL})`;
+        sideProfilePic.style.backgroundSize = "cover";
+        sideProfilePic.style.backgroundPosition = "center";
+        sideProfilePic.innerHTML = "";
+    }
+    
+    // Helper function to save blob to session storage
+    function saveToSessionStorage(blob, userMobile) {
+        console.log("Saving blob to session storage");
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            sessionStorage.setItem(`profilePic_${userMobile}`, e.target.result);
+            console.log("Blob saved to session storage");
+        };
+        reader.readAsDataURL(blob);
+    }
+    
+    // Function to upload profile picture to backend with detailed error handling
+   // Replace your uploadProfilePicture function with this implementation
+function uploadProfilePicture(userId, file) {
+    console.log(`Uploading profile picture for user ${userId}`);
+    
+    // Create FormData to send the file
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    // Try using FormData first (your original multipart approach)
+    fetch(`/api/users/${userId}/profile-picture`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            console.log("Multipart upload failed, falling back to base64 upload");
+            // If multipart fails, fall back to base64 upload
+            uploadProfilePictureAsBase64(userId, file);
+            return null;
+        }
+        return response.text();
+    })
+    .then(data => {
+        if (data) {
+            console.log('Profile picture uploaded successfully via multipart:', data);
+        }
+    })
+    .catch(error => {
+        console.error('Error during multipart upload:', error);
+        console.log("Falling back to base64 upload");
+        uploadProfilePictureAsBase64(userId, file);
     });
 }
 
-// ✅ Function to Set Profile Initials
+// Implementation of base64 upload (you already had part of this)
+function uploadProfilePictureAsBase64(userId, file) {
+    console.log("Using base64 upload method");
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function() {
+        const base64String = reader.result;
+        const base64Image = base64String.split(',')[1]; // Remove the "data:image/jpeg;base64," part
+        
+        fetch(`/api/users/${userId}/profile-picture-base64`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ image: base64Image })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log('Profile picture uploaded successfully via base64:', data);
+        })
+        .catch(error => {
+            console.error('Error uploading profile picture via base64:', error);
+            alert('Failed to upload profile picture to server. The picture will be available for this session only.');
+        });
+    };
+    
+    reader.onerror = function(error) {
+        console.error('Error reading file:', error);
+        alert('Error reading the file. Please try again with a different image.');
+    };
+}
+}
+
+// Function to Set Profile Initials (unchanged)
 function setProfileInitials(name) {
     let userInitial = name ? name.trim().charAt(0).toUpperCase() : "U";
-
     const profileInitial = document.getElementById("profile-initial");
     profileInitial.innerText = userInitial;
     profileInitial.style.display = "flex";
-
+    
     const sideProfilePic = document.getElementById("user-profile-pic");
     let sideProfileInitial = document.createElement("span");
     sideProfileInitial.innerText = userInitial;
@@ -466,11 +600,9 @@ function setProfileInitials(name) {
     sideProfileInitial.style.color = "#333";
     sideProfileInitial.style.fontWeight = "bold";
     sideProfileInitial.style.textTransform = "uppercase";
-
     sideProfilePic.innerHTML = "";
     sideProfilePic.appendChild(sideProfileInitial);
 }
-
 
 
 

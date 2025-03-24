@@ -53,7 +53,7 @@
                     <a href="#" id="adminSignOutBtn">Sign-out</a>
                 </div>
             </div>
-    
+
         </div>
     </header>
 
@@ -65,7 +65,8 @@
                         Management</a></li>
                 <li><a href="/Mobile_Prepaid_Admin/Customer_Management/customer_management.html">Customer Management</a>
                 </li>
-                <li><a href="/Mobile_Prepaid_Admin/Transcation_History_Page/transcation_history.html">Transcation Management</a></li>
+                <li><a href="/Mobile_Prepaid_Admin/Transcation_History_Page/transcation_history.html">Transcation
+                        Management</a></li>
                 <!-- <li><a href="#">Support Management</a></li> -->
             </ul>
         </nav>
@@ -129,6 +130,16 @@
                 <div id="cust_manage_cards_container" class="cust_manage_cards_container">
 
                 </div>
+
+
+                <!-- Pagination and entries info -->
+                <div class="pagination-container">
+                    <div class="entries-info">Showing 0 out of 0 entries</div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination"></ul>
+                    </nav>
+                </div>
+
             </div>
 
 
@@ -160,8 +171,8 @@
             <h3>Delete Customer</h3>
             <p>You are about to delete this <strong>customer record</strong>. This action cannot be undone.</p> -->
 
-            <!-- Customer Details -->
-            <!-- <div class="details">
+    <!-- Customer Details -->
+    <!-- <div class="details">
                 <div class="detail"><strong>Name:</strong> <span id="customer-name"></span></div>
                 <div class="detail"><strong>Mobile:</strong> <span id="customer-mobile"></span></div>
                 <div class="detail"><strong>Plan:</strong> <span id="customer-plan"></span></div>
@@ -173,7 +184,7 @@
             </div>
 
             <!-- Buttons -->
-            <!-- <div class="popup-buttons">
+    <!-- <div class="popup-buttons">
                 <button id="confirm-delete">Yes, Delete</button>
                 <button id="cancel-delete">Cancel</button>
             </div>
@@ -325,7 +336,7 @@
         <div class="popup-content">
             <span id="close-customer-popup" class="close-btn">&times;</span>
             <h3>Customer Details</h3>
-    
+
             <div class="details">
                 <!-- Customer Details -->
                 <div class="details-section">
@@ -334,16 +345,18 @@
                     <div class="detail"><strong>Mobile:</strong> <span id="detail-customer-mobile"></span></div>
                     <div class="detail"><strong>Email:</strong> <span id="detail-customer-email"></span></div>
                 </div>
-    
+
                 <!-- Plan Details -->
                 <div class="details-section">
                     <h4>Plan Details</h4>
                     <div class="detail"><strong>Status:</strong> <span id="detail-customer-status"></span></div>
                     <div class="detail"><strong>Plan:</strong> <span id="detail-customer-plan"></span></div>
-                    <div class="detail"><strong>Subscription Start:</strong> <span id="detail-subscription-start"></span></div>
-                    <div class="detail"><strong>Subscription End:</strong> <span id="detail-subscription-end"></span></div>
+                    <div class="detail"><strong>Subscription Start:</strong> <span
+                            id="detail-subscription-start"></span></div>
+                    <div class="detail"><strong>Subscription End:</strong> <span id="detail-subscription-end"></span>
+                    </div>
                 </div>
-    
+
                 <!-- Transaction Details -->
                 <div class="details-section">
                     <h4>Transaction Details</h4>
@@ -351,13 +364,13 @@
                     <div class="detail"><strong>Last Payment:</strong> <span id="detail-last-payment"></span></div>
                 </div>
             </div>
-    
+
             <div class="popup-buttons">
                 <button id="close-details-popup">Close</button>
             </div>
         </div>
     </div>
-    
+
 
 
 
